@@ -77,7 +77,36 @@ header button:hover{
     background:#1D4ED8;
 }
 
+/* esto de aqui abajo es para adaptarlo a pantalla de movil */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        padding: 15px;
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    header ul {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    header a {
+        padding: 10px;
+    }
+
+    body {
+        padding: 10px;
+    }
+}
+
+
 /*
+esto de aqui abajo al parecer no se puede hacer asi
 nav{
     background:#1E293B;
     border-radius:10px;
