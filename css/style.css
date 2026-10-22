@@ -216,3 +216,55 @@ footer{
     color:white;
     text-align:center;
 }
+
+
+
+/*PANEL DE ACCESIBILIDAD*/
+/* ESTILOS GENERALES PARA TUS FORMULARIOS (HTML ORIGINAL) */
+.formulario_base {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: var(--color-tarjeta);
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(69, 10, 10, .16);
+}
+
+.formulario_base fieldset {
+    border: none;
+}
+
+/* Ocultamos los <br> para gestionar los espacios solo con el modelo de caja CSS */
+.formulario_base br {
+    display: none;
+}
+
+/* Forzamos que cada etiqueta ocupe su propia línea y le damos separación superior */
+.formulario_base label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Diseño de los campos interactivos (excluyendo el checkbox) */
+.formulario_base select,
+.formulario_base input:not([type="checkbox"]),
+.formulario_base textarea {
+    padding: 10px;
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    font-family: inherit;
+    width: 100%;
+}
+
+/* Ajuste específico para el checkbox de accesibilidad */
+.formulario_base input[type="checkbox"] {
+    margin-top: 15px;
+    transform: scale(1.2);
+}
+
+/* Separación superior para los botones */
+.formulario_base button {
+    margin-top: 25px;
+}

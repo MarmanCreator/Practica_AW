@@ -14,7 +14,7 @@
  <body>
 
     <!-- Le ponemos id al formulario para luego con JavaScrip poder hacer la validación -->
-    <form id="form_accesibilidad" action="#" method="POST">
+    <form class="formulario_base" id="form_accesibilidad" action="#" method="POST">
 
         <fieldset>
             <label for="tema_visual">Tema de la página:</label>
@@ -22,8 +22,7 @@
                 <option value="claro" selected>Tema Claro</option>
                 <option value="oscuro" selected>Tema Oscuro</option>
             </select>
-             <br>
-             <br>
+             
             
             <label for="tamano_fuente">Tamaño de tamaño-fuente:</label>
             <select id="tamano_fuente" name="tamano_fuente">
@@ -31,18 +30,17 @@
                 <option value="normal" selected>Tamaño normal</option>
                 <option value="grande" selected>Tamaño grande</option>
             </select>
-            <br>
-            <br>
+           
 
             <label for="alto_contraste">Activar modo de alto contraste:</label>
             <input type="checkbox" id="alto_contraste" name="alto_contraste">
-            <br>
-            <br>
+            
+        
 
         <button type="button" onclick="window.location.href='menu_inicio.html'">Cancelar</button>
         <button type="submit" id="boton_guardar_acesibilidad">Guardar</button> 
 
-
+ 
         </fieldset>
 
     </form>
