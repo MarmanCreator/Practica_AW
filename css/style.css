@@ -1,5 +1,4 @@
 
-/* Variables de color reutilizables en toda la hoja de estilos. */
 :root{
     --color-principal:#c84f4f;
     --color-principal-hover:#991B1B;
@@ -13,14 +12,12 @@
     --color-borde:#FECACA;
 }
 
-/* Elimina margenes y rellenos por defecto y facilita el calculo de tamanos. */
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
 }
 
-/* Estilos generales de la pagina: tipografia, fondo, color y separacion exterior. */
 body {
     font-family: Arial, sans-serif;
     background-color: var(--color-fondo);
@@ -28,18 +25,15 @@ body {
     padding: 20px;  
 }
 
-/* Define el color de los titulos principales. */
 h1 {
     color:var(--color-texto);
 }
 
-/* Quita el subrayado de los enlaces y les asigna el color principal. */
 a {
     text-decoration: none;
     color:var(--color-principal);
 }
 
-/* Estilo base para todos los botones. */
 button{
     cursor:pointer;
     border:1px solid var(--color-principal);
@@ -49,13 +43,11 @@ button{
     padding:10px 15px;
 }
 
-/* Oscurece los botones cuando el cursor pasa sobre ellos. */
 button:hover{
     background:var(--color-principal-hover);
     border-color:var(--color-principal-hover);
 }
 
-/* Organiza el encabezado en una fila y aplica su fondo y espaciado. */
 header{
     background:var(--color-principal);
     color:var(--color-texto-inverso);
@@ -65,30 +57,25 @@ header{
     padding:20px 40px;
 }
 
-/* Coloca horizontalmente los elementos de las listas del encabezado. */
 header ul{
     display:flex;
     list-style:none;
 }
 
-/* Da formato a los enlaces del encabezado para que ocupen una zona pulsable. */
 header a{
     display:block;
     color:var(--color-texto-inverso);
     padding:15px 25px;
 }
 
-/* Cambia el fondo del enlace del encabezado al pasar el cursor. */
 header a:hover{
     background:var(--color-secundario);
 }
 
-/* Coloca los elementos del formulario de busqueda en una fila. */
 header form{
     display:flex;
 }
 
-/* Define el tamano y la apariencia del campo de busqueda. */
 header input{
     width:220px;
     padding:10px;
@@ -96,7 +83,6 @@ header input{
     border-radius:6px 0 0 6px;
 }
 
-/* Personaliza el boton de busqueda y lo une visualmente al campo de texto. */
 header button{
     padding:10px 15px;
     border:none;
@@ -105,51 +91,42 @@ header button{
     border-radius:0 6px 6px 0;
 }
 
-/* Cambia el color del boton de busqueda cuando se pasa el cursor. */
 header button:hover{
     background:var(--color-acento-hover);
 }
 
-/* Adapta el encabezado y sus elementos a pantallas pequenas. */
 @media (max-width: 600px) {
-    /* Apila el contenido del encabezado y reduce su espacio interior. */
     header {
         flex-direction: column;
         padding: 15px;
         text-align: center;
     }
 
-    /* Reduce el tamano del titulo en dispositivos moviles. */
     header h1 {
         font-size: 24px;
         margin-bottom: 10px;
     }
 
-    /* Convierte la lista de enlaces en una columna de ancho completo. */
     header ul {
         flex-direction: column;
         width: 100%;
     }
 
-    /* Reduce el espacio interior de los enlaces en pantallas pequenas. */
     header a {
         padding: 10px;
     }
 
-    /* Reduce el margen exterior general en dispositivos moviles. */
     body {
         padding: 10px;
     }
 }
 
-/* Barra de navegacion principal con fondo, esquinas redondeadas y sombra. */
 nav{
     background:var(--color-secundario);
     border-radius:10px;
     box-shadow:0 8px 20px rgba(69, 10, 10, .16);
 }
 
-/* Centra los elementos del menu y permite que salten de linea si es necesario. */
 nav > ul{
     display:flex;
     justify-content:center;
@@ -160,7 +137,6 @@ nav > ul{
     list-style:none;
 }
 
-/* Permite posicionar correctamente cada submenu respecto a su elemento padre. */
 nav > ul > li{
     position:relative;
 }
@@ -181,8 +157,7 @@ nav a:hover{
     transform:translateY(-1px);
 }
 
-/* estas 3 de aqui abajo es para mostrar los submenus. */
- nav > ul > li > ul{
+nav > ul > li > ul{
     display:none;
     position:absolute;
     top:calc(100% + 6px);
@@ -207,6 +182,54 @@ nav > ul > li > ul a{
     padding:10px 12px;
     text-align:left;
     white-space:nowrap;
+}
+
+/* Estilos para la sección de gestión de cursos */
+.tarjetas-cursos{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+    gap:20px;
+    margin-top:30px;
+}
+
+.tarjetas-cursos > h3,
+.tarjetas-cursos > .total-cursos{
+    grid-column:1 / -1;
+}
+
+.tarjetas-cursos > h3{
+    color:var(--color-principal);
+    font-size:24px;
+}
+
+.tarjetas-cursos > .total-cursos{
+    margin-top:-12px;
+}
+
+.curso{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    padding:20px;
+    background:var(--color-tarjeta);
+    border:1px solid var(--color-borde);
+    border-radius:10px;
+    box-shadow:0 6px 16px rgba(69, 10, 10, .12);
+    transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.curso:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 22px rgba(69, 10, 10, .2);
+}
+
+.curso h4{
+    color:var(--color-principal);
+    font-size:20px;
+}
+
+.curso p{
+    line-height:1.5;
 }
 
 footer{

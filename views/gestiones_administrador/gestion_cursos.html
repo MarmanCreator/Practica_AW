@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mi página</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="/../recurso-imagenes/personas_1/22222B.JPG" type="image/JPG"> 
+        <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
+
+        <link rel="stylesheet" href="../../css/style.css">
+        <script src="../../js/gestion_cursos.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <h1>Web de administracion de escuela</h1>
+            <p>Has iniciado sesion como administracion.</p>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="../menu_inicio_admin.html">Inicio</a></li>
+                <li><a href="curso">Curso</a></li>
+                <li><a href="docentes">Docentes</a></li>
+                <li><a href="aulas">Aulas</a></li>
+                <li><a href="matriculas">Mis matriculas</a></li>
+                <li><a href="accesibilidad">Accesivilidad</a></li>
+                <li class="nav-dropdown">
+                    <a href="#">Administracion</a>
+                    <ul>
+                        <li><a href="gestion_cursos.html">Gestion de cursos</a></li>
+                        <li><a href="gestion_docentes.html">Gestion de docentes</a></li>
+                        <li><a href="gestion_aulas.html">Gestion de aulas</a></li> 
+                        <li><a href="gestion_usuarios.html">Gestion de usuarios</a></li>  
+                        <li><a href="gestion_matriculas.html">Gestion de matriculas</a></li>
+                        <li><a href="importacion_datos.html">Importacion de datos</a></li>
+                        <li><a href="estadisticas.html">Estadisticas</a></li>
+                    </ul>
+                </li>
+                <li class="nav-dropdown">
+                    <a href="#">Perfil</a>
+                    <ul>
+                        <li><a href="/perfil/consultar">Consultar perfil</a></li>
+                        <li><a href="/perfil/cerrar-sesion">Cerrar sesion</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+
+
+
+        <main>
+            <section class="gestion_cursos">
+                <h2>Gestion de cursos</h2>
+                <p>En esta sección puedes gestionar los cursos de la escuela.</p>
+                <section class="cursos">
+                    <h3>Opciones de gestión</h3>
+                    <button type="button" onclick="window.location.href='Añadir_curso.html'">Añadir curso</button>
+                    <button type="button" onclick="window.location.href='Eliminar_curso.html'">Eliminar curso</button>
+                    <button type="button" onclick="window.location.href='Consultar_cursos.html'">Consultar cursos</button>
+                    <button type="button" onclick="window.location.href='Modificar_curso.html'">Modificar curso</button>
+                </section>
+                <section class="tarjetas-cursos"></section>
+            </section>
+            
+        </main>
+
+
+
+
+        <footer>Este es el pie de pagina de inicio (por completar)
+            <button type="button" onclick="window.location.href='formulario-contacto.html'">Contacta con nosotros</button>
+
+        </footer>
+    </body>
+</html>
