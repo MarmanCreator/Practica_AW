@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Gestion de matrículas</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="/../recurso-imagenes/personas_2/steveCurros.JPG" type="image/JPG"> 
+        <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
+
+        <link rel="stylesheet" href="../../css/style.css">
+        <script src="../../js/gestion_matriculas.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <h1>Web de administracion de escuela</h1>
+            <p>Has iniciado sesion como administrador.</p>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="../menu_inicio_admin.html">Inicio</a></li>
+                <li><a href="../catalogo_cursos.html">Cursos</a></li>
+                <li><a href="../docentes.html">Docentes</a></li>
+                <li><a href="../aulas.html">Aulas</a></li>
+                <li><a href="../matriculas.html">Mis matriculas</a></li>
+                <li><a href="../accesibilidad.html">Accesibilidad</a></li>
+                <li class="nav-dropdown">
+                    <a href="#">Administracion</a>
+                    <ul>
+                        <li><a href="gestion_cursos.html">Gestion de cursos</a></li>
+                        <li><a href="gestion_docentes.html">Gestion de docentes</a></li>
+                        <li><a href="gestion_aulas.html">Gestion de aulas</a></li> 
+                        <li><a href="gestion_usuarios.html">Gestion de usuarios</a></li>  
+                        <li><a href="gestion_matriculas.html">Gestion de matriculas</a></li>
+                        <li><a href="importacion_datos.html">Importacion de datos</a></li>
+                        <li><a href="estadisticas.html">Estadisticas</a></li>
+                    </ul>
+                </li>
+                <li class="nav-dropdown">
+                    <a href="#">Perfil</a>
+                    <ul>
+                        <li><a href="../perfil.html">Consultar perfil</a></li>
+                        <li><a href="../cerrar_sesion.html">Cerrar sesion</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+
+
+
+        <main>
+            <a href="../menu_inicio_admin.html">>Inicio</a>
+            <section class="gestion_matriculas">
+                <h2>Gestion de matrículas</h2>
+                <p>En esta sección puedes gestionar las matrículas de la escuela.</p>
+                <section class="matriculas">
+                    <h3>Opciones de gestión</h3>
+                    <button type="button" onclick="window.location.href='Añadir_matricula.html'">Añadir matrícula</button>
+                    <button type="button" onclick="window.location.href='Eliminar_matricula.html'">Eliminar matrícula</button>
+                    <button type="button" onclick="window.location.href='Consultar_matriculas.html'">Consultar matrículas</button>
+                    <button type="button" onclick="window.location.href='Modificar_matricula.html'">Modificar matrícula</button>
+                </section>
+                <section class="tarjetas-matriculas"></section>
+            </section>
+            
+        </main>
+
+
+
+
+        <footer>Este es el pie de pagina de inicio (por completar)
+            <button type="button" onclick="window.location.href='../formulario_contacto.html'">Contacta con nosotros</button>
+
+        </footer>
+    </body>
+</html>

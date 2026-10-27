@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Importacion de datos</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="/../recurso-imagenes/personas_2/steveCurros.JPG" type="image/JPG"> 
+        <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
+
+        <link rel="stylesheet" href="../../css/style.css">
+        <script src="../../js/importacion_datos.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <h1>Web de administracion de escuela</h1>
+            <p>Has iniciado sesion como administrador.</p>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="../menu_inicio_admin.html">Inicio</a></li>
+                <li><a href="../catalogo_cursos.html">Cursos</a></li>
+                <li><a href="../docentes.html">Docentes</a></li>
+                <li><a href="../aulas.html">Aulas</a></li>
+                <li><a href="../matriculas.html">Mis matriculas</a></li>
+                <li><a href="../accesibilidad.html">Accesibilidad</a></li>
+                <li class="nav-dropdown">
+                    <a href="#">Administracion</a>
+                    <ul>
+                        <li><a href="gestion_cursos.html">Gestion de cursos</a></li>
+                        <li><a href="gestion_docentes.html">Gestion de docentes</a></li>
+                        <li><a href="gestion_aulas.html">Gestion de aulas</a></li> 
+                        <li><a href="gestion_usuarios.html">Gestion de usuarios</a></li>  
+                        <li><a href="gestion_matriculas.html">Gestion de matriculas</a></li>
+                        <li><a href="importacion_datos.html">Importacion de datos</a></li>
+                        <li><a href="estadisticas.html">Estadisticas</a></li>
+                    </ul>
+                </li>
+                <li class="nav-dropdown">
+                    <a href="#">Perfil</a>
+                    <ul>
+                        <li><a href="../perfil.html">Consultar perfil</a></li>
+                        <li><a href="../cerrar_sesion.html">Cerrar sesion</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+
+
+
+        <main>
+            <a href="../menu_inicio_admin.html">>Inicio</a>
+            <section class="importacion_de_datos">
+                <h2>Importacion de datos</h2>
+                <p>En esta sección puedes importar datos a la base de datos de la escuela.</p>
+                <section class="importacion_de_datos">
+                    <h3>Opciones de importación</h3>
+                    <button type="button" onclick="window.location.href='Cargar_JSON_docentes.html'">Añadir docentes desde un JSON</button>
+                    <button type="button" onclick="window.location.href='Cargar_JSON_cursos.html'">Añadir cursos desde un JSON</button>
+                    <button type="button" onclick="window.location.href='Cargar_JSON_aulas.html'">Añadir aulas desde un JSON</button>
+                    <button type="button" onclick="window.location.href='Cargar_JSON_usuarios.html'">Añadir usuarios desde un JSON</button>
+                </section>
+            </section>
+            
+        </main>
+
+
+
+
+        <footer>Este es el pie de pagina de inicio (por completar)
+            <button type="button" onclick="window.location.href='../formulario_contacto.html'">Contacta con nosotros</button>
+
+        </footer>
+    </body>
+</html>
