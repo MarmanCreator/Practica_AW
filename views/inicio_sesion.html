@@ -6,29 +6,31 @@
         <title>Mi pagina</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
-        <link rel="icon" href="/../recurso-imagenes/personas_1/22222B.JPG" type="image/JPG"> 
+        <link rel="icon" href="/recurso-imagenes/personas_2/steveCurros.png" type="image/PNG"> 
         <link rel="stylesheet" href="../css/style.css"> 
 </head>
 
 <body>
+    <header>
+            <h1>Web de administracion de escuela</h1>
+    </header>
     <a href="menu_inicio.html">>Inicio</a>
-    <form class="formulario_base" action="/login" method="POST">
+    <form class="formulario_base" id="inicio_sesion" action="#" method="POST">
 
         <!-- Lo que hace que en el hueco de poner el campo aparezca "contraseña" o "email" es el placeholder -->
         <label for="email">Correo electrónico:</label>
         <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required>
-        <br>
-        <br>
 
         <label for="password">Contraseña:</label>
         <input type="password" id="password" name="password" placeholder="Contraseña" required>
-        <br>
-        <br>
     
         <button type="button" onclick="window.location.href='menu_inicio.html'">Cancelar</button>
         <button type="submit">Login</button>
     </form>
+    <footer>Este es el pie de pagina de inicio (por completar)
+        <button type="button" onclick="window.location.href='formulario_contacto.html'">Contacta con nosotros</button>
 
+    </footer>
 </body>
 
 </html>

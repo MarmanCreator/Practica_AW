@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Mi página</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" href="/../recurso-imagenes/personas_1/22222B.JPG" type="image/JPG"> 
+        <link rel="icon" href="/recurso-imagenes/personas_2/steveCurros.png" type="image/PNG">  
         <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
 
         <link rel="stylesheet" href="/css/style.css">
@@ -37,23 +37,17 @@
         </nav>
         <main>
             <a href="menu_inicio.html">>Inicio</a> <!--de momento solo a inicio pero deberia ser de la pagina desde la que se viene -->
-            <form class="formulario_base" id="form_contacto" action="/contacto" method="post">
+            <form class="formulario_base" id="formulario_contacto" action="#" method="post">
         <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
             <label for="nombre">Introduce tu nombre:*</label>
             <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
-            <br>
-            <br>
         
             <label for="email">Introduce tu email:*</label>
             <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required>
-            <br>
-            <br>
 
             <label for="telefono">Introduce tu número de teléfono:*</label>
             <input type="tel" id="telefono" name="telefono" placeholder="Ejemplo: 123456789" 
                 inputmode="numeric" pattern="[0-9]{9}" maxlength="9" required>
-            <br>
-            <br>
         
             <label for="motivo">Motivo de contacto:*</label>
             <select id="motivo" name="motivo" required>
@@ -62,18 +56,12 @@
                 <option value="reclamo">Reclamo</option>
                 <option value="otro">Otro</option>
             </select>
-            <br>
-            <br>
 
             <label for="asunto">Asunto:*</label>
             <input type="text" id="asunto" name="asunto" placeholder="Asunto de tu mensaje" required>
-            <br>
-            <br>
 
             <label for="mensaje">Mensaje:*</label>
             <textarea id="mensaje" name="mensaje" placeholder="Escribe tu mensaje aquí..." required></textarea>
-            <br>
-            <br>
 
             <button type="button" onclick="window.location.href='menu_inicio.html'">Cancelar</button>
             <button type="submit">Enviar consulta</button> 
