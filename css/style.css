@@ -241,3 +241,20 @@ footer{
 .formulario_base button {
     margin-top: 25px;
 }
+
+.formulario_base .opcion-checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.formulario_base .opcion-checkbox label {
+    display: inline;
+    margin: 0;
+    margin-right: 10px; 
+}
+
+
+.formulario_base .opcion-checkbox input[type="checkbox"] {
+    margin-top: 0;
+}
