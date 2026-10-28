@@ -291,3 +291,26 @@ footer{
 .formulario_base button {
     margin-top: 25px;
 }
+
+
+/*Problema con la casilla lo solucionamos asi: 
+/*Preguntarle al profe/investigar sobre lo de que las label sean un contenedor que ocupe toda la linea. 
+
+/* Agrupa y alinea horizontalmente el texto y el checkbox */
+.formulario_base .opcion-checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 20px; /* Mantiene la separación superior original */
+}
+
+/* Anula el display: block general para que no salte de línea */
+.formulario_base .opcion-checkbox label {
+    display: inline;
+    margin: 0;
+    margin-right: 10px; /* Define el espacio entre el texto y la casilla */
+}
+
+/* Elimina el margen superior que empujaba la casilla hacia abajo */
+.formulario_base .opcion-checkbox input[type="checkbox"] {
+    margin-top: 0;
+}
