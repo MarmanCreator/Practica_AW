@@ -184,54 +184,6 @@ nav > ul > li > ul a{
     white-space:nowrap;
 }
 
-/* Estilos para la sección de gestión de cursos */
-.tarjetas-cursos{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
-    gap:20px;
-    margin-top:30px;
-}
-
-.tarjetas-cursos > h3,
-.tarjetas-cursos > .total-cursos{
-    grid-column:1 / -1;
-}
-
-.tarjetas-cursos > h3{
-    color:var(--color-principal);
-    font-size:24px;
-}
-
-.tarjetas-cursos > .total-cursos{
-    margin-top:-12px;
-}
-
-.curso{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    padding:20px;
-    background:var(--color-tarjeta);
-    border:1px solid var(--color-borde);
-    border-radius:10px;
-    box-shadow:0 6px 16px rgba(69, 10, 10, .12);
-    transition:transform .2s ease, box-shadow .2s ease;
-}
-
-.curso:hover{
-    transform:translateY(-4px);
-    box-shadow:0 10px 22px rgba(69, 10, 10, .2);
-}
-
-.curso h4{
-    color:var(--color-principal);
-    font-size:20px;
-}
-
-.curso p{
-    line-height:1.5;
-}
-
 footer{
     margin-top:40px;
     padding:20px;
@@ -242,8 +194,6 @@ footer{
 
 
 
-/*PANEL DE ACCESIBILIDAD*/
-/* ESTILOS GENERALES PARA TUS FORMULARIOS (HTML ORIGINAL) */
 .formulario_base {
     max-width: 500px;
     margin: 40px auto;
@@ -257,12 +207,12 @@ footer{
     border: none;
 }
 
-/* Ocultamos los <br> para gestionar los espacios solo con el modelo de caja CSS */
+
 .formulario_base br {
     display: none;
 }
 
-/* Forzamos que cada etiqueta ocupe su propia línea y le damos separación superior */
+
 .formulario_base label {
     display: block;
     margin-top: 20px;
@@ -270,7 +220,7 @@ footer{
     font-weight: bold;
 }
 
-/* Diseño de los campos interactivos (excluyendo el checkbox) */
+
 .formulario_base select,
 .formulario_base input:not([type="checkbox"]),
 .formulario_base textarea {
@@ -281,13 +231,13 @@ footer{
     width: 100%;
 }
 
-/* Ajuste específico para el checkbox de accesibilidad */
+
 .formulario_base input[type="checkbox"] {
     margin-top: 15px;
     transform: scale(1.2);
 }
 
-/* Separación superior para los botones */
+
 .formulario_base button {
     margin-top: 25px;
 }

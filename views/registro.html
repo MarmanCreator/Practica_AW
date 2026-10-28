@@ -1,26 +1,21 @@
-<!-- Indicamos que el documento esta en html  -->
 <!DOCTYPE html> 
-<!-- Indicamos que el idioma principal es el español  -->
 <html lang="es">
 
-<!-- Comienzo de la sección head -->
  <head> 
         <meta charset="UTF-8">
         <title>Registro</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
         <link rel="icon" href="/recurso-imagenes/personas_2/steveCurros.png" type="image/PNG"> 
         <link rel="stylesheet" href="/css/style.css"> 
  </head>
 
-<!-- Comienza el cuarpo donde metemos el formulario -->
 <body>
     <header>
             <h1>Web de administracion de escuela</h1>
     </header>
     <a href="menu_inicio.html">>Inicio</a>
     <form class="formulario_base" id="registro" action="#" method="post">
-        <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
+
        <label for="nombre">Nombre:*</label>
         <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
         
