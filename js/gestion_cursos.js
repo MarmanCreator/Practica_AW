@@ -1,6 +1,10 @@
 
 
-const cursos = [
+const cursosGuardados = localStorage.getItem("cursos");
+
+const cursos = cursosGuardados
+    ? JSON.parse(cursosGuardados)
+    : [
 
     {
         id: 1,
@@ -45,6 +49,20 @@ function mostrarCursos() {
     });
 }
 
+const formulario_anyadir_curso = document.getElementById("añadir_curso");
+if (formulario_anyadir_curso) {
+    formulario_anyadir_curso.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const nombre = document.getElementById("nombre").value;
+        const categoria = document.getElementById("categoría").value;
+        const duracion = document.getElementById("duracion").value;
+        const descripcion = document.getElementById("descripcion").value;
+        const plazas = document.getElementById("plazas").value;
+        AnyadirCurso(nombre, categoria, duracion, descripcion, plazas);
+        localStorage.setItem("cursos", JSON.stringify(cursos));
+        window.location.href = "../gestiones_administrador/gestion_cursos.html";
+    });
+}
 function AnyadirCurso(nombre, categoria, duracion, descripcion, plazas) {
     const nuevoCurso = {
         id: cursos.length + 1,

@@ -185,6 +185,13 @@ nav > ul > li > ul a{
     white-space:nowrap;
 }
 
+body > main{
+    max-width:1200px;
+    margin:30px auto;
+    padding:0 20px;
+
+}
+
 /* Estilos para la sección de gestión de cursos */
 .tarjetas-cursos{
     display:grid;
