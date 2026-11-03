@@ -158,33 +158,6 @@ nav a:hover{
     transform:translateY(-1px);
 }
 
-nav > ul > li > ul{
-    display:none;
-    position:absolute;
-    top:calc(100% + 6px);
-    left:0;
-    z-index:10;
-    min-width:220px;
-    padding:8px;
-    border-radius:8px;
-    background:var(--color-secundario);
-    box-shadow:0 10px 24px rgba(69, 10, 10, .24);
-    list-style:none;
-}
-
-
-nav > ul > li:hover > ul,
-nav > ul > li:focus-within > ul{
-    display:block;
-}
-
-
-nav > ul > li > ul a{
-    padding:10px 12px;
-    text-align:left;
-    white-space:nowrap;
-}
-
 body > main{
     max-width:1200px;
     margin:30px auto;
