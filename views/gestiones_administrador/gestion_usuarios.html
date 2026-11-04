@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8">
@@ -8,7 +8,6 @@
         <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
 
         <link rel="stylesheet" href="../../css/style.css">
-        <script src="../../js/responsive_nav.js" defer></script>
         <script src="../../js/gestion_usuarios.js" defer></script>
     </head>
 
@@ -17,7 +16,7 @@
             <h1>Web de administracion de escuela</h1>
             <p>Has iniciado sesion como administrador.</p>
         </header>
-        <nav>
+        <nav class="web">
             <ul>
                 <li><a href="../menu_inicio.html">Inicio</a></li>
                 <li><a href="../catalogo_cursos.html">Cursos</a></li>
@@ -25,11 +24,30 @@
                 <li><a href="../aulas.html">Aulas</a></li>
                 <li><a href="../mis_matriculas.html">Mis matriculas</a></li>
                 <li><a href="../accesibilidad.html">Accesibilidad</a></li>
-                
                 <li><a href="../administracion.html">Administracion</a></li>
-
                 <li><a href="../perfil.html">Perfil</a></li>
             </ul>
+        </nav>
+        <nav class="movil">
+            <ul>
+                <li><a href="../menu_inicio.html">Inicio</a></li>
+                <li><a href="../catalogo_cursos.html">Cursos</a></li>
+                <li><a href="../docentes.html">Docentes</a></li>
+            </ul>
+
+            <input type="checkbox" id="boton_menu" class="boton_menu">
+            <label for="boton_menu" class="boton_menu_label" aria-label="Abrir menu">&#9776;</label>
+
+            <aside class="menu_lateral">
+                <label for="boton_menu" class="cerrar_menu" aria-label="Cerrar menu">&times;</label>
+                <ul>
+                <li><a href="../aulas.html">Aulas</a></li>
+                <li><a href="../mis_matriculas.html">Mis matriculas</a></li>
+                <li><a href="../accesibilidad.html">Accesibilidad</a></li>
+                <li><a href="../administracion.html">Administracion</a></li>
+                <li><a href="../perfil.html">Perfil</a></li>
+                </ul>
+            </aside>
         </nav>
 
         <a href="../menu_inicio_admin.html">>Inicio</a>
@@ -59,3 +77,4 @@
         </footer>
     </body>
 </html>
+
