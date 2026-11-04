@@ -7,7 +7,7 @@ const cursos = cursosGuardados
     : [
 
     {
-        id: 1,
+        id: 0,
         nombre: "Aplicaciones Web",
         categoria: "Desarrollo web",
         duracion: "3", // Duración en meses
@@ -15,7 +15,7 @@ const cursos = cursosGuardados
         plazas: 20
     },
     {
-        id: 2,
+        id: 1,
         nombre: "Gestion de proyectos software",
         categoria: "Gestión de proyectos",
         duracion: "4", // Duración en meses
@@ -23,7 +23,7 @@ const cursos = cursosGuardados
         plazas: 2
     },
     {
-        id: 3,
+        id: 2,
         nombre: "Fundamentos de algoritmia",
         categoria: "Programación",
         duracion: "2", // Duración en meses
@@ -65,7 +65,7 @@ if (formulario_anyadir_curso) {
 }
 function AnyadirCurso(nombre, categoria, duracion, descripcion, plazas) {
     const nuevoCurso = {
-        id: cursos.length + 1,
+        id: cursos.reduce((mayorId, curso) => Math.max(mayorId, curso.id), 0) + 1,
         nombre: nombre,
         categoria: categoria,
         duracion: duracion,
@@ -75,6 +75,23 @@ function AnyadirCurso(nombre, categoria, duracion, descripcion, plazas) {
     cursos.push(nuevoCurso);
 }
 
+const formulario_eliminar_curso = document.getElementById("eliminar_curso");
+if (formulario_eliminar_curso) {
+    formulario_eliminar_curso.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const id = Number(document.getElementById("id_curso").value);
+        const cursoExiste = cursos.some(curso => curso.id === id);
+
+        if (!Number.isInteger(id) || !cursoExiste) {
+            alert("No existe ningún curso con ese ID.");
+            return;
+        }
+        EliminarCurso(id);
+        localStorage.setItem("cursos", JSON.stringify(cursos));
+        window.location.href = "../gestiones_administrador/gestion_cursos.html";
+
+    });
+}
 function EliminarCurso(id) {
     const index = cursos.findIndex(curso => curso.id === id);
     if (index !== -1) {
@@ -82,6 +99,42 @@ function EliminarCurso(id) {
     }
 }
 
+const formulario_modificar_curso = document.getElementById("modificar_curso");
+if (formulario_modificar_curso) {
+    formulario_modificar_curso.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const id = Number(document.getElementById("id_curso").value);
+        const cursoExiste = cursos.some(curso => curso.id === id);
+        if (!Number.isInteger(id) || !cursoExiste) {
+            alert("No existe ningún curso con ese ID.");
+            return;
+        }
+        let nombre = cursos.find(curso => curso.id === id).nombre;
+        if(document.getElementById("nombre").value !== "") {
+            nombre = document.getElementById("nombre").value;
+        }
+        let categoria = cursos.find(curso => curso.id === id).categoria;
+        if(document.getElementById("categoría").value !== "") {
+            categoria = document.getElementById("categoría").value;
+        }
+        let duracion = cursos.find(curso => curso.id === id).duracion;
+        if(document.getElementById("duracion").value !== "") {
+            duracion = document.getElementById("duracion").value;
+        }
+        let descripcion = cursos.find(curso => curso.id === id).descripcion;
+        if(document.getElementById("descripcion").value !== "") {
+            descripcion = document.getElementById("descripcion").value;
+        }
+        let plazas = cursos.find(curso => curso.id === id).plazas;
+        if(document.getElementById("plazas").value !== "") {
+            plazas = Number(document.getElementById("plazas").value);
+        }
+        modificarCurso(id, nombre, categoria, duracion, descripcion, plazas);
+        localStorage.setItem("cursos", JSON.stringify(cursos));
+        window.location.href = "../gestiones_administrador/gestion_cursos.html";
+
+    });
+}
 function modificarCurso(id, nombre, categoria, duracion, descripcion, plazas) {
     const curso = cursos.find(curso => curso.id === id);
     if (curso) {
@@ -94,7 +147,7 @@ function modificarCurso(id, nombre, categoria, duracion, descripcion, plazas) {
 }
     
 
-const contenedorTarjetas = document.querySelector('.tarjetas-cursos');
+const contenedorTarjetas = document.querySelector('.tarjetas');
 
 if (contenedorTarjetas) {
     const fragmento = document.createDocumentFragment();
@@ -109,10 +162,11 @@ if (contenedorTarjetas) {
     for (let i = 0; i < cursos.length; i++) {
         const cursoActual = cursos[i];
         const card = document.createElement('article');
-        card.className = 'curso';
+        card.className = 'tarjeta';
 
         card.innerHTML = `
             <h4>${cursoActual.nombre}</h4>
+            <p><strong>Id:</strong> ${cursoActual.id}</p>
             <p><strong>Categoría:</strong> ${cursoActual.categoria}</p>
             <p><strong>Duración:</strong> ${cursoActual.duracion} meses</p>
             <p>${cursoActual.descripcion}</p>
