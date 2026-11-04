@@ -32,10 +32,15 @@ const cursos = cursosGuardados
     }
 ];
 
+cursos.forEach(curso => {
+    if (typeof curso.activo !== "boolean") curso.activo = true;
+});
+localStorage.setItem("cursos", JSON.stringify(cursos));
+
 function mostrarCursos() {
     const tablaCursos = document.getElementById("tabla-cursos");
     tablaCursos.innerHTML = "";
-    cursos.forEach(curso => {
+    cursos.filter(curso => curso.activo).forEach(curso => {
         const fila = document.createElement("tr");
         fila.innerHTML = `
             <td>${curso.id}</td>
@@ -70,7 +75,8 @@ function AnyadirCurso(nombre, categoria, duracion, descripcion, plazas) {
         categoria: categoria,
         duracion: duracion,
         descripcion: descripcion,
-        plazas: plazas
+        plazas: plazas,
+        activo: true
     };
     cursos.push(nuevoCurso);
 }
@@ -80,7 +86,7 @@ if (formulario_eliminar_curso) {
     formulario_eliminar_curso.addEventListener("submit", function (event) {
         event.preventDefault();
         const id = Number(document.getElementById("id_curso").value);
-        const cursoExiste = cursos.some(curso => curso.id === id);
+        const cursoExiste = cursos.some(curso => curso.id === id && curso.activo);
 
         if (!Number.isInteger(id) || !cursoExiste) {
             alert("No existe ningún curso con ese ID.");
@@ -93,9 +99,9 @@ if (formulario_eliminar_curso) {
     });
 }
 function EliminarCurso(id) {
-    const index = cursos.findIndex(curso => curso.id === id);
-    if (index !== -1) {
-        cursos.splice(index, 1);
+    const curso = cursos.find(cursoActual => cursoActual.id === id && cursoActual.activo);
+    if (curso) {
+        curso.activo = false;
     }
 }
 
@@ -104,7 +110,7 @@ if (formulario_modificar_curso) {
     formulario_modificar_curso.addEventListener("submit", function (event) {
         event.preventDefault();
         const id = Number(document.getElementById("id_curso").value);
-        const cursoExiste = cursos.some(curso => curso.id === id);
+        const cursoExiste = cursos.some(curso => curso.id === id && curso.activo);
         if (!Number.isInteger(id) || !cursoExiste) {
             alert("No existe ningún curso con ese ID.");
             return;
@@ -157,10 +163,11 @@ if (contenedorTarjetas) {
 
     const totalCursos = document.createElement('p');
     totalCursos.className = 'total-cursos';
-    totalCursos.textContent = 'Cursos disponibles: ' + cursos.length;
+    const cursosActivos = cursos.filter(curso => curso.activo);
+    totalCursos.textContent = 'Cursos disponibles: ' + cursosActivos.length;
 
-    for (let i = 0; i < cursos.length; i++) {
-        const cursoActual = cursos[i];
+    for (let i = 0; i < cursosActivos.length; i++) {
+        const cursoActual = cursosActivos[i];
         const card = document.createElement('article');
         card.className = 'tarjeta';
 

@@ -26,6 +26,11 @@ const aulas = aulasGuardadas
         }
     ];
 
+aulas.forEach(aula => {
+    if (typeof aula.activo !== "boolean") aula.activo = true;
+});
+localStorage.setItem("aulas", JSON.stringify(aulas));
+
 const formulario_anyadir_aula = document.getElementById("anyadir_aula");
 if (formulario_anyadir_aula) {
     formulario_anyadir_aula.addEventListener("submit", event => {
@@ -35,7 +40,8 @@ if (formulario_anyadir_aula) {
             nombre: document.getElementById("nombre").value,
             edificio: document.getElementById("edificio").value,
             planta: Number(document.getElementById("planta").value),
-            capacidad: Number(document.getElementById("capacidad").value)
+            capacidad: Number(document.getElementById("capacidad").value),
+            activo: true
         });
         localStorage.setItem("aulas", JSON.stringify(aulas));
         window.location.href = "../gestiones_administrador/gestion_aulas.html";
@@ -47,14 +53,14 @@ if (formulario_eliminar_aula) {
     formulario_eliminar_aula.addEventListener("submit", event => {
         event.preventDefault();
         const id = Number(document.getElementById("id_aula").value);
-        const indice = aulas.findIndex(aula => aula.id === id);
+        const aula = aulas.find(aulaActual => aulaActual.id === id);
 
-        if (!Number.isInteger(id) || indice === -1) {
+        if (!Number.isInteger(id) || !aula || !aula.activo) {
             alert("No existe ningún aula con ese ID.");
             return;
         }
 
-        aulas.splice(indice, 1);
+        aula.activo = false;
         localStorage.setItem("aulas", JSON.stringify(aulas));
         window.location.href = "../gestiones_administrador/gestion_aulas.html";
     });
@@ -65,7 +71,7 @@ if (formulario_modificar_aula) {
     formulario_modificar_aula.addEventListener("submit", event => {
         event.preventDefault();
         const id = Number(document.getElementById("id_aula").value);
-        const aula = aulas.find(aulaActual => aulaActual.id === id);
+        const aula = aulas.find(aulaActual => aulaActual.id === id && aulaActual.activo);
 
         if (!Number.isInteger(id) || !aula) {
             alert("No existe ningún aula con ese ID.");
@@ -97,10 +103,11 @@ if (contenedorTarjetas) {
     const total = document.createElement("p");
     total.className = "total-cursos";
     
-    total.textContent = "Aulas disponibles: " + aulas.length;
+    const aulasActivas = aulas.filter(aula => aula.activo);
+    total.textContent = "Aulas disponibles: " + aulasActivas.length;
 
-    for (let i = 0; i < aulas.length; i++) {
-        const aulaActual = aulas[i];
+    for (let i = 0; i < aulasActivas.length; i++) {
+        const aulaActual = aulasActivas[i];
         const card = document.createElement('article');
         card.className = 'tarjeta';
 
