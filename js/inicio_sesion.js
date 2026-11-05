@@ -21,9 +21,9 @@ if(formularioLogin){
 
 
  
-            // 6. Condicional para procesar el resultado de la búsqueda[cite: 114]
+            //Condicional para procesar el resultado de la búsqueda
         if (usuarioValido) {
-            // Guardamos al usuario en sessionStorage porque es un estado temporal[cite: 255]
+            // Guardamos al usuario en sessionStorage porque es un estado temporal
             sessionStorage.setItem("usuarioActivo", JSON.stringify(usuarioValido));
             
             alert("Inicio de sesión exitoso. ¡Bienvenido, " + usuarioValido.nombre + "!");

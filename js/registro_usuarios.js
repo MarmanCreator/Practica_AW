@@ -31,19 +31,24 @@ if(formularioRegistro){
         }
 
         //LLamamos a la funcion que añade al nnuevo usuario con los nuevos datos
-        AnyadirUsuario(nombre, apellido, email, password, rol); 
+        const registroExitoso = AnyadirUsuario(nombre, apellido, email, password, rol); 
+        
+        if(registroExitoso){
+
         //Guardarlo en localStorage convertido a JSON[cite: 257]
         localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
         //Avisamos de que el usuario se ha registrado bien. 
         alert("Usuario registrado correctamente.");
-        
+
+
         //Reedirigimos en fncion del rol.
         if(rol == "estudiante"){
             window.location.href = "menu_inicio_alumno.html";
         }else if(rol === "administrador"){
             window.location.href = "menu_inicio_admin.html"; 
         }
+         }
     }) 
 }
 
@@ -57,7 +62,16 @@ function AnyadirUsuario(nombre, apellido, email, password, rol){
             rol: rol
         };
 
+        const usuarioExistente = usuarios.find(
+            usuario => usuario.email === email
+        )
+
+        if(usuarioExistente){
+            alert("Email ya registrado en otro usuario")
+            return false;  
+        }
         usuarios.push(nuevoUsuario);  
+        return true; 
 }
 
 
