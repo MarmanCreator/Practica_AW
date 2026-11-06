@@ -322,3 +322,57 @@ footer{
 .formulario_base .opcion-checkbox input[type="checkbox"] {
     margin-top: 0;
 }
+
+
+/* =========================================================
+   MÓDULO DE ACCESIBILIDAD - CONTROLADO POR JAVASCRIPT
+   ========================================================= */
+/*Nosotros no estamos reemplazando una clase vieja, sino pegando una etiqueta nueva encima, como tema_oscuro, cuyas
+/*reglas tienen prioridad y sobrescriben temporalmente a las genéricas.
+
+
+
+
+
+
+   /*Tema oscuro en la pagina web
+   
+   Si el <body> tiene la clase 'tema-oscuro', cambiamos la paleta de colores. 
+   Fíjate que mantenemos el mismo nombre de las variables originales 
+   para que toda la página cambie de color automáticamente.
+   */
+   body.tema_oscuro{
+    --color-fondo: #121212;     /* Fondo general gris muy oscuro */
+    --color-tarjeta: #1e1e1e;   /* Cajas y formularios ligeramente más claros para destacar */
+    --color-texto: #e0e0e0;     /* Texto gris claro para evitar el contraste excesivo del blanco puro */
+    --color-texto-inverso: #000000;
+    --color-borde: #333333;     /* Bordes apagados */
+   }
+
+   /*Alto constraste
+   Fondo negro absoluto y texto amarillo.
+   */
+
+   body.alto_contraste{
+    --color-fondo: #000000;
+    --color-tarjeta: #000000;
+    --color-texto: #ffff00;     
+    --color-principal: #ffff00;
+    --color-borde: #ffff00;
+   }
+
+   /* Aseguramos que los bordes de inputs y botones también destaquen */
+   body.alto_contraste *{
+    border-color: #ffff00 !important;
+   }
+
+
+   /*Tamaño de la fuente*/
+   body.fuente_grande{
+    font-size: 1.2rem;
+   }
+
+   /*REVISAR SI HACE FALTA*/
+   body.fuente_pequena {
+    font-size: 0.85rem; 
+}
