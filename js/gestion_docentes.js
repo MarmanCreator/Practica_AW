@@ -3,33 +3,7 @@ const docentesGuardados = localStorage.getItem("docentes");
 const docentes = docentesGuardados
     ? JSON.parse(docentesGuardados)
     : [
-        {
-            id: 0,
-            nombre: "Marcos",
-            apellido: "García",
-            especialidad: "Matemáticas",
-            email: "garcia@example.com",
-            telefono: "123456789",
-            activo: true
-        },
-        {
-            id: 1,
-            nombre: "Pepe",
-            apellido: "López",
-            especialidad: "Física",
-            email: "lopez@example.com",
-            telefono: "987654321",
-            activo: true
-        },
-        {
-            id: 2,
-            nombre: "Antonio",
-            apellido: "Martínez",
-            especialidad: "Química",
-            email: "martinez@example.com",
-            telefono: "555555555",
-            activo: true
-        }
+        
     ];
 
 

@@ -3,30 +3,7 @@ const aulasGuardadas = localStorage.getItem("aulas");
 const aulas = aulasGuardadas
     ? JSON.parse(aulasGuardadas)
     : [
-        {
-            id: 0,
-            nombre: "Aula Informática",
-            edificio: "1",
-            planta: "1",
-            capacidad: 40,
-            activo: true
-        },
-        {
-            id: 1,
-            nombre: "Aula Estudio",
-            edificio: "1",
-            planta: "3",
-            capacidad: 80,
-            activo: true
-        },
-        {
-            id: 2,
-            nombre: "Aula Trabajos en Grupo",
-            edificio: "2",
-            planta: "3",
-            capacidad: 40,
-            activo: true
-        }
+        
     ];
 
 const formulario_anyadir_aula = document.getElementById("anyadir_aula");

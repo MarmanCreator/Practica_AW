@@ -2,13 +2,7 @@ const matriculasGuardadas = localStorage.getItem("matriculas");
 
 const matriculas = matriculasGuardadas ? JSON.parse(matriculasGuardadas) : [
 
-    {
-        id: 0,
-        id_alumno: 0,
-        id_curso: 0,
-        fecha_matricula: new Date().toLocaleDateString("es-ES"),
-        activo: true
-    }
+    
 ];
 
 const usuariosGuardados = localStorage.getItem("usuarios");

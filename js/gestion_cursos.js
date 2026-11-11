@@ -6,54 +6,6 @@ const cursos = cursosGuardados
     ? JSON.parse(cursosGuardados)
     : [
 
-    {
-        id: 0,
-        nombre: "Aplicaciones Web",
-        categoria: "Desarrollo web",
-        descripcion: "Aprende a desarrollar aplicaciones web modernas utilizando HTML, CSS y JavaScript.",
-        id_aula: 0,
-        id_docente: 0,
-        plazas: 20,
-        dias: ["miércoles", "jueves", "viernes"],
-        hora_inicio: "10:00",
-        hora_final: "12:00",
-        fecha_inicio: "2026-09-01",
-        fecha_fin: "2026-12-20",
-        imagen: "",
-        estado: true
-    },
-    {
-        id: 1,
-        nombre: "Gestion de proyectos software",
-        categoria: "Gestión de proyectos",
-        descripcion: "Aprende a gestionar proyectos de desarrollo de software utilizando metodologías ágiles y herramientas de gestión.",
-        id_aula: 2,
-        id_docente: 1,
-        plazas: 2,
-        dias: ["lunes", "martes"],
-        hora_inicio: "14:00",
-        hora_final: "16:00",
-        fecha_inicio: "2026-10-01",
-        fecha_fin: "2027-01-31",
-        imagen: "../recurso-imagenes/vehiculos/byd_seal1.png",
-        estado: true
-    },
-    {
-        id: 2,
-        nombre: "Fundamentos de algoritmia",
-        categoria: "Programación",
-        descripcion: "Aprende los conceptos básicos de algoritmia y estructuras de datos para resolver problemas de programación.",
-        id_aula: 0,
-        id_docente: 2,
-        plazas: 0,
-        dias: ["lunes", "martes"],
-        hora_inicio: "09:00",
-        hora_final: "11:00",
-        fecha_inicio: "2026-11-03",
-        fecha_fin: "2027-01-15",
-        imagen: "../recurso-imagenes/vehiculos/byd_seal1.png",
-        estado: true
-    }
 ];
 
 const aulasGuardadas = localStorage.getItem("aulas");
@@ -159,8 +111,8 @@ function AnyadirCurso(nombre, categoria, descripcion, plazas, id_aula, id_docent
         categoria: categoria,
         descripcion: descripcion,
         plazas: plazas,
-        id_aula: id_aula,
-        id_docente: id_docente,
+        id_aula: Number(id_aula),
+        id_docente: Number(id_docente),
         dias: dias,
         hora_inicio: hora_inicio,
         hora_final: hora_final,
