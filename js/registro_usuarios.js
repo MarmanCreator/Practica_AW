@@ -42,12 +42,15 @@ if(formularioRegistro){
         alert("Usuario registrado correctamente.");
 
 
-        //Reedirigimos en fncion del rol.
-        if(rol == "estudiante"){
-            window.location.href = "menu_inicio_alumno.html";
-        }else if(rol === "administrador"){
-            window.location.href = "menu_inicio_admin.html"; 
-        }
+        // Redirigimos a la página unificada tras el registro exitoso
+        window.location.href = "inicio_sesion.html";
+
+        // //Reedirigimos en fncion del rol.
+        // if(rol == "estudiante"){
+        //     window.location.href = "menu_inicio_alumno.html";
+        // }else if(rol === "administrador"){
+        //     window.location.href = "menu_inicio_admin.html"; 
+        // }
          }
     }) 
 }
