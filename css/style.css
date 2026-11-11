@@ -392,7 +392,7 @@ footer{
    para que toda la página cambie de color automáticamente.
    */
    body.tema_oscuro{
-    --color-fondo: #121212;     /* Fondo general gris muy oscuro */
+    --color-fondo: #171717;     /* Fondo general gris muy oscuro */
     --color-tarjeta: #1e1e1e;   /* Cajas y formularios ligeramente más claros para destacar */
     --color-texto: #e0e0e0;     /* Texto gris claro para evitar el contraste excesivo del blanco puro */
     --color-texto-inverso: #000000;
@@ -405,9 +405,11 @@ footer{
 
    body.alto_contraste{
     --color-fondo: #000000;
-    --color-tarjeta: #000000;
-    --color-texto: #ffff00;     
+    --color-tarjeta: #ffffff;
+    --color-texto: #000000;     
+    --color-texto-inverso: #000000;
     --color-principal: #ffff00;
+    --color-secundario: #ffffff;
     --color-borde: #ffff00;
    }
 
