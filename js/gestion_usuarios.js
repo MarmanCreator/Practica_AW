@@ -6,23 +6,17 @@ const usuariosGuardados = localStorage.getItem("usuarios");
 const usuarios = usuariosGuardados
     ? JSON.parse(usuariosGuardados)
     : [
-        {
-            id: 0,
-            nombre: "Admin",
-            apellido: "Molon",
-            email: "garcia@example.com",
-            contraseña: "Ejemplo",
-            rol: "admin",
-            telefono: "123456789"
-        }
+        // { lo dejo como ejemplo para saber que variables tiene cada usuario
+        //     id: 0,
+        //     nombre: "Admin",
+        //     apellido: "Molon",
+        //     email: "garcia@example.com",
+        //     contraseña: "Ejemplo",
+        //     rol: "admin",
+        //     telefono: "123456789",
+        //     activo: true
+        // }
 ];
-
-usuarios.forEach(usuario => {
-    if (typeof usuario.activo !== "boolean") usuario.activo = true;
-});
-localStorage.setItem("usuarios", JSON.stringify(usuarios));
-
-
 
 const formulario_activar_usuario = document.getElementById("activar_usuario");
 if (formulario_activar_usuario) {

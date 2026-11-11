@@ -8,28 +8,26 @@ const aulas = aulasGuardadas
             nombre: "Aula Informática",
             edificio: "1",
             planta: "1",
-            capacidad: 40
+            capacidad: 40,
+            activo: true
         },
         {
             id: 1,
             nombre: "Aula Estudio",
             edificio: "1",
             planta: "3",
-            capacidad: 80
+            capacidad: 80,
+            activo: true
         },
         {
             id: 2,
             nombre: "Aula Trabajos en Grupo",
             edificio: "2",
             planta: "3",
-            capacidad: 40
+            capacidad: 40,
+            activo: true
         }
     ];
-
-aulas.forEach(aula => {
-    if (typeof aula.activo !== "boolean") aula.activo = true;
-});
-localStorage.setItem("aulas", JSON.stringify(aulas));
 
 const formulario_anyadir_aula = document.getElementById("anyadir_aula");
 if (formulario_anyadir_aula) {

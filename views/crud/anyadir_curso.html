@@ -62,18 +62,48 @@
         <label for="nombre">Nombre del curso:*</label>
         <input type="text" id="nombre" name="nombre" placeholder="Nombre del curso" required>
 
-        <label for="duracion">Duración:*</label>
-        <input type="numeric" id="duracion" name="duracion" placeholder="Duración en meses" required>
-        
         <label for="descripcion">Descripción:</label>
         <textarea id="descripcion" name="descripcion" placeholder="Descripción del curso"></textarea>
         
         <label for="categoría">Categoría:*</label>
         <input type="text" id="categoría" name="categoría" placeholder="Categoría del curso" required>
+        
+        <label for="fecha_inicio"> Fecha de inicio:*</label>
+        <input type="date" id="fecha_inicio" name="fecha_inicio" placeholder="Fecha de inicio" required>
+
+        <label for="fecha_fin"> Fecha de fin:*</label>
+        <input type="date" id="fecha_fin" name="fecha_fin" placeholder="Fecha de fin" required>
 
         <label for="plazas">Plazas:*</label>
         <input type="numeric" id="plazas" name="plazas" placeholder="Número de plazas" required>
-        
+
+        <label for="id_aula">Id del aula asignada:*</label>
+        <input type="numeric" id="id_aula" name="id_aula" placeholder="Id del aula asignada" required>
+
+        <label for="id_docente">Id del docente asignado:*</label>
+        <input type="numeric" id="id_docente" name="id_docente" placeholder="Id del docente asignado" required>
+
+        <label for="dias">Días:*</label>
+        <label><input type="checkbox" name="dias" value="lunes"> Lunes</label>
+        <label><input type="checkbox" name="dias" value="martes"> Martes</label>
+        <label><input type="checkbox" name="dias" value="miercoles"> Miércoles</label>
+        <label><input type="checkbox" name="dias" value="jueves"> Jueves</label>
+        <label><input type="checkbox" name="dias" value="viernes"> Viernes</label>
+
+        <label for="hora_inicio">
+            Hora de inicio de la clase:*
+            <input type="time" id="hora_inicio" name="hora_inicio" placeholder="Hora de inicio de la clase" required>
+        </label>
+
+        <label for="hora_final">
+            Hora del final de la clase:*
+            <input type="time" id="hora_final" name="hora_final" placeholder="Hora del final de la clase" required>
+        </label>
+
+        <label for="imagen">Imagen del curso:</label>
+        <input type="file" id="imagen" name="imagen" accept="image/*">
+
+        <!-- el accept="image/*" permite que solo se puedan seleccionar archivos de imagen. -->
         <button type="button" onclick="window.location.href='../gestiones_administrador/gestion_cursos.html'">Cancelar</button>
         <button type="submit">Añadir curso</button> 
     </form>
