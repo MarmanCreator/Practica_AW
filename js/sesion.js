@@ -1,6 +1,16 @@
+
+//Todo el cçodigo está embuelto sobre este eventLissener para no cometer el error
+//de manipular botones y textos que el navegador aun no ha pintado en la pantalla.
+//Este evento garantiza que el script espera a que el árbol DOM del HTML actual esté 
+//construido al 100% en la memoria antes de intentar leerlo o modificarlo
 document.addEventListener("DOMContentLoaded", () => {
     
     // 1. Recuperar la sesión actual (carnet de identidad del usuario)
+   // Utilizamos sessionStorage en lugar de localStorage para la sesión 
+   // activa porque es una memoria volátil que se destruye al cerrar la pestaña, 
+   // lo cual es vital por seguridad. Como la Web Storage API solo admite cadenas 
+   // de texto, aplicamos JSON.parse() para deserializar la información y convertirla 
+   // de nuevo en un objeto JavaScript manejable que contiene el nombre y el rol del usuario.
     const usuarioGuardado = sessionStorage.getItem("usuarioActivo");
     let usuarioActivo = null;
 
@@ -9,6 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 2. SEGURIDAD: Protección de rutas
+    //Lee la URL en la que está el usuario y usa el método .some() para comprobar si 
+    // coincide con alguna de las rutas prohibidas. Si un visitante intenta forzar la 
+    // entrada escribiendo perfil.html en la barra del navegador, el script detecta que 
+    // usuarioActivo es null, bloquea la carga visual, lanza una alerta y lo expulsa mediante
+    //  una redirección por código (window.location.href) a la pantalla de login. Hacemos lo mismo 
+    //si un estudiante intenta colarse en administracion.html
     const rutaActual = window.location.pathname;
     const paginasPrivadas = ["mis_matriculas.html", "perfil.html", "administracion.html"];
     
@@ -25,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // 3. ADAPTACIÓN DE LA INTERFAZ: Mensaje en el header
+    // 3. Mensaje en el header
     const header = document.querySelector("header");
     if (header) {
         let mensajeHeader = document.querySelector("header p");
