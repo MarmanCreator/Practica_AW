@@ -21,19 +21,17 @@ if(formularioLogin){
 
 
  
-            //Condicional para procesar el resultado de la búsqueda
+          //Condicional para procesar el resultado de la búsqueda
         if (usuarioValido) {
-            // Guardamos al usuario en sessionStorage porque es un estado temporal
+            // 1. Guardamos al usuario en sessionStorage (¡ACTIVO, SIN COMENTAR!)
             sessionStorage.setItem("usuarioActivo", JSON.stringify(usuarioValido));
             
+            // 2. Lanzamos la alerta de éxito
             alert("Inicio de sesión exitoso. ¡Bienvenido, " + usuarioValido.nombre + "!");
+
+            // 3. Redirigimos a la página unificada
+            window.location.href = "menu_inicio.html";
             
-            // Redirigimos según el rol almacenado en el objeto[cite: 115]
-            if (usuarioValido.rol === "estudiante") {
-                window.location.href = "menu_inicio_alumno.html";
-            } else if (usuarioValido.rol === "administrador") {
-                window.location.href = "menu_inicio_admin.html";
-            }
         } else {
             // Si find() devuelve undefined, las credenciales no existen o son incorrectas
             alert("Error: Correo electrónico o contraseña incorrectos.");
