@@ -65,14 +65,14 @@ const docentesGuardados = localStorage.getItem("docentes");
 const docentes = docentesGuardados ? JSON.parse(docentesGuardados): [ ];
 
 function leerImagenComoDataURL(archivo) {
-    // Si no se selecciona ninguna imagen, se guarda una cadena vacía.
+    
     if (!archivo) return Promise.resolve("");
 
     return new Promise((resolve, reject) => {
         const lector = new FileReader();
         lector.onload = () => {
             if (typeof lector.result === "string") {
-                // La imagen se convierte en texto para poder guardarla en localStorage.
+                
                 resolve(lector.result);
             } else {
                 reject(new Error("No se pudo leer la imagen."));
@@ -86,7 +86,7 @@ function leerImagenComoDataURL(archivo) {
 
 const formulario_anyadir_curso = document.getElementById("añadir_curso");
 if (formulario_anyadir_curso) {
-    formulario_anyadir_curso.addEventListener("submit", async function (event) { //el async es para poder usar await dentro
+    formulario_anyadir_curso.addEventListener("submit", async function (event) { 
         event.preventDefault();
         const nombre = document.getElementById("nombre").value;
         const categoria = document.getElementById("categoría").value;
@@ -95,7 +95,7 @@ if (formulario_anyadir_curso) {
         const id_aula = document.getElementById("id_aula").value;
         const id_docente = document.getElementById("id_docente").value;
         const dias = [...document.querySelectorAll('input[name="dias"]:checked')]
-            .map(dia => dia.value); // los 3 puntos son para que se convierta en un array y luego se mapea para obtener los valores de los días seleccionados
+            .map(dia => dia.value); 
         const hora_inicio = document.getElementById("hora_inicio").value;
         const hora_final = document.getElementById("hora_final").value;
         const fecha_inicio = document.getElementById("fecha_inicio").value;
@@ -209,7 +209,7 @@ if (formulario_modificar_curso) {
         }
         const curso = cursos.find(cursoActual => cursoActual.id === id);
         const nombreIntroducido = document.getElementById("nombre").value.trim();
-        //el .trim() es para eliminar los espacios en blanco al principio y al final del string
+        
         let nombre = curso.nombre;
         if (nombreIntroducido !== "") {
             if (cursos.some(cursoActual =>
@@ -338,8 +338,8 @@ if (formulario_modificar_curso) {
         const archivoImagen = document.getElementById("imagen").files[0];
         if (archivoImagen) {
             try {
-                // Si se selecciona una imagen nueva, sustituye a la anterior.
-                imagen = await leerImagenComoDataURL(archivoImagen); // el await es necesario para que guarde la imagen una vez que ya se ha leido entrea
+                
+                imagen = await leerImagenComoDataURL(archivoImagen); 
             } catch (error) {
                 alert(error.message);
                 return;

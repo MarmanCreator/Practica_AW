@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8">
         <title>Añadir curso</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="../../recurso-imagenes/personas_2/steveCurros.png" type="image/PNG">  
-        <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
+        
 
         <link rel="stylesheet" href="../../css/style.css">
         <script src="../../js/accesibilidad.js" defer></script>
@@ -59,7 +59,7 @@
 
 
         <form class="formulario_base" id="añadir_curso" action="#" method="post">
-        <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
+        
         <label for="nombre">Nombre del curso:*</label>
         <input type="text" id="nombre" name="nombre" placeholder="Nombre del curso" required>
 
@@ -104,7 +104,7 @@
         <label for="imagen">Imagen del curso:</label>
         <input type="file" id="imagen" name="imagen" accept="image/*">
 
-        <!-- el accept="image/*" permite que solo se puedan seleccionar archivos de imagen. -->
+        
         <button type="button" onclick="window.location.href='../gestiones_administrador/gestion_cursos.html'">Cancelar</button>
         <button type="submit">Añadir curso</button> 
     </form>

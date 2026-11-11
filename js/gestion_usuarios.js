@@ -5,18 +5,7 @@ const usuariosGuardados = localStorage.getItem("usuarios");
 
 const usuarios = usuariosGuardados
     ? JSON.parse(usuariosGuardados)
-    : [
-        // { lo dejo como ejemplo para saber que variables tiene cada usuario
-        //     id: 0,
-        //     nombre: "Admin",
-        //     apellido: "Molon",
-        //     email: "garcia@example.com",
-        //     contraseña: "Ejemplo",
-        //     rol: "admin",
-        //     telefono: "123456789",
-        //     activo: true
-        // }
-];
+    : [];
 
 const formulario_activar_usuario = document.getElementById("activar_usuario");
 if (formulario_activar_usuario) {

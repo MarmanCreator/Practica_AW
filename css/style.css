@@ -1,15 +1,15 @@
 
 :root{
-    --color-principal:#8B5E3C; /* Color principal de la pagina */
-    --color-principal-hover:#5C3D26; /* Color principal al pasar el raton */
-    --color-secundario:#A47551; /* Color secundario para menus y cabeceras */
-    --color-acento:#B8865B; /* Color de elementos destacados */
-    --color-acento-hover:#8F633F; /* Color de los acentos al pasar el raton */
-    --color-fondo:#fdd8a4; /* Color de fondo general */
-    --color-tarjeta:#ffeed5; /* Fondo de tarjetas y formularios */
-    --color-texto:#000000; /* Color del texto principal */
-    --color-texto-inverso:#ffffff; /* Texto sobre fondos oscuros */
-    --color-borde:#D8BFA3; /* Color de bordes */
+    --color-principal:#8B5E3C; 
+    --color-principal-hover:#5C3D26; 
+    --color-secundario:#A47551; 
+    --color-acento:#B8865B; 
+    --color-acento-hover:#8F633F; 
+    --color-fondo:#fdd8a4; 
+    --color-tarjeta:#ffeed5; 
+    --color-texto:#000000; 
+    --color-texto-inverso:#ffffff; 
+    --color-borde:#D8BFA3; 
 }
 
 *{
@@ -138,7 +138,7 @@ nav{
     background:var(--color-secundario);
     border-bottom-left-radius:10px;
     border-bottom-right-radius:10px;
-    box-shadow:0 8px 20px rgba(69, 10, 10, .16); /* Sombra suave del menu */
+    box-shadow:0 8px 20px rgba(69, 10, 10, .16); 
 }
 
 nav > ul{
@@ -242,7 +242,7 @@ body > main{
 
 }
 
-/* Estilos generales para las tarjetas */
+
 .tarjetas{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
@@ -272,7 +272,7 @@ body > main{
     background:var(--color-tarjeta);
     border:1px solid var(--color-borde);
     border-radius:10px;
-    box-shadow:0 6px 16px rgba(69, 10, 10, .12); /* Sombra de las tarjetas */
+    box-shadow:0 6px 16px rgba(69, 10, 10, .12); 
     transition:transform .2s ease, box-shadow .2s ease;
 }
  
@@ -286,7 +286,7 @@ body > main{
 
 .tarjeta:hover{
     transform:translateY(-4px);
-    box-shadow:0 10px 22px rgba(69, 10, 10, .2); /* Sombra al pasar el raton */
+    box-shadow:0 10px 22px rgba(69, 10, 10, .2); 
 }
 
 .tarjeta h4{
@@ -302,33 +302,33 @@ footer{
     margin-top:40px;
     padding:20px;
     background:var(--color-principal);
-    color:white; /* Texto del pie de pagina */
+    color:white; 
     text-align:center;
 }
 
 
 
-/*PANEL DE ACCESIBILIDAD*/
-/* ESTILOS GENERALES PARA TUS FORMULARIOS (HTML ORIGINAL) */
+
+
 .formulario_base {
     max-width: 500px;
     margin: 40px auto;
     padding: 30px;
     background-color: var(--color-tarjeta);
     border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(69, 10, 10, .16); /* Sombra del formulario */
+    box-shadow: 0 8px 20px rgba(69, 10, 10, .16); 
 }
 
 .formulario_base fieldset {
     border: none;
 }
 
-/* Ocultamos los <br> para gestionar los espacios solo con el modelo de caja CSS */
+
 .formulario_base br {
     display: none;
 }
 
-/* Forzamos que cada etiqueta ocupe su propia línea y le damos separación superior */
+
 .formulario_base label {
     display: block;
     margin-top: 20px;
@@ -336,7 +336,7 @@ footer{
     font-weight: bold;
 }
 
-/* Diseño de los campos interactivos (excluyendo el checkbox) */
+
 .formulario_base select,
 .formulario_base input:not([type="checkbox"]),
 .formulario_base textarea {
@@ -347,69 +347,46 @@ footer{
     width: 100%;
 }
 
-/* Ajuste específico para el checkbox de accesibilidad */
+
 .formulario_base input[type="checkbox"] {
     margin-top: 15px;
     transform: scale(1.2);
 }
 
-/* Separación superior para los botones */
+
 .formulario_base button {
     margin-top: 25px;
 }
 
 
-/*Problema con la casilla lo solucionamos asi: 
-/*Preguntarle al profe/investigar sobre lo de que las label sean un contenedor que ocupe toda la linea. 
-
-/* Agrupa y alinea horizontalmente el texto y el checkbox */
 .formulario_base .opcion-checkbox {
     display: flex;
     align-items: center;
-    margin-top: 20px; /* Mantiene la separación superior original */
+    margin-top: 20px; 
 }
 
-/* Anula el display: block general para que no salte de línea */
+
 .formulario_base .opcion-checkbox label {
     display: inline;
     margin: 0;
-    margin-right: 10px; /* Define el espacio entre el texto y la casilla */
+    margin-right: 10px; 
 }
 
-/* Elimina el margen superior que empujaba la casilla hacia abajo */
+
 .formulario_base .opcion-checkbox input[type="checkbox"] {
     margin-top: 0;
 }
 
 
-/* =========================================================
-   MÓDULO DE ACCESIBILIDAD - CONTROLADO POR JAVASCRIPT
-   ========================================================= */
-/*Nosotros no estamos reemplazando una clase vieja, sino pegando una etiqueta nueva encima, como tema_oscuro, cuyas
-/*reglas tienen prioridad y sobrescriben temporalmente a las genéricas.
-
-     
-
-
-
-
-   /*Tema oscuro en la pagina web
-   
-   Si el <body> tiene la clase 'tema-oscuro', cambiamos la paleta de colores. 
-   Fíjate que mantenemos el mismo nombre de las variables originales 
-   para que toda la página cambie de color automáticamente.
-   */
    body.tema_oscuro{
-    --color-fondo: #171717;     /* Fondo general gris muy oscuro */
-    --color-tarjeta: #1e1e1e;   /* Cajas y formularios ligeramente más claros para destacar */
-    --color-texto: #e0e0e0;     /* Texto gris claro para evitar el contraste excesivo del blanco puro */
+    --color-fondo: #171717;     
+    --color-tarjeta: #1e1e1e;   
+    --color-texto: #e0e0e0;     
     --color-texto-inverso: #000000;
-    --color-borde: #333333;     /* Bordes apagados */
+    --color-borde: #333333;     
    }
 
-   /*Alto constraste
-   Fondo negro absoluto y texto amarillo.
-   */
+
 
    body.alto_contraste{
     --color-fondo: #000000;
@@ -421,18 +398,18 @@ footer{
     --color-borde: #ffff00;
    }
 
-   /* Aseguramos que los bordes de inputs y botones también destaquen */
+   
    body.alto_contraste *{
     border-color: #ffff00 !important;
    }
 
 
-   /*Tamaño de la fuente*/
+   
    body.fuente_grande{
     font-size: 1.2rem;
    }
 
-   /*REVISAR SI HACE FALTA*/
+   
    body.fuente_pequena {
     font-size: 0.85rem; 
 }
