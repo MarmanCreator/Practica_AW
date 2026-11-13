@@ -154,13 +154,13 @@ if (formulario_anyadir_curso) {
 }
 function AnyadirCurso(nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen) {
     const nuevoCurso = {
-        id: cursos.reduce((mayorId, curso) => Math.max(mayorId, curso.id), 0) + 1,
+        id: cursos.reduce((mayorId, curso) => Math.max(mayorId, curso.id), -1) + 1,
         nombre: nombre,
         categoria: categoria,
         descripcion: descripcion,
         plazas: plazas,
-        id_aula: id_aula,
-        id_docente: id_docente,
+        id_aula: Number(id_aula),
+        id_docente: Number(id_docente),
         dias: dias,
         hora_inicio: hora_inicio,
         hora_final: hora_final,
@@ -359,8 +359,8 @@ function modificarCurso(id, nombre, categoria, descripcion, plazas, id_aula, id_
         curso.categoria = categoria;
         curso.descripcion = descripcion;
         curso.plazas = plazas;
-        curso.id_aula = id_aula;
-        curso.id_docente = id_docente;
+        curso.id_aula = Number(id_aula);
+        curso.id_docente = Number(id_docente);
         curso.dias = dias;
         curso.hora_inicio = hora_inicio;
         curso.hora_final = hora_final;
