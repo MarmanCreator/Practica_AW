@@ -62,7 +62,8 @@ function AnyadirUsuario(nombre, apellido, email, password, rol){
             apellido: apellido,
             email: email,
             password: password, 
-            rol: rol
+            rol: rol,
+            activo: true
         };
 
         const usuarioExistente = usuarios.find(
