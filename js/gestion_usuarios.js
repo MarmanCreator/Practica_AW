@@ -6,26 +6,26 @@ const usuariosGuardados = localStorage.getItem("usuarios");
 const usuarios = usuariosGuardados
     ? JSON.parse(usuariosGuardados)
     : [
-        {
-            id: 0,
-            nombre: "Admin",
-            apellido: "Molon",
-            email: "admin@admin.es",
-            password: "1234",
-            rol: "administrador",
-            telefono: "123456789",
-            activo: true
-        },
-        {
-            id: 1,
-            nombre: "User",
-            apellido: "Molon",
-            email: "user@user.es",
-            password: "1234",
-            rol: "estudiante",
-            telefono: "123456789",
-            activo: true
-        }
+        // {
+        //     id: 0,
+        //     nombre: "Admin",
+        //     apellido: "Molon",
+        //     email: "admin@admin.es",
+        //     password: "1234",
+        //     rol: "administrador",
+        //     telefono: "123456789",
+        //     activo: true
+        // },
+        // {
+        //     id: 1,
+        //     nombre: "User",
+        //     apellido: "Molon",
+        //     email: "user@user.es",
+        //     password: "1234",
+        //     rol: "estudiante",
+        //     telefono: "123456789",
+        //     activo: true
+        // }
 ];
 
 localStorage.setItem("usuarios", JSON.stringify(usuarios));
