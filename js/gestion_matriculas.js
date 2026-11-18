@@ -204,7 +204,7 @@ if(es_mis_matriculas){
     const total = document.createElement("p");
     total.className = "total-cursos";
     total.id = "total-matriculas";
-    const matriculasMias = matriculas.filter(matricula => matricula.activo && matricula.id_usuario === user.id);
+    const matriculasMias = matriculas.filter(matricula => matricula.activo && matricula.id_usuario === usuarioActual.id);
     total.textContent = "Matrículas disponibles: " + matriculasMias.length;
 
     for (let i = 0; i < matriculasMias.length; i++) {

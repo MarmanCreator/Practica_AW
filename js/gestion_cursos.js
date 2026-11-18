@@ -64,6 +64,10 @@ const docentesGuardados = localStorage.getItem("docentes");
 
 const docentes = docentesGuardados ? JSON.parse(docentesGuardados): [ ];
 
+const matriculasGuardadas = localStorage.getItem("matriculas");
+
+const matriculas = matriculasGuardadas ? JSON.parse(matriculasGuardadas) : [];
+
 function leerImagenComoDataURL(archivo) {
     // Si no se selecciona ninguna imagen, se guarda una cadena vacía.
     if (!archivo) return Promise.resolve("");
@@ -372,7 +376,10 @@ function modificarCurso(id, nombre, categoria, descripcion, plazas, id_aula, id_
     
 
 const contenedorTarjetas = document.querySelector('.tarjetas');
-
+const usuarioGuardado = sessionStorage.getItem("usuarioActivo");
+        const usuarioActual = usuarioGuardado
+            ? JSON.parse(usuarioGuardado)
+            : null;
 if (contenedorTarjetas) {
     const fragmento = document.createDocumentFragment();
 
@@ -388,7 +395,7 @@ if (contenedorTarjetas) {
         const cursoActual = cursosActivos[i];
         const card = document.createElement('article');
         card.className = 'tarjeta';
-        const dias = cursoActual.dias.length > 0
+        const dias = Array.isArray(cursoActual.dias) && cursoActual.dias.length > 0
             ? cursoActual.dias.join(", ")
             : "No especificados";
         const horaInicio = cursoActual.hora_inicio || "No especificada";
@@ -398,6 +405,12 @@ if (contenedorTarjetas) {
         const imagen = cursoActual.imagen
             ? `<img src="${cursoActual.imagen}" alt="Imagen del curso ${cursoActual.nombre}">`
             : "";
+        const aula = aulas.find(aulaActual => aulaActual.id === Number(cursoActual.id_aula));
+        const docente = docentes.find(docenteActual => docenteActual.id === Number(cursoActual.id_docente));
+        const nombreAula = aula ? aula.nombre : "No especificada";
+        const nombreDocente = docente
+            ? `${docente.nombre} ${docente.apellido || ""}`.trim()
+            : "No especificado";
 
         card.innerHTML = `
             ${imagen}
@@ -409,9 +422,39 @@ if (contenedorTarjetas) {
             <p><strong>Fechas:</strong> ${fechaInicio} - ${fechaFin}</p>
             <p>${cursoActual.descripcion}</p>
             <p><strong>Plazas disponibles:</strong> ${cursoActual.plazas}</p>
-            <p><strong>Aula:</strong> ${aulas.find(aula => aula.id === cursoActual.id_aula).nombre}</p>
-            <p><strong>Docente:</strong> ${docentes.find(docente => docente.id === cursoActual.id_docente).nombre} ${docentes.find(docente => docente.id === cursoActual.id_docente).apellido}</p>
+            <p><strong>Aula:</strong> ${nombreAula}</p>
+            <p><strong>Docente:</strong> ${nombreDocente}</p>
         `;
+
+        let button = null;
+        if (usuarioActual && usuarioActual.rol === "estudiante") {
+            button = document.createElement("button");
+            button.textContent = "Matricularse";
+            button.addEventListener("click", () => {
+                if(matriculas.some(matricula => matricula.id_curso === cursoActual.id && matricula.id_alumno === usuarioActual.id)) {
+                    alert("No te puedes matricular en un curso en el que ya estás matriculado.");
+                    return;
+                }
+                if(cursoActual.plazas <= 0) {
+                    alert("No hay plazas disponibles en este curso.");
+                    return;
+                }
+                const nuevaMatricula = {
+                    id: matriculas.reduce((mayorId, matricula) => Math.max(mayorId, matricula.id), -1) + 1,
+                    id_curso: cursoActual.id,
+                    id_alumno: usuarioActual.id,
+                    fecha_matricula: new Date().toLocaleDateString("es-ES"),
+                    activo: true
+                };
+                matriculas.push(nuevaMatricula);
+                localStorage.setItem("matriculas", JSON.stringify(matriculas));
+                alert("Te has matriculado en el curso " + cursoActual.nombre + ".");
+            });
+        }
+
+        if (button) {
+            card.appendChild(button);
+        }
 
         fragmento.appendChild(card);
     }
