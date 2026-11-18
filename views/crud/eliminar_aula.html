@@ -59,8 +59,10 @@
 
 
         <form class="formulario_base" id="eliminar_aula" action="#" method="post">
-            <label for="id_aula">Id del aula:*</label>
-            <input type="number" id="id_aula" name="id_aula" required>
+            <label for="id_aula">Aula que se quiere eliminar:*</label>
+            <select id="id_aula" name="id_aula" required>
+                <option value="" selected>Selecciona un aula</option>
+            </select>
 
             <button type="button" onclick="window.location.href='../gestiones_administrador/gestion_aulas.html'">Cancelar</button>
             <button type="submit">Eliminar aula</button>

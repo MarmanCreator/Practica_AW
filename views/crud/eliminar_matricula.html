@@ -60,8 +60,10 @@
 
         <form class="formulario_base" id="eliminar_matricula" action="#" method="post">
         <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
-        <label for="id_matricula">Id de la matricula a eliminar:*</label>
-        <input type="numeric" id="id_matricula" name="id_matricula" placeholder="Id de la matricula" required>
+        <label for="matricula">Id de la matricula:*</label>
+        <select id="matricula" name="matricula" required>
+            <option value="" disabled selected>Selecciona una matrícula</option>
+        </select>
 
         <button type="button" onclick="window.location.href='../gestiones_administrador/gestion_matriculas.html'">Cancelar</button>
         <button type="submit">Eliminar matricula</button> 

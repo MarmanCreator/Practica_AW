@@ -60,11 +60,12 @@
 
         <form class="formulario_base" id="anyadir_matricula" action="#" method="post">
         <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
-        <label for="id_usuario">Id del usuario a matricular:*</label>
-        <input type="numeric" id="id_usuario" name="id_usuario" placeholder="Id del usuario" required>
 
-        <label for="id_curso">Id del curso donde se le matricula:*</label>
-        <input type="numeric" id="id_curso" name="id_curso" placeholder="Id del curso" required>
+        <label for="usuario">Usuario:*</label>
+        <select id="usuario" name="usuario" required></select>
+
+        <label for="curso">Curso:*</label>
+        <select id="curso" name="curso" required></select>
 
         <button type="button" onclick="window.location.href='../gestiones_administrador/gestion_matriculas.html'">Cancelar</button>
         <button type="submit">Añadir matricula</button> 

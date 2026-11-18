@@ -33,6 +33,22 @@ const docentes = docentesGuardados
     ];
 
 
+
+const selectDocente = document.getElementById("id_docente");
+
+if (selectDocente) {
+    for (let i = 0; i < docentes.length; i++) {
+        const doc = docentes[i];
+
+        if (doc.activo) {
+            const opcion = document.createElement("option");
+            opcion.value = doc.id;
+            opcion.textContent = `${doc.nombre} ${doc.apellido || ""}`.trim();
+            selectDocente.appendChild(opcion);
+        }
+    }
+}
+
 const formularioAnyadirDocente = document.getElementById("añadir_docente");
 if (formularioAnyadirDocente) {
     formularioAnyadirDocente.addEventListener("submit", event => {
