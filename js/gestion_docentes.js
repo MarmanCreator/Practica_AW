@@ -148,11 +148,11 @@ if (formularioModificarDocente) {
         }
 
         
-        if (nombre !== "") docente.nombre = nombre;
-        if (apellido !== "") docente.apellido = apellido;
-        if (especialidad !== "") docente.especialidad = especialidad;
-        if (email !== "") docente.email = email;
-        if (telefono !== "") docente.telefono = telefono;
+        if (nombreIntroducido !== "") docente.nombre = nombreIntroducido;
+        if (apellidoIntroducido !== "") docente.apellido = apellidoIntroducido;
+        if (especialidadIntroducida !== "") docente.especialidad = especialidadIntroducida;
+        if (emailIntroducido !== "") docente.email = emailIntroducido;
+        if (telefonoIntroducido !== "") docente.telefono = telefonoIntroducido;
 
         localStorage.setItem("docentes", JSON.stringify(docentes));
         window.location.href = "../gestiones_administrador/gestion_docentes.html";

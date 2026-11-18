@@ -145,10 +145,10 @@ if (formulario_modificar_aula) {
             }
         }
         
-        if (nombre !== "") aula.nombre = nombreIntroducido;
-        if (edificio !== "") aula.edificio = edificioIntroducido;
-        if (planta !== "") aula.planta = plantaIntroducida;
-        if (capacidad !== "") aula.capacidad = Number(capacidadIntroducida); 
+        if (nombreIntroducido !== "") aula.nombre = nombreIntroducido;
+        if (edificioIntroducido !== "") aula.edificio = edificioIntroducido;
+        if (plantaIntroducida !== "") aula.planta = plantaIntroducida;
+        if (capacidadIntroducida !== "") aula.capacidad = Number(capacidadIntroducida); 
 
         localStorage.setItem("aulas", JSON.stringify(aulas));
         window.location.href = "../gestiones_administrador/gestion_aulas.html";

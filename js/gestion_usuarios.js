@@ -122,7 +122,7 @@ if (formulario_modificar_usuario) {
         const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
         const apellidoIntroducido = sanitizarEntrada(document.getElementById("apellido").value.trim());
         const emailIntroducido = sanitizarEntrada(document.getElementById("email").value.trim());
-        const contraseñaIntroducida = document.getElementById("contraseña").value; 
+        const contraseñaIntroducida = document.getElementById("password").value; 
         const rolIntroducido = sanitizarEntrada(document.getElementById("rol").value.trim());
         const telefonoIntroducido = document.getElementById("telefono").value.trim();
 

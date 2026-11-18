@@ -17,7 +17,8 @@ if(formularioRegistro){
         const rol = document.getElementById("rol").value; 
         
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-        if (!regexLetras.test(nombre) || !regexLetras.test(apellido)) {
+        if (!regexLetras.test(nombre) ||
+            (apellido !== "" && !regexLetras.test(apellido))) {
             alert("Error: El nombre y los apellidos solo pueden contener letras y espacios.");
             return; 
         }
