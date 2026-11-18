@@ -58,15 +58,21 @@
         <a href="modificar_matricula.html">>Modificar matricula</a>
 
         <form class="formulario_base" id="modificar_matricula" action="#" method="post">
-        <label for="id_matricula">Id de la matrícula que se quiere modificar:*</label>
-        <input type="number" id="id_matricula" name="id_matricula" placeholder="Id de la matrícula" required>
+        <label for="matricula">Id de la matricula:*</label>
+        <select id="matricula" name="matricula" required>
+            <option value="" disabled selected>Selecciona una matrícula</option>
+        </select>
 
         <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
-        <label for="id_usuario">Id del usuario nuevo para esta matricula:</label>
-        <input type="numeric" id="id_usuario" name="id_usuario" placeholder="Id del usuario">
+        <label for="usuario">Añade el usuario nuevo para esta matricula:</label>
+        <select id="usuario" name="usuario">
+            <option value="" selected>Selecciona un usuario</option>
+        </select>
 
-        <label for="id_curso">Id del curso nuevo para esta matricula:</label>
-        <input type="numeric" id="id_curso" name="id_curso" placeholder="Id del curso">
+        <label for="curso">Añade el curso nuevo para esta matricula:</label>
+        <select id="curso" name="curso">
+            <option value="" selected>Selecciona un curso</option>
+        </select>
 
         <button type="button" onclick="window.location.href='../gestiones_administrador/gestion_matriculas.html'">Cancelar</button>
         <button type="submit">Modificar matricula</button> 
