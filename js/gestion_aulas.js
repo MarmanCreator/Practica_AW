@@ -48,14 +48,47 @@ const formulario_anyadir_aula = document.getElementById("anyadir_aula");
 if (formulario_anyadir_aula) {
     formulario_anyadir_aula.addEventListener("submit", event => {
         event.preventDefault();
+
+        // 1. LECTURA Y SANITIZACIÓN
+        const nombre = sanitizarEntrada(document.getElementById("nombre").value.trim());
+        const edificio = sanitizarEntrada(document.getElementById("edificio").value.trim());
+        const plantaInput = document.getElementById("planta").value.trim();
+        const capacidadInput = document.getElementById("capacidad").value.trim();
+
+
+        // 2. VALIDACIONES DE SEGURIDAD (REGEX)
+        // Letras, números y espacios (ej: "Aula 101", "Edificio B")
+        const regexAlfanumerico = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/; 
+        // Permite números enteros positivos y negativos (ej: -1 para sótanos)
+        const regexPlanta = /^-?\d+$/; 
+        // Solo números enteros positivos
+        const regexCapacidad = /^\d+$/; 
+
+        if (!regexAlfanumerico.test(nombre) || !regexAlfanumerico.test(edificio)) {
+            alert("Error: El nombre y el edificio solo pueden contener letras, números y espacios.");
+            return;
+        }
+
+        if (!regexPlanta.test(plantaInput)) {
+            alert("Error: La planta debe ser un número entero (se admiten negativos para sótanos).");
+            return;
+        }
+
+        if (!regexCapacidad.test(capacidadInput) || Number(capacidadInput) <= 0) {
+            alert("Error: La capacidad debe ser un número entero positivo mayor que cero.");
+            return;
+        }
+
+        // 3. EJECUCIÓN (Solo si supera las validaciones)
         aulas.push({
             id: aulas.reduce((mayorId, aula) => Math.max(mayorId, aula.id), -1) + 1,
-            nombre: document.getElementById("nombre").value,
-            edificio: document.getElementById("edificio").value,
-            planta: Number(document.getElementById("planta").value),
-            capacidad: Number(document.getElementById("capacidad").value),
+            nombre: nombre,
+            edificio: edificio,
+            planta: Number(plantaInput),
+            capacidad: Number(capacidadInput),
             activo: true
         });
+
         localStorage.setItem("aulas", JSON.stringify(aulas));
         window.location.href = "../gestiones_administrador/gestion_aulas.html";
     });
@@ -91,23 +124,41 @@ if (formulario_modificar_aula) {
             return;
         }
 
-        const nombre = document.getElementById("nombre").value;
-        const edificio = document.getElementById("edificio").value;
-        const planta = document.getElementById("planta").value;
-        const capacidad = document.getElementById("capacidad").value;
+        // 1. LECTURA Y SANITIZACIÓN
+        const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
+        const edificioIntroducido = sanitizarEntrada(document.getElementById("edificio").value.trim());
+        const plantaIntroducida = document.getElementById("planta").value.trim();
+        const capacidadIntroducida = document.getElementById("capacidad").value.trim();
 
-        //Esta linea establece lo que se puede usar en los campos de nombre y apellido.
-        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-        //Aquí comprobamos que no hayn metido cosas raras en el nombre/apellido. 
-        if (!regexLetras.test(nombre) || !regexLetras.test(apellido)) {
-            alert("Error: El nombre y los apellidos solo pueden contener letras y espacios.");
-            return; // Detenemos el envío del formulario inmediatamente
+        // 2. VALIDACIONES DE SEGURIDAD (REGEX)
+        const regexNumeros = /^\d+$/; 
+        const regexAlfanumerico = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/; 
+        const regexPlanta = /^-?\d+$/;
+
+        // Comprobación de campos de texto (Solo si han escrito algo nuevo)
+        if ((nombreIntroducido !== "" && !regexAlfanumerico.test(nombreIntroducido)) || 
+            (edificioIntroducido !== "" && !regexAlfanumerico.test(edificioIntroducido))) {
+            alert("Error: El nombre y el edificio solo pueden contener letras, números y espacios.");
+            return; 
+        }
+
+        // Comprobación de campos numéricos (Solo si han escrito algo nuevo)
+        if (plantaIntroducida !== "" && !regexPlanta.test(plantaIntroducida)) {
+            alert("Error: La planta debe ser un número entero (se admiten negativos para sótanos).");
+            return;
+        }
+
+        if (capacidadIntroducida !== "") {
+            if (!regexNumeros.test(capacidadIntroducida) || Number(capacidadIntroducida) <= 0) {
+                alert("Error: La capacidad debe ser un número entero positivo mayor que cero.");
+                return;
+            }
         }
         
-        if (nombre !== "") aula.nombre = nombre;
-        if (edificio !== "") aula.edificio = edificio;
-        if (planta !== "") aula.planta = planta;
-        if (capacidad !== "") aula.capacidad = Number(capacidad);
+        if (nombre !== "") aula.nombre = nombreIntroducido;
+        if (edificio !== "") aula.edificio = edificioIntroducido;
+        if (planta !== "") aula.planta = plantaIntroducida;
+        if (capacidad !== "") aula.capacidad = Number(capacidadIntroducida); 
 
         localStorage.setItem("aulas", JSON.stringify(aulas));
         window.location.href = "../gestiones_administrador/gestion_aulas.html";
@@ -145,4 +196,15 @@ if (contenedorTarjetas) {
 
     contenedorTarjetas.replaceChildren(fragmento);
     contenedorTarjetas.prepend(titulo, total);
+}
+
+
+// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
+function sanitizarEntrada(texto) {
+    return texto
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }

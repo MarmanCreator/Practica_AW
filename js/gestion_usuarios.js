@@ -111,40 +111,84 @@ const formulario_modificar_usuario = document.getElementById("modificar_usuario"
 if (formulario_modificar_usuario) {
     formulario_modificar_usuario.addEventListener("submit", function (event) {
         event.preventDefault();
-        const id = Number(document.getElementById("id_usuario_activo").value);
-        const usuarioExiste = usuarios.some(usuario => usuario.id === id && usuario.activo);
-        if (!Number.isInteger(id) || !usuarioExiste) {
-            alert("No existe ningún usuario con ese ID.");
+        // 1. LECTURA Y SANITIZACIÓN
+        const idIntroducido = document.getElementById("id_usuario_activo").value.trim();
+        const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
+        const apellidoIntroducido = sanitizarEntrada(document.getElementById("apellido").value.trim());
+        const emailIntroducido = sanitizarEntrada(document.getElementById("email").value.trim());
+        const contraseñaIntroducida = document.getElementById("contraseña").value; // La contraseña no se sanitiza ni se le hace trim
+        const rolIntroducido = sanitizarEntrada(document.getElementById("rol").value.trim());
+        const telefonoIntroducido = document.getElementById("telefono").value.trim();
+
+        // 2. VALIDACIONES DE SEGURIDAD (REGEX Y EXISTENCIA)
+        const regexNumeros = /^\d+$/;
+        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const regexTelefono = /^[\d\s]+$/;
+
+        // Validamos el ID estrictamente
+        if (!regexNumeros.test(idIntroducido)) {
+            alert("Error: El ID del usuario debe ser un número entero positivo.");
             return;
         }
-        let nombre = usuarios.find(usuario => usuario.id === id).nombre;
-        if(document.getElementById("nombre").value !== "") {
-            nombre = document.getElementById("nombre").value;
+        
+        const id = Number(idIntroducido);
+        // Buscamos el usuario UNA sola vez (más eficiente)
+        const usuario = usuarios.find(u => u.id === id);
+        
+        if (!usuario || !usuario.activo) {
+            alert("No existe ningún usuario activo con ese ID.");
+            return;
         }
-        let apellido = usuarios.find(usuario => usuario.id === id).apellido;
-        if(document.getElementById("apellido").value !== "") {
-            apellido = document.getElementById("apellido").value;
+
+        // Validamos campos de texto (Solo si escriben algo nuevo)
+        if ((nombreIntroducido !== "" && !regexLetras.test(nombreIntroducido)) || 
+            (apellidoIntroducido !== "" && !regexLetras.test(apellidoIntroducido))) {
+            alert("Error: En los campos de nombre y apellido solo están permitidas letras y espacios.");
+            return;
         }
-        let email = usuarios.find(usuario => usuario.id === id).email;
-        if(document.getElementById("email").value !== "") {
-            email = document.getElementById("email").value;
+
+        // Validamos datos de contacto (Solo si escriben algo nuevo)
+        if (emailIntroducido !== "" && !regexEmail.test(emailIntroducido)) {
+            alert("Error: El formato del correo electrónico no es válido.");
+            return;
         }
-        let contraseña = usuarios.find(usuario => usuario.id === id).password;
-        if(document.getElementById("contraseña").value !== "") {
-            contraseña = document.getElementById("contraseña").value;
+        
+        if (telefonoIntroducido !== "" && !regexTelefono.test(telefonoIntroducido)) {
+            alert("Error: El teléfono solo puede contener números y espacios.");
+            return;
         }
-        let rol = usuarios.find(usuario => usuario.id === id).rol;
-        if(document.getElementById("rol").value !== "") {
-            rol = document.getElementById("rol").value;
+        
+        // Validación del rol (evitar que se inventen roles inyectando código)
+        const rolesValidos = ["administrador", "docente", "estudiante"];
+        if (rolIntroducido !== "" && !rolesValidos.includes(rolIntroducido.toLowerCase())) {
+             alert("Error: El rol introducido no es válido.");
+             return; 
         }
-        let telefono = usuarios.find(usuario => usuario.id === id).telefono;
-        if(document.getElementById("telefono").value !== "") {
-            telefono = document.getElementById("telefono").value;
-        }
+
+        // 3. ASIGNACIÓN DE VALORES (Mantenemos los antiguos, o pisamos con los nuevos)
+        let nombre = usuario.nombre;
+        if (nombreIntroducido !== "") nombre = nombreIntroducido;
+        
+        let apellido = usuario.apellido;
+        if (apellidoIntroducido !== "") apellido = apellidoIntroducido;
+        
+        let email = usuario.email;
+        if (emailIntroducido !== "") email = emailIntroducido;
+        
+        let contraseña = usuario.password || usuario.contraseña; // Por si lo tienes guardado como password o contraseña
+        if (contraseñaIntroducida !== "") contraseña = contraseñaIntroducida;
+        
+        let rol = usuario.rol;
+        if (rolIntroducido !== "") rol = rolIntroducido;
+        
+        let telefono = usuario.telefono;
+        if (telefonoIntroducido !== "") telefono = telefonoIntroducido;
+
+        // 4. GUARDADO Y REDIRECCIÓN
         modificarUsuario(id, nombre, apellido, email, contraseña, rol, telefono);
         localStorage.setItem("usuarios", JSON.stringify(usuarios));
         window.location.href = "../gestiones_administrador/gestion_usuarios.html";
-
     });
 }
 function modificarUsuario(id, nombre, apellido, email, contraseña, rol, telefono) {
@@ -192,4 +236,15 @@ if (contenedorTarjetas) {
 
     contenedorTarjetas.replaceChildren(fragmento);
     contenedorTarjetas.prepend(tituloUsuarios, totalUsuarios);
+}
+
+
+// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
+function sanitizarEntrada(texto) {
+    return texto
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
