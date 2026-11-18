@@ -29,6 +29,21 @@ const aulas = aulasGuardadas
         }
     ];
 
+
+
+const selectAula = document.getElementById("id_aula");
+
+if (selectAula) {
+    for (let i = 0; i < aulas.length; i++) {
+        const aula = aulas[i];
+        const opcion = document.createElement("option");
+        opcion.value = aula.id;
+        opcion.textContent = `${aula.nombre}`.trim();
+        selectAula.appendChild(opcion);
+    }
+}
+
+
 const formulario_anyadir_aula = document.getElementById("anyadir_aula");
 if (formulario_anyadir_aula) {
     formulario_anyadir_aula.addEventListener("submit", event => {

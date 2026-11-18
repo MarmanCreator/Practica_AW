@@ -20,6 +20,7 @@ if(formularioRegistro){
         const nombre = document.getElementById("nombre").value.trim();  
         const apellido = document.getElementById("apellido").value.trim(); 
         const email = document.getElementById("email").value.trim(); 
+        const telefono = document.getElementById("telefono").value.trim();
         const password = document.getElementById("password").value; 
         const confirPassword = document.getElementById("confirm_password").value; 
         const rol = document.getElementById("rol").value; 
@@ -31,7 +32,7 @@ if(formularioRegistro){
         }
 
         //LLamamos a la funcion que añade al nnuevo usuario con los nuevos datos
-        const registroExitoso = AnyadirUsuario(nombre, apellido, email, password, rol); 
+        const registroExitoso = AnyadirUsuario(nombre, apellido, email, telefono, password, rol); 
         
         if(registroExitoso){
 
@@ -55,12 +56,13 @@ if(formularioRegistro){
     }) 
 }
 
-function AnyadirUsuario(nombre, apellido, email, password, rol){
+function AnyadirUsuario(nombre, apellido, email, telefono, password, rol){
     const nuevoUsuario = {
             id: usuarios.length + 1, // ID simple autoincremental
             nombre: nombre,
             apellido: apellido,
             email: email,
+            telefono: telefono,
             password: password, 
             rol: rol,
             activo: true

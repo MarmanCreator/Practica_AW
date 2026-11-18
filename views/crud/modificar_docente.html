@@ -63,7 +63,9 @@
         <form class="formulario_base" id="modificar_docente" action="#" method="post">
         <!-- Aqui importante modificar el atributo id ="nombre" para que el input pille la etiqueta. -->
         <label for="id_docente">Id del docente que se quiere modificar:*</label>
-        <input type="number" id="id_docente" name="id_docente" placeholder="Id del docente" required>
+        <select id="id_docente" name="id_docente" required>
+            <option value="" selected>Selecciona un docente</option>
+        </select>
         
         <label for="nombre">Nombre del docente:</label>
         <input type="text" id="nombre" name="nombre" placeholder="Nombre del docente">

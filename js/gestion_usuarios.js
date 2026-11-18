@@ -18,11 +18,57 @@ const usuarios = usuariosGuardados
         // }
 ];
 
+for (const usuario of usuarios) {
+    usuario.password = usuario.password ?? usuario.contraseña ?? "";
+    usuario.telefono = usuario.telefono ?? "";
+}
+
+const usuarioSesionGuardado = sessionStorage.getItem("usuarioActivo");
+const usuarioSesionActual = usuarioSesionGuardado
+    ? JSON.parse(usuarioSesionGuardado)
+    : null;
+
+
+const selectUsuarioEliminado = document.getElementById("id_usuario_eliminado");
+
+if (selectUsuarioEliminado) {
+    for (let i = 0; i < usuarios.length; i++) {
+        const user = usuarios[i];
+
+        if (!user.activo) {
+            const opcion = document.createElement("option");
+            opcion.value = user.id;
+            opcion.textContent = `${user.nombre} ${user.apellido || ""}`.trim();
+            selectUsuarioEliminado.appendChild(opcion);
+        }
+    }
+}
+
+const selectUsuarioActivo = document.getElementById("id_usuario_activo");
+
+if (selectUsuarioActivo) {
+    for (let i = 0; i < usuarios.length; i++) {
+        const user = usuarios[i];
+        const esFormularioDesactivar =
+            document.getElementById("desactivar_usuario") !== null;
+        const esUsuarioSesion =
+            usuarioSesionActual && user.id === usuarioSesionActual.id;
+
+        if (user.activo &&
+            (!esFormularioDesactivar || !esUsuarioSesion)) {
+            const opcion = document.createElement("option");
+            opcion.value = user.id;
+            opcion.textContent = `${user.nombre} ${user.apellido || ""}`.trim();
+            selectUsuarioActivo.appendChild(opcion);
+        }
+    }
+}
+
 const formulario_activar_usuario = document.getElementById("activar_usuario");
 if (formulario_activar_usuario) {
     formulario_activar_usuario.addEventListener("submit", function (event) {
         event.preventDefault();
-        const id = Number(document.getElementById("id_usuario").value);
+        const id = Number(document.getElementById("id_usuario_eliminado").value);
         const usuarioExiste = usuarios.some(usuario => usuario.id === id && !usuario.activo);
         if (!Number.isInteger(id) || !usuarioExiste) {
             alert("No existe ningún usuario con ese ID o ya está activo.");
@@ -41,8 +87,13 @@ const formulario_desactivar_usuario = document.getElementById("desactivar_usuari
 if (formulario_desactivar_usuario) {
     formulario_desactivar_usuario.addEventListener("submit", function (event) {
         event.preventDefault();
-        const id = Number(document.getElementById("id_usuario").value);
+        const id = Number(document.getElementById("id_usuario_activo").value);
         const usuarioExiste = usuarios.some(usuario => usuario.id === id && usuario.activo);
+        const esUsuarioActual = usuarioSesionActual && id === usuarioSesionActual.id;
+        if (esUsuarioActual) {
+            alert("No puedes desactivar el usuario que tiene la sesión actual.");
+            return;
+        }
         if (!Number.isInteger(id) || !usuarioExiste) {
             alert("No existe ningún usuario con ese ID o ya está inactivo.");
             return;
@@ -60,7 +111,7 @@ const formulario_modificar_usuario = document.getElementById("modificar_usuario"
 if (formulario_modificar_usuario) {
     formulario_modificar_usuario.addEventListener("submit", function (event) {
         event.preventDefault();
-        const id = Number(document.getElementById("id_usuario").value);
+        const id = Number(document.getElementById("id_usuario_activo").value);
         const usuarioExiste = usuarios.some(usuario => usuario.id === id && usuario.activo);
         if (!Number.isInteger(id) || !usuarioExiste) {
             alert("No existe ningún usuario con ese ID.");
@@ -78,7 +129,7 @@ if (formulario_modificar_usuario) {
         if(document.getElementById("email").value !== "") {
             email = document.getElementById("email").value;
         }
-        let contraseña = usuarios.find(usuario => usuario.id === id).contraseña;
+        let contraseña = usuarios.find(usuario => usuario.id === id).password;
         if(document.getElementById("contraseña").value !== "") {
             contraseña = document.getElementById("contraseña").value;
         }
@@ -102,7 +153,7 @@ function modificarUsuario(id, nombre, apellido, email, contraseña, rol, telefon
         usuario.nombre = nombre;
         usuario.apellido = apellido;
         usuario.email = email;
-        usuario.contraseña = contraseña;
+        usuario.password = contraseña;
         usuario.rol = rol;
         usuario.telefono = telefono;
     }
@@ -131,7 +182,7 @@ if (contenedorTarjetas) {
             <h4>${usuarioActual.nombre} ${usuarioActual.apellido}</h4>
             <p><strong>Id:</strong> ${usuarioActual.id}</p>
             <p><strong>Email:</strong> ${usuarioActual.email}</p>
-            <p><strong>Contraseña:</strong> ${usuarioActual.contraseña}</p>
+            <p><strong>Contraseña:</strong> ${"No visible"}</p>
             <p><strong>Rol:</strong> ${usuarioActual.rol}</p>
             <p><strong>Teléfono:</strong> ${usuarioActual.telefono}</p>
         `;
