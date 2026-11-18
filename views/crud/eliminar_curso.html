@@ -60,8 +60,10 @@
 
         <form class="formulario_base" id="eliminar_curso" action="#" method="post">
         <!-- Aqui importante eliminar el atributo id ="nombre" para que el input pille la etiqueta. -->
-        <label for="id_curso">Id del curso:*</label>
-        <input type="numeric" id="id_curso" name="id_curso" placeholder="Id del curso" required>
+        <label for="id_curso">Id del curso que se quiere eliminar:*</label>
+        <select id="id_curso" name="id_curso" required>
+            <option value="" selected>Selecciona un curso</option>
+        </select>
 
         <button type="button" onclick="window.location.href='../gestiones_administrador/gestion_cursos.html'">Cancelar</button>
         <button type="submit">Eliminar curso</button> 

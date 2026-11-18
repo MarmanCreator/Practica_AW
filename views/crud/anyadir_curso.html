@@ -79,10 +79,14 @@
         <input type="numeric" id="plazas" name="plazas" placeholder="Número de plazas" required>
 
         <label for="id_aula">Id del aula asignada:*</label>
-        <input type="numeric" id="id_aula" name="id_aula" placeholder="Id del aula asignada" required>
+        <select id="id_aula" name="id_aula" required>
+            <option value="" selected>Selecciona un aula</option>
+        </select>
 
         <label for="id_docente">Id del docente asignado:*</label>
-        <input type="numeric" id="id_docente" name="id_docente" placeholder="Id del docente asignado" required>
+        <select id="id_docente" name="id_docente" required>
+            <option value="" selected>Selecciona un docente</option>
+        </select>
 
         <label for="dias">Días:*</label>
         <label><input type="checkbox" name="dias" value="lunes"> Lunes</label>

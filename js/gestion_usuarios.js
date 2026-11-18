@@ -6,22 +6,29 @@ const usuariosGuardados = localStorage.getItem("usuarios");
 const usuarios = usuariosGuardados
     ? JSON.parse(usuariosGuardados)
     : [
-        // { lo dejo como ejemplo para saber que variables tiene cada usuario
-        //     id: 0,
-        //     nombre: "Admin",
-        //     apellido: "Molon",
-        //     email: "garcia@example.com",
-        //     contraseña: "Ejemplo",
-        //     rol: "admin",
-        //     telefono: "123456789",
-        //     activo: true
-        // }
+        {
+            id: 0,
+            nombre: "Admin",
+            apellido: "Molon",
+            email: "admin@admin.es",
+            password: "1234",
+            rol: "administrador",
+            telefono: "123456789",
+            activo: true
+        },
+        {
+            id: 1,
+            nombre: "User",
+            apellido: "Molon",
+            email: "user@user.es",
+            password: "1234",
+            rol: "estudiante",
+            telefono: "123456789",
+            activo: true
+        }
 ];
 
-for (const usuario of usuarios) {
-    usuario.password = usuario.password ?? usuario.contraseña ?? "";
-    usuario.telefono = usuario.telefono ?? "";
-}
+localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
 const usuarioSesionGuardado = sessionStorage.getItem("usuarioActivo");
 const usuarioSesionActual = usuarioSesionGuardado
@@ -129,9 +136,9 @@ if (formulario_modificar_usuario) {
         if(document.getElementById("email").value !== "") {
             email = document.getElementById("email").value;
         }
-        let contraseña = usuarios.find(usuario => usuario.id === id).password;
-        if(document.getElementById("contraseña").value !== "") {
-            contraseña = document.getElementById("contraseña").value;
+        let password = usuarios.find(usuario => usuario.id === id).password;
+        if(document.getElementById("password").value !== "") {
+            password = document.getElementById("password").value;
         }
         let rol = usuarios.find(usuario => usuario.id === id).rol;
         if(document.getElementById("rol").value !== "") {
@@ -141,19 +148,19 @@ if (formulario_modificar_usuario) {
         if(document.getElementById("telefono").value !== "") {
             telefono = document.getElementById("telefono").value;
         }
-        modificarUsuario(id, nombre, apellido, email, contraseña, rol, telefono);
+        modificarUsuario(id, nombre, apellido, email, password, rol, telefono);
         localStorage.setItem("usuarios", JSON.stringify(usuarios));
         window.location.href = "../gestiones_administrador/gestion_usuarios.html";
 
     });
 }
-function modificarUsuario(id, nombre, apellido, email, contraseña, rol, telefono) {
+function modificarUsuario(id, nombre, apellido, email, password, rol, telefono) {
     const usuario = usuarios.find(usuario => usuario.id === id);
     if (usuario) {
         usuario.nombre = nombre;
         usuario.apellido = apellido;
         usuario.email = email;
-        usuario.password = contraseña;
+        usuario.password = password;
         usuario.rol = rol;
         usuario.telefono = telefono;
     }
