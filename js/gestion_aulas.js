@@ -81,6 +81,14 @@ if (formulario_modificar_aula) {
         const planta = document.getElementById("planta").value;
         const capacidad = document.getElementById("capacidad").value;
 
+        //Esta linea establece lo que se puede usar en los campos de nombre y apellido.
+        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        //Aquí comprobamos que no hayn metido cosas raras en el nombre/apellido. 
+        if (!regexLetras.test(nombre) || !regexLetras.test(apellido)) {
+            alert("Error: El nombre y los apellidos solo pueden contener letras y espacios.");
+            return; // Detenemos el envío del formulario inmediatamente
+        }
+        
         if (nombre !== "") aula.nombre = nombre;
         if (edificio !== "") aula.edificio = edificio;
         if (planta !== "") aula.planta = planta;

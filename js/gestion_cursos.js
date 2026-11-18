@@ -88,9 +88,9 @@ const formulario_anyadir_curso = document.getElementById("añadir_curso");
 if (formulario_anyadir_curso) {
     formulario_anyadir_curso.addEventListener("submit", async function (event) { //el async es para poder usar await dentro
         event.preventDefault();
-        const nombre = document.getElementById("nombre").value;
-        const categoria = document.getElementById("categoría").value;
-        const descripcion = document.getElementById("descripcion").value;
+        const nombre = sanitizarEntrada(document.getElementById("nombre").value);
+        const categoria = sanitizarEntrada(document.getElementById("categoría").value);
+        const descripcion = sanitizarEntrada(document.getElementById("descripcion").value);
         const plazas = document.getElementById("plazas").value;
         const id_aula = document.getElementById("id_aula").value;
         const id_docente = document.getElementById("id_docente").value;
@@ -100,6 +100,23 @@ if (formulario_anyadir_curso) {
         const hora_final = document.getElementById("hora_final").value;
         const fecha_inicio = document.getElementById("fecha_inicio").value;
         const fecha_fin = document.getElementById("fecha_fin").value;
+
+        //Esta linea establece lo que se puede usar en los campos.
+        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        //Aquí comprobamos que no hayn metido cosas raras.
+        if (!regexLetras.test(nombre) || !regexLetras.test(categoria)) {
+            alert("Error: En estos campos solo están permidtidos letras y espacios.");
+            return; // Detenemos el envío del formulario inmediatamente
+        }
+
+        //Lo mismo para números.
+        const regexNumeros = /^\d+$/;
+        if (!regexNumeros.test(plazas) || !regexNumeros.test(id_aula) || !regexNumeros.test(id_docente)) {
+            alert("Error: En estos campos solo están permitidos números enteros positivos.");
+            return;
+        }
+
+
         if (dias.length === 0) {
             alert("Debes seleccionar al menos un día.");
             return;
@@ -201,14 +218,18 @@ const formulario_modificar_curso = document.getElementById("modificar_curso");
 if (formulario_modificar_curso) {
     formulario_modificar_curso.addEventListener("submit", async function (event) {
         event.preventDefault();
-        const id = Number(document.getElementById("id_curso").value);
+
+        const id = Number(sanitizarEntrada(document.getElementById("id_curso").value));
         const cursoExiste = cursos.some(curso => curso.id === id && curso.estado);
         if (!Number.isInteger(id) || !cursoExiste) {
             alert("No existe ningún curso con ese ID.");
             return;
         }
+
         const curso = cursos.find(cursoActual => cursoActual.id === id);
-        const nombreIntroducido = document.getElementById("nombre").value.trim();
+    
+
+        const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
         //el .trim() es para eliminar los espacios en blanco al principio y al final del string
         let nombre = curso.nombre;
         if (nombreIntroducido !== "") {
@@ -223,13 +244,15 @@ if (formulario_modificar_curso) {
             nombre = nombreIntroducido;
         }
         let categoria = curso.categoria;
-        if (document.getElementById("categoría").value.trim() !== "") {
-            categoria = document.getElementById("categoría").value;
+        if (sanitizarEntrada(document.getElementById("categoría").value.trim()) !== "") { 
+            categoria = sanitizarEntrada(document.getElementById("categoría").value);
         }
         let descripcion = curso.descripcion;
-        if (document.getElementById("descripcion").value.trim() !== "") {
-            descripcion = document.getElementById("descripcion").value;
+        if (sanitizarEntrada(document.getElementById("descripcion").value.trim()) !== "") {
+            descripcion = sanitizarEntrada(document.getElementById("descripcion").value);
         }
+
+
         let plazas = curso.plazas;
         const plazasIntroducidas = document.getElementById("plazas").value.trim();
         if (plazasIntroducidas !== "") {
@@ -256,6 +279,7 @@ if (formulario_modificar_curso) {
 
         let id_docente = curso.id_docente;
         const idDocenteIntroducido = document.getElementById("id_docente").value.trim();
+
         if (idDocenteIntroducido !== "") {
             id_docente = Number(idDocenteIntroducido);
             if (!Number.isInteger(id_docente)) {
@@ -346,6 +370,19 @@ if (formulario_modificar_curso) {
             }
         }
 
+        //VALIDACION DE SEGURIDAD 
+        const regexNumeros = /^\d+$/;
+        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
+        if(!regexNumeros.test(idAulaIntroducido) || !regexNumeros.test(plazasIntroducidas) || !regexNumeros.test(idDocenteIntroducido)){
+            alert("Error: En estos campos solo están permitidos números positivos.")
+        }
+
+        if(!regexLetras.test(nombre) || !regexLetras.test(categoria)){
+            alert("Error: En estos campos solo están permitidos letras y espacios")
+        }
+
+
         modificarCurso(id, nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen);
         localStorage.setItem("cursos", JSON.stringify(cursos));
         window.location.href = "../gestiones_administrador/gestion_cursos.html";
@@ -418,4 +455,16 @@ if (contenedorTarjetas) {
 
     contenedorTarjetas.replaceChildren(fragmento);
     contenedorTarjetas.prepend(tituloCursos, totalCursos);
+}
+
+
+
+// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
+function sanitizarEntrada(texto) {
+    return texto
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }

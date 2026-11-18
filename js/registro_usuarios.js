@@ -17,13 +17,21 @@ if(formularioRegistro){
         
         //Vamos leyendo los campos 
         //.trim() limpia la entrada de datos, elimina los espacios en blanco. 
-        const nombre = document.getElementById("nombre").value.trim();  
-        const apellido = document.getElementById("apellido").value.trim(); 
-        const email = document.getElementById("email").value.trim(); 
+        const nombre = sanitizarEntrada(document.getElementById("nombre").value.trim());  
+        const apellido = sanitizarEntrada(document.getElementById("apellido").value.trim()); 
+        const email = sanitizarEntrada(document.getElementById("email").value.trim()); 
         const password = document.getElementById("password").value; 
         const confirPassword = document.getElementById("confirm_password").value; 
         const rol = document.getElementById("rol").value; 
         
+        //Esta linea establece lo que se puede usar en los campos de nombre y apellido.
+        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        //Aquí comprobamos que no hayn metido cosas raras en el nombre/apellido. 
+        if (!regexLetras.test(nombre) || !regexLetras.test(apellido)) {
+            alert("Error: El nombre y los apellidos solo pueden contener letras y espacios.");
+            return; // Detenemos el envío del formulario inmediatamente
+        }
+
         //Compribacion basica temporal de las contraseñas. Muestra pantallita de error. 
         if(password !== confirPassword){
             alert("Las contraseñas no coinciden. "); 
@@ -78,8 +86,19 @@ function AnyadirUsuario(nombre, apellido, email, password, rol){
 }
 
 
-
-
+// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
+function sanitizarEntrada(texto) {
+    return texto
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+//Basicamente aqui lo que hacemos es que el texto que introduzca el usuario 
+//en nuestro formulario, antes de procesarlo, vamos a sustituir algunos caracteres
+//que sabemos que son utilizados en instrucciones html, por texto plano. 
+//De esta forma el navegador no interpreta <script> como una orden por ejemplo 
 
 
 //          FUNCIONAMIENTO DE GETELEMENTBYID()
