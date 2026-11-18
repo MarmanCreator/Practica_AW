@@ -14,7 +14,7 @@ const cursos = cursosGuardados
         id_aula: 0,
         id_docente: 0,
         plazas: 20,
-        dias: ["miércoles", "jueves", "viernes"],
+        dias: ["miercoles", "jueves", "viernes"],
         hora_inicio: "10:00",
         hora_final: "12:00",
         fecha_inicio: "2026-09-01",
@@ -408,12 +408,16 @@ if (formulario_modificar_curso) {
         const regexNumeros = /^\d+$/;
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
 
-        if(!regexNumeros.test(idAulaIntroducido) || !regexNumeros.test(plazasIntroducidas) || !regexNumeros.test(idDocenteIntroducido)){
-            alert("Error: En estos campos solo están permitidos números positivos.")
+        if ((idAulaIntroducido !== "" && !regexNumeros.test(idAulaIntroducido)) ||
+            (plazasIntroducidas !== "" && !regexNumeros.test(plazasIntroducidas)) ||
+            (idDocenteIntroducido !== "" && !regexNumeros.test(idDocenteIntroducido))) {
+            alert("Error: En estos campos solo están permitidos números positivos.");
+            return;
         }
 
-        if(!regexLetras.test(nombre) || !regexLetras.test(categoria)){
-            alert("Error: En estos campos solo están permitidos letras y espacios")
+        if (!regexLetras.test(nombre) || !regexLetras.test(categoria)) {
+            alert("Error: En estos campos solo están permitidos letras y espacios.");
+            return;
         }
 
 

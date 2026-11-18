@@ -27,8 +27,10 @@ if(formularioRegistro){
         
         //Esta linea establece lo que se puede usar en los campos de nombre y apellido.
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-        //Aquí comprobamos que no hayn metido cosas raras en el nombre/apellido. 
-        if (!regexLetras.test(nombre) || !regexLetras.test(apellido)) {
+
+        if (!regexLetras.test(nombre) ||
+            (apellido !== "" && !regexLetras.test(apellido))) {
+
             alert("Error: El nombre y los apellidos solo pueden contener letras y espacios.");
             return; // Detenemos el envío del formulario inmediatamente
         }
