@@ -49,19 +49,14 @@ if (formulario_anyadir_aula) {
     formulario_anyadir_aula.addEventListener("submit", event => {
         event.preventDefault();
 
-        // 1. LECTURA Y SANITIZACIÓN
         const nombre = sanitizarEntrada(document.getElementById("nombre").value.trim());
         const edificio = sanitizarEntrada(document.getElementById("edificio").value.trim());
         const plantaInput = document.getElementById("planta").value.trim();
         const capacidadInput = document.getElementById("capacidad").value.trim();
 
 
-        // 2. VALIDACIONES DE SEGURIDAD (REGEX)
-        // Letras, números y espacios (ej: "Aula 101", "Edificio B")
         const regexAlfanumerico = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/; 
-        // Permite números enteros positivos y negativos (ej: -1 para sótanos)
         const regexPlanta = /^-?\d+$/; 
-        // Solo números enteros positivos
         const regexCapacidad = /^\d+$/; 
 
         if (!regexAlfanumerico.test(nombre) || !regexAlfanumerico.test(edificio)) {
@@ -79,7 +74,6 @@ if (formulario_anyadir_aula) {
             return;
         }
 
-        // 3. EJECUCIÓN (Solo si supera las validaciones)
         aulas.push({
             id: aulas.reduce((mayorId, aula) => Math.max(mayorId, aula.id), -1) + 1,
             nombre: nombre,
@@ -124,25 +118,21 @@ if (formulario_modificar_aula) {
             return;
         }
 
-        // 1. LECTURA Y SANITIZACIÓN
         const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
         const edificioIntroducido = sanitizarEntrada(document.getElementById("edificio").value.trim());
         const plantaIntroducida = document.getElementById("planta").value.trim();
         const capacidadIntroducida = document.getElementById("capacidad").value.trim();
 
-        // 2. VALIDACIONES DE SEGURIDAD (REGEX)
         const regexNumeros = /^\d+$/; 
         const regexAlfanumerico = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/; 
         const regexPlanta = /^-?\d+$/;
 
-        // Comprobación de campos de texto (Solo si han escrito algo nuevo)
         if ((nombreIntroducido !== "" && !regexAlfanumerico.test(nombreIntroducido)) || 
             (edificioIntroducido !== "" && !regexAlfanumerico.test(edificioIntroducido))) {
             alert("Error: El nombre y el edificio solo pueden contener letras, números y espacios.");
             return; 
         }
 
-        // Comprobación de campos numéricos (Solo si han escrito algo nuevo)
         if (plantaIntroducida !== "" && !regexPlanta.test(plantaIntroducida)) {
             alert("Error: La planta debe ser un número entero (se admiten negativos para sótanos).");
             return;
@@ -199,7 +189,6 @@ if (contenedorTarjetas) {
 }
 
 
-// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
 function sanitizarEntrada(texto) {
     return texto
         .replace(/&/g, "&amp;")

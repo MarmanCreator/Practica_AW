@@ -118,29 +118,25 @@ const formulario_modificar_usuario = document.getElementById("modificar_usuario"
 if (formulario_modificar_usuario) {
     formulario_modificar_usuario.addEventListener("submit", function (event) {
         event.preventDefault();
-        // 1. LECTURA Y SANITIZACIÓN
         const idIntroducido = document.getElementById("id_usuario_activo").value.trim();
         const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
         const apellidoIntroducido = sanitizarEntrada(document.getElementById("apellido").value.trim());
         const emailIntroducido = sanitizarEntrada(document.getElementById("email").value.trim());
-        const contraseñaIntroducida = document.getElementById("contraseña").value; // La contraseña no se sanitiza ni se le hace trim
+        const contraseñaIntroducida = document.getElementById("contraseña").value; 
         const rolIntroducido = sanitizarEntrada(document.getElementById("rol").value.trim());
         const telefonoIntroducido = document.getElementById("telefono").value.trim();
 
-        // 2. VALIDACIONES DE SEGURIDAD (REGEX Y EXISTENCIA)
         const regexNumeros = /^\d+$/;
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const regexTelefono = /^[\d\s]+$/;
 
-        // Validamos el ID estrictamente
         if (!regexNumeros.test(idIntroducido)) {
             alert("Error: El ID del usuario debe ser un número entero positivo.");
             return;
         }
         
         const id = Number(idIntroducido);
-        // Buscamos el usuario UNA sola vez (más eficiente)
         const usuario = usuarios.find(u => u.id === id);
         
         if (!usuario || !usuario.activo) {
@@ -148,14 +144,12 @@ if (formulario_modificar_usuario) {
             return;
         }
 
-        // Validamos campos de texto (Solo si escriben algo nuevo)
         if ((nombreIntroducido !== "" && !regexLetras.test(nombreIntroducido)) || 
             (apellidoIntroducido !== "" && !regexLetras.test(apellidoIntroducido))) {
             alert("Error: En los campos de nombre y apellido solo están permitidas letras y espacios.");
             return;
         }
 
-        // Validamos datos de contacto (Solo si escriben algo nuevo)
         if (emailIntroducido !== "" && !regexEmail.test(emailIntroducido)) {
             alert("Error: El formato del correo electrónico no es válido.");
             return;
@@ -168,7 +162,6 @@ if (formulario_modificar_usuario) {
 
         }
         
-        // Validación del rol (evitar que se inventen roles inyectando código)
         const rolesValidos = ["administrador", "docente", "estudiante"];
         if (rolIntroducido !== "" && !rolesValidos.includes(rolIntroducido.toLowerCase())) {
              alert("Error: El rol introducido no es válido.");
@@ -176,7 +169,6 @@ if (formulario_modificar_usuario) {
         }
 
 
-        // 3. ASIGNACIÓN DE VALORES (Mantenemos los antiguos, o pisamos con los nuevos)
         let nombre = usuario.nombre;
         if (nombreIntroducido !== "") nombre = nombreIntroducido;
         
@@ -186,7 +178,7 @@ if (formulario_modificar_usuario) {
         let email = usuario.email;
         if (emailIntroducido !== "") email = emailIntroducido;
         
-        let contraseña = usuario.password || usuario.contraseña; // Por si lo tienes guardado como password o contraseña
+        let contraseña = usuario.password || usuario.contraseña; 
         if (contraseñaIntroducida !== "") contraseña = contraseñaIntroducida;
         
         let rol = usuario.rol;
@@ -195,7 +187,6 @@ if (formulario_modificar_usuario) {
         let telefono = usuario.telefono;
         if (telefonoIntroducido !== "") telefono = telefonoIntroducido;
 
-        // 4. GUARDADO Y REDIRECCIÓN
         modificarUsuario(id, nombre, apellido, email, contraseña, rol, telefono);
 
         localStorage.setItem("usuarios", JSON.stringify(usuarios));
@@ -250,7 +241,6 @@ if (contenedorTarjetas) {
 }
 
 
-// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
 function sanitizarEntrada(texto) {
     return texto
         .replace(/&/g, "&amp;")

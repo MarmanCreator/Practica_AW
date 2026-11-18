@@ -54,31 +54,26 @@ if (formularioAnyadirDocente) {
     formularioAnyadirDocente.addEventListener("submit", event => {
         event.preventDefault();
         
-       // 1. LECTURA Y SANITIZACIÓN
         const nombre = sanitizarEntrada(document.getElementById("nombre").value.trim());
         const apellido = sanitizarEntrada(document.getElementById("apellido").value.trim());
         const especialidad = sanitizarEntrada(document.getElementById("especialidad").value.trim()); 
         const email = sanitizarEntrada(document.getElementById("email").value.trim());
         const telefono = document.getElementById("telefono").value.trim();
 
-        // 2. VALIDACIONES DE SEGURIDAD (REGEX)
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         const regexTelefono = /^[\d\s]+$/; 
         const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
 
-        // Agrupamos la validación de todos los campos de texto
         if (!regexLetras.test(nombre) || !regexLetras.test(apellido) || !regexLetras.test(especialidad)) {
             alert("Error: En los campos de nombre, apellido y especialidad solo están permitidos letras y espacios.");
             return;
         }
 
-        // Agrupamos la validación de los datos de contacto
         if (!regexEmail.test(email) || !regexTelefono.test(telefono)) {
             alert("Error: El formato del correo electrónico o del teléfono no es válido.");
             return;
         }
 
-        // 3. EJECUCIÓN (Solo si ha superado todos los return anteriores)
         docentes.push({
             id: docentes.reduce((mayorId, docente) => Math.max(mayorId, docente.id), -1) + 1,
             nombre: nombre,
@@ -123,7 +118,6 @@ if (formularioModificarDocente) {
             alert("No existe ningún docente con ese ID.");
             return;
         }
-        // 1. LECTURA Y SANITIZACIÓN
         const idIntroducido = document.getElementById("id_docente").value.trim();
         const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
         const apellidoIntroducido = sanitizarEntrada(document.getElementById("apellido").value.trim());
@@ -131,13 +125,11 @@ if (formularioModificarDocente) {
         const emailIntroducido = sanitizarEntrada(document.getElementById("email").value.trim());
         const telefonoIntroducido = document.getElementById("telefono").value.trim();
 
-        // 2. VALIDACIONES DE SEGURIDAD (REGEX)
         const regexNumeros = /^\d+$/;
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         const regexTelefono = /^[\d\s]+$/;
         const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-        // Comprobación de campos de texto agrupados (Solo si han escrito algo nuevo)
         if ((nombreIntroducido !== "" && !regexLetras.test(nombreIntroducido)) || 
             (apellidoIntroducido !== "" && !regexLetras.test(apellidoIntroducido)) || 
             (especialidadIntroducida !== "" && !regexLetras.test(especialidadIntroducida))) {
@@ -145,7 +137,6 @@ if (formularioModificarDocente) {
             return;
         }
 
-        // Comprobación de datos de contacto (Solo si han escrito algo nuevo)
         if (emailIntroducido !== "" && !regexEmail.test(emailIntroducido)) {
             alert("Error: El formato del correo electrónico no es válido.");
             return;
@@ -202,7 +193,6 @@ if (contenedorTarjetas) {
     contenedorTarjetas.prepend(titulo, total);
 }
 
-// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
 function sanitizarEntrada(texto) {
     return texto
         .replace(/&/g, "&amp;")

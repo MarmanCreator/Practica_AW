@@ -21,7 +21,6 @@ const cursosGuardados = localStorage.getItem("cursos");
 const cursos = cursosGuardados ? JSON.parse(cursosGuardados) : [ ];
 
 
-// Esto de abajo es para rellenar el select de matrículas en el formulario de modificar matrícula, mostrando solo las matrículas activas.
 const selectMatricula = document.getElementById("matricula");
 
 if (selectMatricula) {
@@ -36,7 +35,6 @@ if (selectMatricula) {
         }
     }
 }
-// Esto de abajo es para rellenar el select de usuarios en el formulario de añadir matrícula, mostrando solo los usuarios activos que no sean administradores.
 const selectUsuario = document.getElementById("usuario");
 
 if (selectUsuario) {
@@ -51,7 +49,6 @@ if (selectUsuario) {
         }
     }
 }
-//y esto para rellenar el select de cursos en el formulario de añadir matrícula, mostrando solo los cursos activos.
 const selectCurso = document.getElementById("curso");
 if (selectCurso) {
     for (let i = 0; i < cursos.length; i++) {
