@@ -62,10 +62,14 @@
         <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
 
         <label for="usuario">Usuario:*</label>
-        <select id="usuario" name="usuario" required></select>
+        <select id="usuario" name="usuario" required>
+            <option value="" disabled selected>Selecciona un usuario.</option>
+        </select>
 
-        <label for="curso">Curso:*</label>
-        <select id="curso" name="curso" required></select>
+        <label for="curso">Curso:*</label>    
+        <select id="curso" name="curso" required>
+            <option value="" disabled selected>Selecciona un curso.</option>
+        </select>
 
         <button type="button" onclick="window.location.href='../gestiones_administrador/gestion_matriculas.html'">Cancelar</button>
         <button type="submit">Añadir matricula</button> 
