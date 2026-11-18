@@ -32,7 +32,7 @@ const docentes = docentesGuardados
         }
     ];
 
-
+localStorage.setItem("docentes", JSON.stringify(docentes));
 
 const selectDocente = document.getElementById("id_docente");
 

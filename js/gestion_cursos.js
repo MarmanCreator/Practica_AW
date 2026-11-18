@@ -55,6 +55,7 @@ const cursos = cursosGuardados
         estado: true
     }
 ];
+localStorage.setItem("cursos", JSON.stringify(cursos));
 
 const aulasGuardadas = localStorage.getItem("aulas");
 
@@ -67,6 +68,47 @@ const docentes = docentesGuardados ? JSON.parse(docentesGuardados): [ ];
 const matriculasGuardadas = localStorage.getItem("matriculas");
 
 const matriculas = matriculasGuardadas ? JSON.parse(matriculasGuardadas) : [];
+
+
+
+const selectAula = document.getElementById("id_aula");
+
+if (selectAula) {
+    for (let i = 0; i < aulas.length; i++) {
+        const aula = aulas[i];
+        const opcion = document.createElement("option");
+        opcion.value = aula.id;
+        opcion.textContent = `${aula.nombre}`.trim();
+        selectAula.appendChild(opcion);
+    }
+}
+const selectDocente = document.getElementById("id_docente");
+if (selectDocente) {
+    for (let i = 0; i < docentes.length; i++) {
+        const doc = docentes[i];
+
+        if (doc.activo) {
+            const opcion = document.createElement("option");
+            opcion.value = doc.id;
+            opcion.textContent = `${doc.nombre} ${doc.apellido || ""}`.trim();
+            selectDocente.appendChild(opcion);
+        }
+    }
+}
+//y esto para rellenar el select de cursos en el formulario de añadir matrícula, mostrando solo los cursos activos.
+const selectCurso = document.getElementById("id_curso");
+if (selectCurso) {
+    for (let i = 0; i < cursos.length; i++) {
+        const curso = cursos[i];
+
+        if (curso.estado) {
+            const opcion = document.createElement("option");
+            opcion.value = curso.id;
+            opcion.textContent = `${curso.nombre}`.trim();
+            selectCurso.appendChild(opcion);
+        }
+    }
+}
 
 function leerImagenComoDataURL(archivo) {
     // Si no se selecciona ninguna imagen, se guarda una cadena vacía.
@@ -115,7 +157,7 @@ if (formulario_anyadir_curso) {
 
         //Lo mismo para números.
         const regexNumeros = /^\d+$/;
-        if (!regexNumeros.test(plazas) || !regexNumeros.test(id_aula) || !regexNumeros.test(id_docente)) {
+        if (!regexNumeros.test(plazas)) {
             alert("Error: En estos campos solo están permitidos números enteros positivos.");
             return;
         }
@@ -131,18 +173,6 @@ if (formulario_anyadir_curso) {
         }
         if (fecha_inicio >= fecha_fin) {
             alert("La fecha de inicio debe ser anterior a la fecha de finalización.");
-            return;
-        }
-        if (!Number.isInteger(Number(id_aula)) || !Number.isInteger(Number(id_docente))) {
-            alert("El ID del aula y el ID del docente deben ser números enteros.");
-            return;
-        }
-        if (!aulas.some(aula => aula.id === Number(id_aula))){
-            alert("No existe ningún aula con ese ID.");
-            return;
-        }
-        if (!docentes.some(docente => docente.id === Number(id_docente) && docente.activo)){
-            alert("No existe ningún docente con ese ID.");
             return;
         }
         if(!Number.isInteger(Number(plazas)) || Number(plazas) < 0) {
@@ -479,7 +509,7 @@ if (contenedorTarjetas) {
                 const nuevaMatricula = {
                     id: matriculas.reduce((mayorId, matricula) => Math.max(mayorId, matricula.id), -1) + 1,
                     id_curso: cursoActual.id,
-                    id_alumno: usuarioActual.id,
+                    id_usuario: usuarioActual.id,
                     fecha_matricula: new Date().toLocaleDateString("es-ES"),
                     activo: true
                 };

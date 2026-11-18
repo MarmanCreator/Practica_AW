@@ -28,7 +28,7 @@ const aulas = aulasGuardadas
             activo: true
         }
     ];
-
+localStorage.setItem("aulas", JSON.stringify(aulas));
 
 
 const selectAula = document.getElementById("id_aula");
