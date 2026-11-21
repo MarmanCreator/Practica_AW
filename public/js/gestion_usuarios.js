@@ -83,7 +83,7 @@ if (formulario_activar_usuario) {
         }
         ActivarUsuario(id);
         localStorage.setItem("usuarios", JSON.stringify(usuarios));
-        window.location.href = "../gestiones_administrador/gestion_usuarios.html";
+        window.location.href = "/gestiones_administrador/gestion_usuarios.html";
     });
 }
 function ActivarUsuario(id) {
@@ -107,7 +107,7 @@ if (formulario_desactivar_usuario) {
         }
         DesactivarUsuario(id);
         localStorage.setItem("usuarios", JSON.stringify(usuarios));
-        window.location.href = "../gestiones_administrador/gestion_usuarios.html";
+        window.location.href = "/gestiones_administrador/gestion_usuarios.html";
     });
 }
 function DesactivarUsuario(id) {
@@ -201,7 +201,7 @@ if (formulario_modificar_usuario) {
         modificarUsuario(id, nombre, apellido, email, contraseña, rol, telefono);
 
         localStorage.setItem("usuarios", JSON.stringify(usuarios));
-        window.location.href = "../gestiones_administrador/gestion_usuarios.html";
+        window.location.href = "/gestiones_administrador/gestion_usuarios.html";
     });
 }
 function modificarUsuario(id, nombre, apellido, email, password, rol, telefono) {

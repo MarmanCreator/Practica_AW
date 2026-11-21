@@ -54,13 +54,13 @@ if(formularioRegistro){
 
 
         // Redirigimos a la página unificada tras el registro exitoso
-        window.location.href = "inicio_sesion.html";
+        window.location.href = "/inicio_sesion.html";
 
         // //Reedirigimos en fncion del rol.
         // if(rol == "estudiante"){
-        //     window.location.href = "menu_inicio_alumno.html";
+        //     window.location.href = "/menu_inicio_alumno.html";
         // }else if(rol === "administrador"){
-        //     window.location.href = "menu_inicio_admin.html"; 
+        //     window.location.href = "/menu_inicio_admin.html"; 
         // }
          }
     }) 

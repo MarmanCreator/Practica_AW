@@ -90,7 +90,7 @@ if (formulario_anyadir_aula) {
         });
 
         localStorage.setItem("aulas", JSON.stringify(aulas));
-        window.location.href = "../gestiones_administrador/gestion_aulas.html";
+        window.location.href = "/gestiones_administrador/gestion_aulas.html";
     });
 }
 
@@ -108,7 +108,7 @@ if (formulario_eliminar_aula) {
 
         aula.activo = false;
         localStorage.setItem("aulas", JSON.stringify(aulas));
-        window.location.href = "../gestiones_administrador/gestion_aulas.html";
+        window.location.href = "/gestiones_administrador/gestion_aulas.html";
     });
 }
 
@@ -161,7 +161,7 @@ if (formulario_modificar_aula) {
         if (capacidadIntroducida !== "") aula.capacidad = Number(capacidadIntroducida); 
 
         localStorage.setItem("aulas", JSON.stringify(aulas));
-        window.location.href = "../gestiones_administrador/gestion_aulas.html";
+        window.location.href = "/gestiones_administrador/gestion_aulas.html";
     });
 }
 

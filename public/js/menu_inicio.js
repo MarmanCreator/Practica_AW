@@ -14,17 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
             <article class="tarjeta">
                 <h3>Consulta nuestros cursos</h3>
                 <p>Descubre los cursos disponibles y sus plazas.</p>
-                <a href="catalogo_cursos.html">Ver cursos</a>
+                <a href="/catalogo_cursos.html">Ver cursos</a>
             </article>
             <article class="tarjeta">
                 <h3>Conoce al equipo docente</h3>
                 <p>Consulta la información de los docentes de la escuela.</p>
-                <a href="docentes.html">Ver docentes</a>
+                <a href="/docentes.html">Ver docentes</a>
             </article>
             <article class="tarjeta">
                 <h3>Gestiona tus matrículas</h3>
                 <p>Accede a tus matrículas y revisa tu formación.</p>
-                <a href="mis_matriculas.html">Ver mis matrículas</a>
+                <a href="/mis_matriculas.html">Ver mis matrículas</a>
             </article>
         </section>
     `;
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Usuario logueado: Mostramos botones útiles para él
         informacionInicio.innerHTML = `
             <h2>Accesos rápidos</h2>
-            <p>Revisa tus datos en el <a href="perfil.html">perfil</a> o consulta tus <a href="mis_matriculas.html">matrículas</a>.</p>
+            <p>Revisa tus datos en el <a href="/perfil.html">perfil</a> o consulta tus <a href="/mis_matriculas.html">matrículas</a>.</p>
             <p>Si has terminado, recuerda cerrar sesión por seguridad.</p>
             <button onclick="cerrarSesion()">Cerrar sesión</button>
         `;
@@ -44,8 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Visitante: Le ofrecemos registrarse o iniciar sesión
         informacionInicio.innerHTML = `
             <h2>Accesos rápidos</h2>
-            <p>¿Eres nuevo? Puedes <a href="registro.html">registrarte</a> o <a href="inicio_sesion.html">iniciar sesión</a>.</p>
-            <p>Si necesitas ayuda, visita la sección de <a href="formulario_contacto.html">contacto</a>.</p>
+            <p>¿Eres nuevo? Puedes <a href="/registro.html">registrarte</a> o <a href="/inicio_sesion.html">iniciar sesión</a>.</p>
+            <p>Si necesitas ayuda, visita la sección de <a href="/formulario_contacto.html">contacto</a>.</p>
         `;
     }
 });
@@ -74,17 +74,17 @@ document.addEventListener("DOMContentLoaded", () => {
 //             <article class="tarjeta">
 //                 <h3>Consulta nuestros cursos</h3>
 //                 <p>Descubre los cursos disponibles y sus plazas.</p>
-//                 <a href="catalogo_cursos.html">Ver cursos</a>
+//                 <a href="/catalogo_cursos.html">Ver cursos</a>
 //             </article>
 //             <article class="tarjeta">
 //                 <h3>Conoce al equipo docente</h3>
 //                 <p>Consulta la información de los docentes de la escuela.</p>
-//                 <a href="docentes.html">Ver docentes</a>
+//                 <a href="/docentes.html">Ver docentes</a>
 //             </article>
 //             <article class="tarjeta">
 //                 <h3>Gestiona tus matrículas</h3>
 //                 <p>Accede a tus matrículas y revisa tu formación.</p>
-//                 <a href="mis_matriculas.html">Ver mis matrículas</a>
+//                 <a href="/mis_matriculas.html">Ver mis matrículas</a>
 //             </article>
 //         </section>
 //     `;

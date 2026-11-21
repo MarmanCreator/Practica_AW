@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         // 4. Sincronizamos el formulario visualmente.
-        // Si estamos en la página "accesibilidad.html", queremos que
+        // Si estamos en la página "/accesibilidad.html", queremos que
         // las opciones seleccionadas coincidan con lo guardado.
         const formAccesibilidad = document.getElementById('form_accesibilidad');
         if (formAccesibilidad) {

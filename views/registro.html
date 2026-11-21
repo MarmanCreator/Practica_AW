@@ -9,13 +9,13 @@
         <title>Registro</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Para poner un logo simplemente sería cambiar la ruta de href.  -->
-        <link rel="icon" href="../recurso-imagenes/personas_2/steveCurros.png" type="image/PNG"> 
-        <link rel="stylesheet" href="../css/style.css"> 
-        <script src="../js/accesibilidad.js" defer></script>
+        <link rel="icon" href="/images/recurso-imagenes/personas_2/steveCurros.png" type="image/PNG"> 
+        <link rel="stylesheet" href="/css/style.css"> 
+        <script src="/js/accesibilidad.js" defer></script>
 
-        <script src="../js/registro_usuarios.js" defer></script>
+        <script src="/js/registro_usuarios.js" defer></script>
 
-        <script src="../js/sesion.js" defer></script>
+        <script src="/js/sesion.js" defer></script>
  </head>
 
 <!-- Comienza el cuarpo donde metemos el formulario -->
@@ -23,8 +23,8 @@
     <header>
             <h1>Web de administracion de escuela</h1>
     </header>
-    <a href="menu_inicio.html">>Inicio</a>
-    <a href="registro.html">>Registro</a>
+    <a href="/menu_inicio.html">>Inicio</a>
+    <a href="/registro.html">>Registro</a>
    
     <form class="formulario_base" id="registro" action="#" method="post">
         <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
@@ -52,11 +52,11 @@
             <option value="administrador">Administrador</option>
         </select>
         
-        <button type="button" onclick="window.location.href='menu_inicio.html'">Cancelar</button>
+        <button type="button" onclick="window.location.href = '/menu_inicio.html'">Cancelar</button>
         <button type="submit">Registrarse</button> 
     </form>
     <footer>Este es el pie de pagina de inicio (por completar)
-        <button type="button" onclick="window.location.href='formulario_contacto.html'">Contacta con nosotros</button>
+        <button type="button" onclick="window.location.href = '/formulario_contacto.html'">Contacta con nosotros</button>
 
     </footer>
 </body>

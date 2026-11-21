@@ -35,7 +35,7 @@ const cursos = cursosGuardados
         hora_final: "16:00",
         fecha_inicio: "2026-10-01",
         fecha_fin: "2027-01-31",
-        imagen: "../recurso-imagenes/vehiculos/byd_seal1.png",
+        imagen: "/images/recurso-imagenes/vehiculos/byd_seal1.png",
         estado: true
     },
     {
@@ -51,7 +51,7 @@ const cursos = cursosGuardados
         hora_final: "11:00",
         fecha_inicio: "2026-11-03",
         fecha_fin: "2027-01-15",
-        imagen: "../recurso-imagenes/vehiculos/byd_seal1.png",
+        imagen: "/images/recurso-imagenes/vehiculos/byd_seal1.png",
         estado: true
     }
 ];
@@ -200,7 +200,7 @@ if (formulario_anyadir_curso) {
         }
         AnyadirCurso(nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen);
         localStorage.setItem("cursos", JSON.stringify(cursos));
-        window.location.href = "../gestiones_administrador/gestion_cursos.html";
+        window.location.href = "/gestiones_administrador/gestion_cursos.html";
     });
 }
 function AnyadirCurso(nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen) {
@@ -243,7 +243,7 @@ if (formulario_eliminar_curso) {
             return;
         }
         localStorage.setItem("cursos", JSON.stringify(cursos));
-        window.location.href = "../gestiones_administrador/gestion_cursos.html";
+        window.location.href = "/gestiones_administrador/gestion_cursos.html";
 
     });
 }
@@ -423,7 +423,7 @@ if (formulario_modificar_curso) {
 
         modificarCurso(id, nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen);
         localStorage.setItem("cursos", JSON.stringify(cursos));
-        window.location.href = "../gestiones_administrador/gestion_cursos.html";
+        window.location.href = "/gestiones_administrador/gestion_cursos.html";
 
     });
 }

@@ -35,18 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
     //  una redirección por código (window.location.href) a la pantalla de login. Hacemos lo mismo 
     //si un estudiante intenta colarse en administracion.html
     const rutaActual = window.location.pathname;
-    const paginasPrivadas = ["mis_matriculas.html", "perfil.html", "administracion.html"];
+    const paginasPrivadas = ["/mis_matriculas.html", "/perfil.html", "/administracion.html"];
     
     const intentaAccesoPrivado = paginasPrivadas.some(pagina => rutaActual.includes(pagina));
     if (!usuarioActivo && intentaAccesoPrivado) {
         alert("Debes iniciar sesión para acceder a esta página.");
-        window.location.href = "inicio_sesion.html";
+        window.location.href = "/inicio_sesion.html";
         return; 
     }
 
-    if (usuarioActivo && usuarioActivo.rol !== "administrador" && rutaActual.includes("administracion.html")) {
+    if (usuarioActivo && usuarioActivo.rol !== "administrador" && rutaActual.includes("/administracion.html")) {
         alert("Acceso denegado: No tienes permisos de administrador.");
-        window.location.href = "menu_inicio.html";
+        window.location.href = "/menu_inicio.html";
         return;
     }
 
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //Utilizamos un bucle forEach para coger cada enlace de la lista uno por uno.
     enlaces.forEach(enlace => {
         const href = enlace.getAttribute("href"); //Usamos enlace.getAttribute("href") para leer hacia donde apunta ese enlace.
-       //Es como mirarle el billete a cada pasajero, si el billete dice "registro.html" ya sabemos que boton tenemos entre manos.
+       //Es como mirarle el billete a cada pasajero, si el billete dice "/registro.html" ya sabemos que boton tenemos entre manos.
         if (!href) return; // Si el enlace no tiene href, lo saltamos
         
         // Subfunción inteligente: Oculta el <li> completo si está en una lista, o solo el <a> si está suelto
@@ -112,17 +112,17 @@ document.addEventListener("DOMContentLoaded", () => {
         //Aquí reutilizamos nuestra variable usuarioActivo. El script ya sabe con esta variable si el usuario esta logeado o no. 
         if (usuarioActivo) {
             // Usuario LOGUEADO: Ocultar los enlaces de login y registro estén donde estén
-            if (href.includes("registro.html") || href.includes("inicio_sesion.html")) { //Recuerda que en href tenemos guardado a donde apunta el enlace.
+            if (href.includes("/registro.html") || href.includes("/inicio_sesion.html")) { //Recuerda que en href tenemos guardado a donde apunta el enlace.
                 ocultarElemento();
             }
             // Si es estudiante, ocultar el botón de administración
-            if (usuarioActivo.rol === "estudiante" && href.includes("administracion.html")) {
+            if (usuarioActivo.rol === "estudiante" && href.includes("/administracion.html")) {
                 ocultarElemento();
             }
 
         } else { // Usuario NO LOGUEADO: Ocultar zonas privadas
             
-            if (href.includes("perfil.html") || href.includes("mis_matriculas.html") || href.includes("administracion.html")) {
+            if (href.includes("/perfil.html") || href.includes("/mis_matriculas.html") || href.includes("/administracion.html")) {
                 ocultarElemento();
             }
         }
@@ -132,5 +132,5 @@ document.addEventListener("DOMContentLoaded", () => {
 // Función global para el botón de cerrar sesión
 function cerrarSesion() {
     sessionStorage.removeItem("usuarioActivo");
-    window.location.href = "menu_inicio.html";
+    window.location.href = "/menu_inicio.html";
 }

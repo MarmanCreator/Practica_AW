@@ -1,6 +1,5 @@
-Desde la raiz del proyecto, estos son los comandos utilizados para preparar la carpeta backend:
+Desde la raiz del proyecto, estos son los comandos utilizados:
 
-cd backend
 npm init -y
 
 npm init -y crea el archivo package.json y genera package-lock.json al instalar o inicializar las dependencias necesarias.

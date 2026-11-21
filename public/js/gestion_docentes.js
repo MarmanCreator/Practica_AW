@@ -90,7 +90,7 @@ if (formularioAnyadirDocente) {
         });
 
         localStorage.setItem("docentes", JSON.stringify(docentes));
-        window.location.href = "../gestiones_administrador/gestion_docentes.html";
+        window.location.href = "/gestiones_administrador/gestion_docentes.html";
     });
 }
 
@@ -108,7 +108,7 @@ if (formularioEliminarDocente) {
 
         docente.activo = false;
         localStorage.setItem("docentes", JSON.stringify(docentes));
-        window.location.href = "../gestiones_administrador/gestion_docentes.html";
+        window.location.href = "/gestiones_administrador/gestion_docentes.html";
     });
 }
 
@@ -164,7 +164,7 @@ if (formularioModificarDocente) {
         if (telefonoIntroducido !== "") docente.telefono = telefonoIntroducido;
 
         localStorage.setItem("docentes", JSON.stringify(docentes));
-        window.location.href = "../gestiones_administrador/gestion_docentes.html";
+        window.location.href = "/gestiones_administrador/gestion_docentes.html";
     });
 }
 

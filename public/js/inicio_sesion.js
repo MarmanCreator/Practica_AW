@@ -30,7 +30,7 @@ if(formularioLogin){
             alert("Inicio de sesión exitoso. ¡Bienvenido, " + usuarioValido.nombre + "!");
 
             // 3. Redirigimos a la página unificada
-            window.location.href = "menu_inicio.html";
+            window.location.href = "/menu_inicio.html";
             
         } else {
             // Si find() devuelve undefined, las credenciales no existen o son incorrectas

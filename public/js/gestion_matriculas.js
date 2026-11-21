@@ -111,7 +111,7 @@ if (formularioAnyadirMatricula &&
             activo: true
         });
         localStorage.setItem("matriculas", JSON.stringify(matriculas));
-        window.location.href = "../gestiones_administrador/gestion_matriculas.html";
+        window.location.href = "/gestiones_administrador/gestion_matriculas.html";
     });
 }
 
@@ -131,7 +131,7 @@ if (formularioEliminarMatricula) {
 
         matricula.activo = false;
         localStorage.setItem("matriculas", JSON.stringify(matriculas));
-        window.location.href = "../gestiones_administrador/gestion_matriculas.html";
+        window.location.href = "/gestiones_administrador/gestion_matriculas.html";
     });
 }
 
@@ -185,7 +185,7 @@ if (formularioModificarMatricula) {
         matricula.id_usuario = id_usuario;
         matricula.id_curso = id_curso;
         localStorage.setItem("matriculas", JSON.stringify(matriculas));
-        window.location.href = "../gestiones_administrador/gestion_matriculas.html";
+        window.location.href = "/gestiones_administrador/gestion_matriculas.html";
     });
 }
 
@@ -281,7 +281,7 @@ else if (contenedorTarjetas) {
         button = document.createElement("button");
         button.textContent = "Editar";
         button.addEventListener("click", () => {
-            window.location.href = `../crud/modificar_matricula.html?id=${matriculaActual.id}`;  
+            window.location.href = `/crud/modificar_matricula.html?id=${matriculaActual.id}`;  
         });
 
         card.appendChild(button);

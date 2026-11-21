@@ -1,0 +1,21 @@
+{
+  "name": "practica_aw",
+  "version": "1.0.0",
+  "description": "Practica de Aplicaciones Web",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarmanCreator/Practica_AW.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MarmanCreator/Practica_AW/issues"
+  },
+  "homepage": "https://github.com/MarmanCreator/Practica_AW#readme"
+}
