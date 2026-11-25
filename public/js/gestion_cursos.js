@@ -11,7 +11,7 @@ const cursos = cursosGuardados
         nombre: "Aplicaciones Web",
         categoria: "Desarrollo web",
         descripcion: "Aprende a desarrollar aplicaciones web modernas utilizando HTML, CSS y JavaScript.",
-        id_aula: 0,
+        id_aula: 1,
         id_docente: 0,
         plazas: 20,
         dias: ["miercoles", "jueves", "viernes"],
@@ -27,7 +27,7 @@ const cursos = cursosGuardados
         nombre: "Gestion de proyectos software",
         categoria: "Gestión de proyectos",
         descripcion: "Aprende a gestionar proyectos de desarrollo de software utilizando metodologías ágiles y herramientas de gestión.",
-        id_aula: 2,
+        id_aula: 3,
         id_docente: 1,
         plazas: 2,
         dias: ["lunes", "martes"],
@@ -43,7 +43,7 @@ const cursos = cursosGuardados
         nombre: "Fundamentos de algoritmia",
         categoria: "Programación",
         descripcion: "Aprende los conceptos básicos de algoritmia y estructuras de datos para resolver problemas de programación.",
-        id_aula: 0,
+        id_aula: 1,
         id_docente: 2,
         plazas: 0,
         dias: ["lunes", "martes"],
@@ -59,7 +59,15 @@ localStorage.setItem("cursos", JSON.stringify(cursos));
 
 const aulasGuardadas = localStorage.getItem("aulas");
 
-const aulas = aulasGuardadas ? JSON.parse(aulasGuardadas): [ ];
+const aulas = aulasGuardadas ? JSON.parse(aulasGuardadas).map(aula => ({
+    id_aula: Number(aula.id_aula !== undefined ? aula.id_aula : aula.id),
+    nombre: aula.nombre,
+    estado: aula.estado !== undefined
+        ? aula.estado
+        : aula.activo
+            ? "activa"
+            : "inactiva"
+})) : [ ];
 
 const docentesGuardados = localStorage.getItem("docentes");
 
@@ -76,8 +84,9 @@ const selectAula = document.getElementById("id_aula");
 if (selectAula) {
     for (let i = 0; i < aulas.length; i++) {
         const aula = aulas[i];
+        if (aula.estado !== "activa") continue;
         const opcion = document.createElement("option");
-        opcion.value = aula.id;
+        opcion.value = aula.id_aula;
         opcion.textContent = `${aula.nombre}`.trim();
         selectAula.appendChild(opcion);
     }
@@ -305,7 +314,7 @@ if (formulario_modificar_curso) {
                 alert("El ID del aula debe ser un número entero.");
                 return;
             }
-            if (!aulas.some(aula => aula.id === id_aula)) {
+            if (!aulas.some(aula => aula.id_aula === id_aula && aula.estado === "activa")) {
                 alert("No existe ningún aula con ese ID.");
                 return;
             }
@@ -476,7 +485,7 @@ if (contenedorTarjetas) {
         const imagen = cursoActual.imagen
             ? `<img src="${cursoActual.imagen}" alt="Imagen del curso ${cursoActual.nombre}">`
             : "";
-        const aula = aulas.find(aulaActual => aulaActual.id === Number(cursoActual.id_aula));
+        const aula = aulas.find(aulaActual => aulaActual.id_aula === Number(cursoActual.id_aula));
         const docente = docentes.find(docenteActual => docenteActual.id === Number(cursoActual.id_docente));
         const nombreAula = aula ? aula.nombre : "No especificada";
         const nombreDocente = docente

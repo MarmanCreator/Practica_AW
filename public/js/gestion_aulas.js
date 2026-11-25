@@ -1,31 +1,46 @@
 const aulasGuardadas = localStorage.getItem("aulas");
 
 const aulas = aulasGuardadas
-    ? JSON.parse(aulasGuardadas)
+    ? JSON.parse(aulasGuardadas).map(aula => ({
+        id_aula: Number(aula.id_aula !== undefined ? aula.id_aula : aula.id),
+        nombre: aula.nombre,
+        edificio: aula.edificio,
+        planta: String(aula.planta),
+        capacidad: Number(aula.capacidad),
+        equipamiento: aula.equipamiento || "",
+        estado: aula.estado !== undefined
+            ? aula.estado
+            : aula.activo
+                ? "activa"
+                : "inactiva"
+    }))
     : [
         {
-            id: 0,
+            id_aula: 1,
             nombre: "Aula Informática",
             edificio: "1",
             planta: "1",
             capacidad: 40,
-            activo: true
+            equipamiento: "",
+            estado: "activa"
         },
         {
-            id: 1,
+            id_aula: 2,
             nombre: "Aula Estudio",
             edificio: "1",
             planta: "3",
             capacidad: 80,
-            activo: true
+            equipamiento: "",
+            estado: "activa"
         },
         {
-            id: 2,
+            id_aula: 3,
             nombre: "Aula Trabajos en Grupo",
             edificio: "2",
             planta: "3",
             capacidad: 40,
-            activo: true
+            equipamiento: "",
+            estado: "activa"
         }
     ];
 localStorage.setItem("aulas", JSON.stringify(aulas));
@@ -36,8 +51,9 @@ const selectAula = document.getElementById("id_aula");
 if (selectAula) {
     for (let i = 0; i < aulas.length; i++) {
         const aula = aulas[i];
+        if (aula.estado !== "activa") continue;
         const opcion = document.createElement("option");
-        opcion.value = aula.id;
+        opcion.value = aula.id_aula;
         opcion.textContent = `${aula.nombre}`.trim();
         selectAula.appendChild(opcion);
     }
@@ -52,15 +68,13 @@ if (formulario_anyadir_aula) {
         // 1. LECTURA Y SANITIZACIÓN
         const nombre = sanitizarEntrada(document.getElementById("nombre").value.trim());
         const edificio = sanitizarEntrada(document.getElementById("edificio").value.trim());
-        const plantaInput = document.getElementById("planta").value.trim();
+        const planta = sanitizarEntrada(document.getElementById("planta").value.trim());
         const capacidadInput = document.getElementById("capacidad").value.trim();
-
+        const equipamiento = sanitizarEntrada(document.getElementById("equipamiento").value.trim());
 
         // 2. VALIDACIONES DE SEGURIDAD (REGEX)
         // Letras, números y espacios (ej: "Aula 101", "Edificio B")
         const regexAlfanumerico = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/; 
-        // Permite números enteros positivos y negativos (ej: -1 para sótanos)
-        const regexPlanta = /^-?\d+$/; 
         // Solo números enteros positivos
         const regexCapacidad = /^\d+$/; 
 
@@ -69,8 +83,8 @@ if (formulario_anyadir_aula) {
             return;
         }
 
-        if (!regexPlanta.test(plantaInput)) {
-            alert("Error: La planta debe ser un número entero (se admiten negativos para sótanos).");
+        if (!planta) {
+            alert("Debes indicar la planta del aula.");
             return;
         }
 
@@ -81,12 +95,13 @@ if (formulario_anyadir_aula) {
 
         // 3. EJECUCIÓN (Solo si supera las validaciones)
         aulas.push({
-            id: aulas.reduce((mayorId, aula) => Math.max(mayorId, aula.id), -1) + 1,
+            id_aula: aulas.reduce((mayorId, aula) => Math.max(mayorId, aula.id_aula), 0) + 1,
             nombre: nombre,
             edificio: edificio,
-            planta: Number(plantaInput),
+            planta: planta,
             capacidad: Number(capacidadInput),
-            activo: true
+            equipamiento: equipamiento,
+            estado: "activa"
         });
 
         localStorage.setItem("aulas", JSON.stringify(aulas));
@@ -99,14 +114,14 @@ if (formulario_eliminar_aula) {
     formulario_eliminar_aula.addEventListener("submit", event => {
         event.preventDefault();
         const id = Number(document.getElementById("id_aula").value);
-        const aula = aulas.find(aulaActual => aulaActual.id === id);
+        const aula = aulas.find(aulaActual => aulaActual.id_aula === id);
 
-        if (!Number.isInteger(id) || !aula || !aula.activo) {
+        if (!Number.isInteger(id) || !aula || aula.estado !== "activa") {
             alert("No existe ningún aula con ese ID.");
             return;
         }
 
-        aula.activo = false;
+        aula.estado = "inactiva";
         localStorage.setItem("aulas", JSON.stringify(aulas));
         window.location.href = "/gestiones_administrador/gestion_aulas.html";
     });
@@ -117,7 +132,7 @@ if (formulario_modificar_aula) {
     formulario_modificar_aula.addEventListener("submit", event => {
         event.preventDefault();
         const id = Number(document.getElementById("id_aula").value);
-        const aula = aulas.find(aulaActual => aulaActual.id === id && aulaActual.activo);
+        const aula = aulas.find(aulaActual => aulaActual.id_aula === id && aulaActual.estado === "activa");
 
         if (!Number.isInteger(id) || !aula) {
             alert("No existe ningún aula con ese ID.");
@@ -127,25 +142,20 @@ if (formulario_modificar_aula) {
         // 1. LECTURA Y SANITIZACIÓN
         const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
         const edificioIntroducido = sanitizarEntrada(document.getElementById("edificio").value.trim());
-        const plantaIntroducida = document.getElementById("planta").value.trim();
+        const plantaIntroducida = sanitizarEntrada(document.getElementById("planta").value.trim());
         const capacidadIntroducida = document.getElementById("capacidad").value.trim();
+        const equipamientoIntroducido = sanitizarEntrada(document.getElementById("equipamiento").value.trim());
+        const limpiarEquipamiento = document.getElementById("limpiar_equipamiento").checked;
 
         // 2. VALIDACIONES DE SEGURIDAD (REGEX)
         const regexNumeros = /^\d+$/; 
         const regexAlfanumerico = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/; 
-        const regexPlanta = /^-?\d+$/;
 
         // Comprobación de campos de texto (Solo si han escrito algo nuevo)
         if ((nombreIntroducido !== "" && !regexAlfanumerico.test(nombreIntroducido)) || 
             (edificioIntroducido !== "" && !regexAlfanumerico.test(edificioIntroducido))) {
             alert("Error: El nombre y el edificio solo pueden contener letras, números y espacios.");
             return; 
-        }
-
-        // Comprobación de campos numéricos (Solo si han escrito algo nuevo)
-        if (plantaIntroducida !== "" && !regexPlanta.test(plantaIntroducida)) {
-            alert("Error: La planta debe ser un número entero (se admiten negativos para sótanos).");
-            return;
         }
 
         if (capacidadIntroducida !== "") {
@@ -159,6 +169,8 @@ if (formulario_modificar_aula) {
         if (edificioIntroducido !== "") aula.edificio = edificioIntroducido;
         if (plantaIntroducida !== "") aula.planta = plantaIntroducida;
         if (capacidadIntroducida !== "") aula.capacidad = Number(capacidadIntroducida); 
+        if (equipamientoIntroducido !== "") aula.equipamiento = equipamientoIntroducido;
+        else if (limpiarEquipamiento) aula.equipamiento = "";
 
         localStorage.setItem("aulas", JSON.stringify(aulas));
         window.location.href = "/gestiones_administrador/gestion_aulas.html";
@@ -175,20 +187,27 @@ if (contenedorTarjetas) {
     const total = document.createElement("p");
     total.className = "total-cursos";
     
-    const aulasActivas = aulas.filter(aula => aula.activo);
+    const aulasActivas = aulas.filter(aula => aula.estado === "activa");
     total.textContent = "Aulas disponibles: " + aulasActivas.length;
 
     for (let i = 0; i < aulasActivas.length; i++) {
         const aulaActual = aulasActivas[i];
         const card = document.createElement('article');
         card.className = 'tarjeta';
+        const nombre = sanitizarEntrada(aulaActual.nombre);
+        const idAula = sanitizarEntrada(aulaActual.id_aula);
+        const edificio = sanitizarEntrada(aulaActual.edificio);
+        const planta = sanitizarEntrada(aulaActual.planta);
+        const capacidad = sanitizarEntrada(aulaActual.capacidad);
+        const equipamiento = sanitizarEntrada(aulaActual.equipamiento || "No especificado");
 
         card.innerHTML = `
-            <h4>${aulaActual.nombre}</h4>
-            <p><strong>Id:</strong> ${aulaActual.id}</p>
-            <p><strong>Edificio:</strong> ${aulaActual.edificio}</p>
-            <p><strong>Planta:</strong> ${aulaActual.planta}</p>
-            <p><strong>Capacidad:</strong> ${aulaActual.capacidad}</p>
+            <h4>${nombre}</h4>
+            <p><strong>Id:</strong> ${idAula}</p>
+            <p><strong>Edificio:</strong> ${edificio}</p>
+            <p><strong>Planta:</strong> ${planta}</p>
+            <p><strong>Capacidad:</strong> ${capacidad}</p>
+            <p><strong>Equipamiento:</strong> ${equipamiento}</p>
         `;
 
         fragmento.appendChild(card);
@@ -198,13 +217,12 @@ if (contenedorTarjetas) {
     contenedorTarjetas.prepend(titulo, total);
 }
 
-
-// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
 function sanitizarEntrada(texto) {
-    return texto
-        .replace(/&/g, "&amp;")
+    return String(texto)
+        .replace(/&(?!(amp|lt|gt|quot|#039);)/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+
