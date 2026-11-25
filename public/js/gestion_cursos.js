@@ -75,7 +75,19 @@ const docentes = docentesGuardados ? JSON.parse(docentesGuardados): [ ];
 
 const matriculasGuardadas = localStorage.getItem("matriculas");
 
-const matriculas = matriculasGuardadas ? JSON.parse(matriculasGuardadas) : [];
+const matriculas = matriculasGuardadas
+    ? JSON.parse(matriculasGuardadas).map(matricula => ({
+        id_matricula: Number(matricula.id_matricula !== undefined ? matricula.id_matricula : matricula.id),
+        id_usuario: Number(matricula.id_usuario !== undefined ? matricula.id_usuario : matricula.id_alumno),
+        id_curso: Number(matricula.id_curso),
+        fecha_matricula: matricula.fecha_matricula || "",
+        estado: matricula.estado === "activa" || matricula.estado === "cancelada"
+            ? matricula.estado
+            : matricula.activo === false
+                ? "cancelada"
+                : "activa"
+    }))
+    : [];
 
 
 
@@ -507,11 +519,17 @@ if (contenedorTarjetas) {
         `;
 
         let button = null;
-        if (usuarioActual && usuarioActual.rol === "estudiante") {
+        if (usuarioActual && (usuarioActual.rol === "estudiante" || usuarioActual.rol === "alumno")) {
             button = document.createElement("button");
             button.textContent = "Matricularse";
             button.addEventListener("click", () => {
-                if(matriculas.some(matricula => matricula.id_curso === cursoActual.id && matricula.id_alumno === usuarioActual.id)) {
+                const idUsuarioActual = Number(usuarioActual.id_usuario !== undefined ? usuarioActual.id_usuario : usuarioActual.id);
+                const idCursoActual = Number(cursoActual.id_curso !== undefined ? cursoActual.id_curso : cursoActual.id);
+                if(matriculas.some(matricula =>
+                    matricula.id_curso === idCursoActual &&
+                    matricula.id_usuario === idUsuarioActual &&
+                    matricula.estado === "activa"
+                )) {
                     alert("No te puedes matricular en un curso en el que ya estás matriculado.");
                     return;
                 }
@@ -520,11 +538,11 @@ if (contenedorTarjetas) {
                     return;
                 }
                 const nuevaMatricula = {
-                    id: matriculas.reduce((mayorId, matricula) => Math.max(mayorId, matricula.id), -1) + 1,
-                    id_curso: cursoActual.id,
-                    id_usuario: usuarioActual.id,
-                    fecha_matricula: new Date().toLocaleDateString("es-ES"),
-                    activo: true
+                    id_matricula: matriculas.reduce((mayorId, matricula) => Math.max(mayorId, matricula.id_matricula), 0) + 1,
+                    id_curso: idCursoActual,
+                    id_usuario: idUsuarioActual,
+                    fecha_matricula: fechaHoraActual(),
+                    estado: "activa"
                 };
                 matriculas.push(nuevaMatricula);
                 localStorage.setItem("matriculas", JSON.stringify(matriculas));
@@ -543,6 +561,12 @@ if (contenedorTarjetas) {
     contenedorTarjetas.prepend(tituloCursos, totalCursos);
 }
 
+function fechaHoraActual() {
+    const ahora = new Date();
+    const formato = numero => String(numero).padStart(2, "0");
+    return `${ahora.getFullYear()}-${formato(ahora.getMonth() + 1)}-${formato(ahora.getDate())} ` +
+        `${formato(ahora.getHours())}:${formato(ahora.getMinutes())}:${formato(ahora.getSeconds())}`;
+}
 
 
 // Función para neutralizar etiquetas HTML y evitar inyecciones XSS
