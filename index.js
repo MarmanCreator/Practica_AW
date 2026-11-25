@@ -1,1 +1,0 @@
-console.log("Backend Node.js ejecutado correctamente");

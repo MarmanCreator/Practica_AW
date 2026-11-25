@@ -2,10 +2,12 @@
   "name": "practica_aw",
   "version": "1.0.0",
   "description": "Practica de Aplicaciones Web",
-  "main": "index.js",
+  "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node app.js",
+    "dev": "node --watch app.js"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/MarmanCreator/Practica_AW/issues"
   },
-  "homepage": "https://github.com/MarmanCreator/Practica_AW#readme"
+  "homepage": "https://github.com/MarmanCreator/Practica_AW#readme",
+  "dependencies": {
+    "express": "^5.3.0"
+  }
 }
