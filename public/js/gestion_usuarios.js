@@ -1,51 +1,42 @@
-
-
-
 const usuariosGuardados = localStorage.getItem("usuarios");
-
 const usuarios = usuariosGuardados
-    ? JSON.parse(usuariosGuardados)
+    ? JSON.parse(usuariosGuardados).map(normalizarUsuario)
     : [
         {
-            id: 0,
-            nombre: "Admin",
-            apellido: "Molon",
+            id_usuario: 1,
+            nombre: "Admin Molon",
             email: "admin@admin.es",
             password: "1234",
-            rol: "administrador",
-            telefono: "123456789",
-            activo: true
+            rol: "admin",
+            fecha_registro: fechaHoraActual(),
+            activo: 1
         },
         {
-            id: 1,
-            nombre: "User",
-            apellido: "Molon",
+            id_usuario: 2,
+            nombre: "User Molon",
             email: "user@user.es",
             password: "1234",
-            rol: "estudiante",
-            telefono: "123456789",
-            activo: true
+            rol: "alumno",
+            fecha_registro: fechaHoraActual(),
+            activo: 1
         }
-];
+    ];
 
 localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
 const usuarioSesionGuardado = sessionStorage.getItem("usuarioActivo");
 const usuarioSesionActual = usuarioSesionGuardado
-    ? JSON.parse(usuarioSesionGuardado)
+    ? normalizarUsuario(JSON.parse(usuarioSesionGuardado), 0)
     : null;
-
 
 const selectUsuarioEliminado = document.getElementById("id_usuario_eliminado");
 
 if (selectUsuarioEliminado) {
-    for (let i = 0; i < usuarios.length; i++) {
-        const user = usuarios[i];
-
-        if (!user.activo) {
+    for (const user of usuarios) {
+        if (user.activo === 0) {
             const opcion = document.createElement("option");
-            opcion.value = user.id;
-            opcion.textContent = `${user.nombre} ${user.apellido || ""}`.trim();
+            opcion.value = user.id_usuario;
+            opcion.textContent = `${user.nombre} (${user.id_usuario})`;
             selectUsuarioEliminado.appendChild(opcion);
         }
     }
@@ -54,196 +45,141 @@ if (selectUsuarioEliminado) {
 const selectUsuarioActivo = document.getElementById("id_usuario_activo");
 
 if (selectUsuarioActivo) {
-    for (let i = 0; i < usuarios.length; i++) {
-        const user = usuarios[i];
-        const esFormularioDesactivar =
-            document.getElementById("desactivar_usuario") !== null;
-        const esUsuarioSesion =
-            usuarioSesionActual && user.id === usuarioSesionActual.id;
+    const esFormularioDesactivar =
+        document.getElementById("desactivar_usuario") !== null;
 
-        if (user.activo &&
-            (!esFormularioDesactivar || !esUsuarioSesion)) {
+    for (const user of usuarios) {
+        const esUsuarioSesion =
+            usuarioSesionActual &&
+            user.id_usuario === usuarioSesionActual.id_usuario;
+
+        if (user.activo === 1 && (!esFormularioDesactivar || !esUsuarioSesion)) {
             const opcion = document.createElement("option");
-            opcion.value = user.id;
-            opcion.textContent = `${user.nombre} ${user.apellido || ""}`.trim();
+            opcion.value = user.id_usuario;
+            opcion.textContent = `${user.nombre} (${user.id_usuario})`;
             selectUsuarioActivo.appendChild(opcion);
         }
     }
 }
 
-const formulario_activar_usuario = document.getElementById("activar_usuario");
-if (formulario_activar_usuario) {
-    formulario_activar_usuario.addEventListener("submit", function (event) {
+const formularioActivarUsuario = document.getElementById("activar_usuario");
+if (formularioActivarUsuario) {
+    formularioActivarUsuario.addEventListener("submit", event => {
         event.preventDefault();
         const id = Number(document.getElementById("id_usuario_eliminado").value);
-        const usuarioExiste = usuarios.some(usuario => usuario.id === id && !usuario.activo);
-        if (!Number.isInteger(id) || !usuarioExiste) {
+        const usuario = usuarios.find(user =>
+            user.id_usuario === id && user.activo === 0
+        );
+
+        if (!Number.isInteger(id) || !usuario) {
             alert("No existe ningún usuario con ese ID o ya está activo.");
             return;
         }
-        ActivarUsuario(id);
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+        usuario.activo = 1;
+        guardarUsuarios();
         window.location.href = "/gestiones_administrador/gestion_usuarios.html";
     });
 }
-function ActivarUsuario(id) {
-    usuarios.find(usuario => usuario.id === id).activo = true;
-}
 
-const formulario_desactivar_usuario = document.getElementById("desactivar_usuario");
-if (formulario_desactivar_usuario) {
-    formulario_desactivar_usuario.addEventListener("submit", function (event) {
+const formularioDesactivarUsuario = document.getElementById("desactivar_usuario");
+if (formularioDesactivarUsuario) {
+    formularioDesactivarUsuario.addEventListener("submit", event => {
         event.preventDefault();
         const id = Number(document.getElementById("id_usuario_activo").value);
-        const usuarioExiste = usuarios.some(usuario => usuario.id === id && usuario.activo);
-        const esUsuarioActual = usuarioSesionActual && id === usuarioSesionActual.id;
+        const usuario = usuarios.find(user =>
+            user.id_usuario === id && user.activo === 1
+        );
+        const esUsuarioActual =
+            usuarioSesionActual && id === usuarioSesionActual.id_usuario;
+
         if (esUsuarioActual) {
             alert("No puedes desactivar el usuario que tiene la sesión actual.");
             return;
         }
-        if (!Number.isInteger(id) || !usuarioExiste) {
+        if (!Number.isInteger(id) || !usuario) {
             alert("No existe ningún usuario con ese ID o ya está inactivo.");
             return;
         }
-        DesactivarUsuario(id);
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+        usuario.activo = 0;
+        guardarUsuarios();
         window.location.href = "/gestiones_administrador/gestion_usuarios.html";
     });
 }
-function DesactivarUsuario(id) {
-    usuarios.find(usuario => usuario.id === id).activo = false;
-}
 
-const formulario_modificar_usuario = document.getElementById("modificar_usuario");
-if (formulario_modificar_usuario) {
-    formulario_modificar_usuario.addEventListener("submit", function (event) {
+const formularioModificarUsuario = document.getElementById("modificar_usuario");
+if (formularioModificarUsuario) {
+    formularioModificarUsuario.addEventListener("submit", event => {
         event.preventDefault();
-        // 1. LECTURA Y SANITIZACIÓN
+
         const idIntroducido = document.getElementById("id_usuario_activo").value.trim();
-        const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
-        const apellidoIntroducido = sanitizarEntrada(document.getElementById("apellido").value.trim());
-        const emailIntroducido = sanitizarEntrada(document.getElementById("email").value.trim());
+        const nombreIntroducido = document.getElementById("nombre").value.trim();
+        const emailIntroducido = document.getElementById("email").value.trim().toLowerCase();
+        const passwordIntroducida = document.getElementById("password").value;
+        const rolIntroducido = document.getElementById("rol").value;
 
-        const contraseñaIntroducida = document.getElementById("password").value; 
-
-        const rolIntroducido = sanitizarEntrada(document.getElementById("rol").value.trim());
-        const telefonoIntroducido = document.getElementById("telefono").value.trim();
-
-        // 2. VALIDACIONES DE SEGURIDAD (REGEX Y EXISTENCIA)
         const regexNumeros = /^\d+$/;
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        const regexTelefono = /^[\d\s]+$/;
 
-        // Validamos el ID estrictamente
         if (!regexNumeros.test(idIntroducido)) {
             alert("Error: El ID del usuario debe ser un número entero positivo.");
             return;
         }
-        
+
         const id = Number(idIntroducido);
-        // Buscamos el usuario UNA sola vez (más eficiente)
-        const usuario = usuarios.find(u => u.id === id);
-        
-        if (!usuario || !usuario.activo) {
+        const usuario = usuarios.find(user => user.id_usuario === id);
+
+        if (!usuario || usuario.activo !== 1) {
             alert("No existe ningún usuario activo con ese ID.");
             return;
         }
-
-        // Validamos campos de texto (Solo si escriben algo nuevo)
-        if ((nombreIntroducido !== "" && !regexLetras.test(nombreIntroducido)) || 
-            (apellidoIntroducido !== "" && !regexLetras.test(apellidoIntroducido))) {
-            alert("Error: En los campos de nombre y apellido solo están permitidas letras y espacios.");
+        if (nombreIntroducido !== "" && !regexLetras.test(nombreIntroducido)) {
+            alert("Error: El nombre solo puede contener letras y espacios.");
             return;
         }
-
-        // Validamos datos de contacto (Solo si escriben algo nuevo)
         if (emailIntroducido !== "" && !regexEmail.test(emailIntroducido)) {
             alert("Error: El formato del correo electrónico no es válido.");
             return;
         }
-
-        
-        if (telefonoIntroducido !== "" && !regexTelefono.test(telefonoIntroducido)) {
-            alert("Error: El teléfono solo puede contener números y espacios.");
+        if (rolIntroducido !== "" && !["admin", "alumno"].includes(rolIntroducido)) {
+            alert("Error: El rol introducido no es válido.");
             return;
-
-        }
-        
-        // Validación del rol (evitar que se inventen roles inyectando código)
-        const rolesValidos = ["administrador", "docente", "estudiante"];
-        if (rolIntroducido !== "" && !rolesValidos.includes(rolIntroducido.toLowerCase())) {
-             alert("Error: El rol introducido no es válido.");
-             return; 
         }
 
+        if (nombreIntroducido !== "") usuario.nombre = nombreIntroducido;
+        if (emailIntroducido !== "") usuario.email = emailIntroducido;
+        if (passwordIntroducida !== "") usuario.password = passwordIntroducida;
+        if (rolIntroducido !== "") usuario.rol = rolIntroducido;
 
-        // 3. ASIGNACIÓN DE VALORES (Mantenemos los antiguos, o pisamos con los nuevos)
-        let nombre = usuario.nombre;
-        if (nombreIntroducido !== "") nombre = nombreIntroducido;
-        
-        let apellido = usuario.apellido;
-        if (apellidoIntroducido !== "") apellido = apellidoIntroducido;
-        
-        let email = usuario.email;
-        if (emailIntroducido !== "") email = emailIntroducido;
-        
-        let contraseña = usuario.password || usuario.contraseña; // Por si lo tienes guardado como password o contraseña
-        if (contraseñaIntroducida !== "") contraseña = contraseñaIntroducida;
-        
-        let rol = usuario.rol;
-        if (rolIntroducido !== "") rol = rolIntroducido;
-        
-        let telefono = usuario.telefono;
-        if (telefonoIntroducido !== "") telefono = telefonoIntroducido;
-
-        // 4. GUARDADO Y REDIRECCIÓN
-        modificarUsuario(id, nombre, apellido, email, contraseña, rol, telefono);
-
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+        guardarUsuarios();
         window.location.href = "/gestiones_administrador/gestion_usuarios.html";
     });
 }
-function modificarUsuario(id, nombre, apellido, email, password, rol, telefono) {
-    const usuario = usuarios.find(usuario => usuario.id === id);
-    if (usuario) {
-        usuario.nombre = nombre;
-        usuario.apellido = apellido;
-        usuario.email = email;
-        usuario.password = password;
-        usuario.rol = rol;
-        usuario.telefono = telefono;
-    }
-}
 
-
-const contenedorTarjetas = document.querySelector('.tarjetas');
+const contenedorTarjetas = document.querySelector(".tarjetas");
 
 if (contenedorTarjetas) {
     const fragmento = document.createDocumentFragment();
+    const tituloUsuarios = document.createElement("h3");
+    tituloUsuarios.textContent = "Usuarios disponibles";
 
-    const tituloUsuarios = document.createElement('h3');
-    tituloUsuarios.textContent = 'Usuarios disponibles';
+    const usuariosActivos = usuarios.filter(usuario => usuario.activo === 1);
+    const totalUsuarios = document.createElement("p");
+    totalUsuarios.className = "total-cursos";
+    totalUsuarios.textContent = "Usuarios disponibles: " + usuariosActivos.length;
 
-    const totalUsuarios = document.createElement('p');
-    totalUsuarios.className = 'total-cursos';
-    const usuariosActivos = usuarios.filter(usuario => usuario.activo);
-    totalUsuarios.textContent = 'Usuarios disponibles: ' + usuariosActivos.length;
-
-    for (let i = 0; i < usuariosActivos.length; i++) {
-        const usuarioActual = usuariosActivos[i];
-        const card = document.createElement('article');
-        card.className = 'tarjeta';
-
+    for (const usuario of usuariosActivos) {
+        const card = document.createElement("article");
+        card.className = "tarjeta";
         card.innerHTML = `
-            <h4>${usuarioActual.nombre} ${usuarioActual.apellido}</h4>
-            <p><strong>Id:</strong> ${usuarioActual.id}</p>
-            <p><strong>Email:</strong> ${usuarioActual.email}</p>
-            <p><strong>Contraseña:</strong> ${"No visible"}</p>
-            <p><strong>Rol:</strong> ${usuarioActual.rol}</p>
-            <p><strong>Teléfono:</strong> ${usuarioActual.telefono}</p>
+            <h4>${sanitizarEntrada(usuario.nombre)}</h4>
+            <p><strong>Id usuario:</strong> ${usuario.id_usuario}</p>
+            <p><strong>Email:</strong> ${sanitizarEntrada(usuario.email)}</p>
+            <p><strong>Rol:</strong> ${sanitizarEntrada(usuario.rol)}</p>
+            <p><strong>Fecha de registro:</strong> ${sanitizarEntrada(usuario.fecha_registro)}</p>
         `;
-
         fragmento.appendChild(card);
     }
 
@@ -251,10 +187,40 @@ if (contenedorTarjetas) {
     contenedorTarjetas.prepend(tituloUsuarios, totalUsuarios);
 }
 
+function normalizarUsuario(usuario, indice) {
+    const rol = usuario.rol === "administrador"
+        ? "admin"
+        : usuario.rol === "estudiante"
+            ? "alumno"
+            : usuario.rol;
+    const nombre = [usuario.nombre, usuario.apellido]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
 
-// Función para neutralizar etiquetas HTML y evitar inyecciones XSS
+    return {
+        id_usuario: Number(usuario.id_usuario ?? usuario.id ?? indice + 1),
+        nombre: nombre,
+        email: usuario.email || "",
+        password: usuario.password || usuario.contraseña || "",
+        rol: ["alumno", "admin"].includes(rol) ? rol : "alumno",
+        fecha_registro: usuario.fecha_registro || fechaHoraActual(),
+        activo: usuario.activo === false || Number(usuario.activo) === 0 ? 0 : 1
+    };
+}
+
+function guardarUsuarios() {
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+}
+
+function fechaHoraActual() {
+    const ahora = new Date();
+    const fechaLocal = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000);
+    return fechaLocal.toISOString().slice(0, 19).replace("T", " ");
+}
+
 function sanitizarEntrada(texto) {
-    return texto
+    return String(texto)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")

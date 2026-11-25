@@ -7,7 +7,9 @@ localStorage.setItem("matriculas", JSON.stringify(matriculas));
 
 const usuariosGuardados = localStorage.getItem("usuarios");
 
-const usuarios = usuariosGuardados ? JSON.parse(usuariosGuardados) : [ ];
+const usuarios = usuariosGuardados
+    ? JSON.parse(usuariosGuardados).map(normalizarUsuario)
+    : [];
 
 const cursosGuardados = localStorage.getItem("cursos");
 
@@ -29,17 +31,17 @@ if (selectMatricula) {
         }
     }
 }
-// Esto de abajo es para rellenar el select de usuarios en el formulario de añadir matrícula, mostrando solo los usuarios activos que no sean administradores.
+// Rellena el selector con usuarios activos de tipo alumno.
 const selectUsuario = document.getElementById("id_usuario");
 
 if (selectUsuario) {
     for (let i = 0; i < usuarios.length; i++) {
         const user = usuarios[i];
 
-        if (user.activo && user.rol !== "administrador" && user.rol !== "admin") {
+        if (user.activo === 1 && user.rol === "alumno") {
             const opcion = document.createElement("option");
             opcion.value = obtenerIdUsuario(user);
-            opcion.textContent = `${user.nombre} ${user.apellido || ""}`.trim();
+            opcion.textContent = user.nombre;
             selectUsuario.appendChild(opcion);
         }
     }
@@ -92,7 +94,7 @@ if (formularioAnyadirMatricula &&
             alert("Ese usuario ya está matriculado en ese curso.");
             return;
         }
-        if(usuario.rol === "administrador" || usuario.rol === "admin"){
+        if (usuario.rol !== "alumno") {
             alert("No se puede matricular a un administrador en un curso.");
             return;
         }
@@ -187,9 +189,9 @@ if (formularioModificarMatricula) {
 const contenedorTarjetas = document.querySelector(".tarjetas");
 const es_mis_matriculas = document.getElementById("tarjetas-mis-matriculas");
 const usuarioGuardado = sessionStorage.getItem("usuarioActivo");
-        const usuarioActual = usuarioGuardado
-            ? JSON.parse(usuarioGuardado)
-            : null;
+const usuarioActual = usuarioGuardado
+    ? normalizarUsuario(JSON.parse(usuarioGuardado), 0)
+    : null;
 
 if(es_mis_matriculas){
     const fragmento = document.createDocumentFragment();
@@ -203,7 +205,7 @@ if(es_mis_matriculas){
     const matriculasMias = matriculas.filter(matricula =>
         usuarioActual &&
         matricula.estado === "activa" &&
-        matricula.id_usuario === Number(usuarioActual.id_usuario ?? usuarioActual.id)
+        matricula.id_usuario === usuarioActual.id_usuario
     );
     total.textContent = "Matrículas disponibles: " + matriculasMias.length;
 
@@ -216,16 +218,14 @@ if(es_mis_matriculas){
         const curso = cursos.find(cursoActual =>
             obtenerIdCurso(cursoActual) === Number(matriculaActual.id_curso)
         );
-        const nombreUsuario = usuario
-            ? `${usuario.nombre} ${usuario.apellido || ""}`.trim()
-            : "Usuario no encontrado";
+        const nombreUsuario = usuario ? usuario.nombre : "Usuario no encontrado";
         const nombreCurso = curso ? curso.nombre : "Curso no encontrado";
         const card = document.createElement("article");
         card.className = "tarjeta";
 
         card.innerHTML = `
             <h4>Matrícula ${matriculaActual.id_matricula}</h4>
-            <p><strong>Usuario:</strong> ${nombreUsuario}</p>
+            <p><strong>Usuario:</strong> ${sanitizarEntrada(nombreUsuario)}</p>
             <p><strong>Id del usuario:</strong> ${usuarioId}</p>
             <p><strong>Curso:</strong> ${nombreCurso}</p>
             <p><strong>Id del curso:</strong> ${matriculaActual.id_curso}</p>
@@ -259,16 +259,14 @@ else if (contenedorTarjetas) {
         const curso = cursos.find(cursoActual =>
             obtenerIdCurso(cursoActual) === Number(matriculaActual.id_curso)
         );
-        const nombreUsuario = usuario
-            ? `${usuario.nombre} ${usuario.apellido || ""}`.trim()
-            : "Usuario no encontrado";
+        const nombreUsuario = usuario ? usuario.nombre : "Usuario no encontrado";
         const nombreCurso = curso ? curso.nombre : "Curso no encontrado";
         const card = document.createElement("article");
         card.className = "tarjeta";
 
         card.innerHTML = `
             <h4>Matrícula ${matriculaActual.id_matricula}</h4>
-            <p><strong>Usuario:</strong> ${nombreUsuario}</p>
+            <p><strong>Usuario:</strong> ${sanitizarEntrada(nombreUsuario)}</p>
             <p><strong>Id del usuario:</strong> ${usuarioId}</p>
             <p><strong>Curso:</strong> ${nombreCurso}</p>
             <p><strong>Id del curso:</strong> ${matriculaActual.id_curso}</p>
@@ -329,9 +327,37 @@ function fechaHoraActual() {
 }
 
 function obtenerIdUsuario(usuario) {
-    return Number(usuario.id_usuario ?? usuario.id);
+    return Number(usuario.id_usuario);
+}
+
+function normalizarUsuario(usuario, indice) {
+    const rol = usuario.rol === "administrador"
+        ? "admin"
+        : usuario.rol === "estudiante"
+            ? "alumno"
+            : usuario.rol;
+    const nombre = [usuario.nombre, usuario.apellido]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+    return {
+        id_usuario: Number(usuario.id_usuario ?? usuario.id ?? indice + 1),
+        nombre: nombre,
+        rol: ["alumno", "admin"].includes(rol) ? rol : "alumno",
+        activo: usuario.activo === false || Number(usuario.activo) === 0 ? 0 : 1
+    };
 }
 
 function obtenerIdCurso(curso) {
     return Number(curso.id_curso ?? curso.id);
+}
+
+function sanitizarEntrada(texto) {
+    return String(texto)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }

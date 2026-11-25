@@ -448,9 +448,9 @@ function modificarCurso(id, datos) {
 
 const contenedorTarjetas = document.querySelector('.tarjetas');
 const usuarioGuardado = sessionStorage.getItem("usuarioActivo");
-        const usuarioActual = usuarioGuardado
-            ? JSON.parse(usuarioGuardado)
-            : null;
+const usuarioActual = usuarioGuardado
+    ? normalizarUsuarioSesion(JSON.parse(usuarioGuardado))
+    : null;
 if (contenedorTarjetas) {
     const fragmento = document.createDocumentFragment();
 
@@ -490,11 +490,11 @@ if (contenedorTarjetas) {
         `;
 
         let button = null;
-        if (usuarioActual && (usuarioActual.rol === "estudiante" || usuarioActual.rol === "alumno")) {
+        if (usuarioActual && usuarioActual.activo === 1 && usuarioActual.rol === "alumno") {
             button = document.createElement("button");
             button.textContent = "Matricularse";
             button.addEventListener("click", () => {
-                const idUsuarioActual = Number(usuarioActual.id_usuario !== undefined ? usuarioActual.id_usuario : usuarioActual.id);
+                const idUsuarioActual = usuarioActual.id_usuario;
                 const idCursoActual = cursoActual.id_curso;
                 if(matriculas.some(matricula =>
                     matricula.id_curso === idCursoActual &&
@@ -548,6 +548,25 @@ function sanitizarEntrada(texto) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+function normalizarUsuarioSesion(usuario) {
+    const rol = usuario.rol === "administrador"
+        ? "admin"
+        : usuario.rol === "estudiante"
+            ? "alumno"
+            : usuario.rol;
+    const nombre = [usuario.nombre, usuario.apellido]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+    return {
+        id_usuario: Number(usuario.id_usuario ?? usuario.id),
+        nombre: nombre,
+        rol: ["alumno", "admin"].includes(rol) ? rol : "alumno",
+        activo: usuario.activo === false || Number(usuario.activo) === 0 ? 0 : 1
+    };
 }
 
 function normalizarCurso(curso) {

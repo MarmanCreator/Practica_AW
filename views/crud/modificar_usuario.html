@@ -67,9 +67,6 @@
         <label for="nombre">Nombre del usuario:</label>
         <input type="text" id="nombre" name="nombre" placeholder="Nombre del usuario">
 
-        <label for="apellido">Apellido del usuario:</label>
-        <input type="text" id="apellido" name="apellido" placeholder="Apellido del usuario">
-
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" placeholder="Email del usuario">
 
@@ -79,12 +76,9 @@
         <label for="rol">Rol:</label>
         <select id="rol" name="rol">
             <option value="">Selecciona un rol</option>
-            <option value="administrador">Administrador</option>
-            <option value="estudiante">Estudiante</option>
+            <option value="admin">Administrador</option>
+            <option value="alumno">Alumno</option>
         </select>
-
-        <label for="telefono">Teléfono:</label>
-        <input type="tel" id="telefono" name="telefono" placeholder="Teléfono del usuario">
 
         <button type="button" onclick="window.location.href = '/gestiones_administrador/gestion_usuarios.html'">Cancelar</button>
         <button type="submit">Modificar usuario</button> 

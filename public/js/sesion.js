@@ -24,7 +24,36 @@ document.addEventListener("DOMContentLoaded", () => {
     */
 
     if (usuarioGuardado) {
-        usuarioActivo = JSON.parse(usuarioGuardado); 
+        const usuarioGuardadoActual = JSON.parse(usuarioGuardado);
+        const rolGuardado = usuarioGuardadoActual.rol === "administrador"
+            ? "admin"
+            : usuarioGuardadoActual.rol === "estudiante"
+                ? "alumno"
+                : usuarioGuardadoActual.rol;
+        const nombre = [usuarioGuardadoActual.nombre, usuarioGuardadoActual.apellido]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+
+        usuarioActivo = {
+            id_usuario: Number(usuarioGuardadoActual.id_usuario ?? usuarioGuardadoActual.id),
+            nombre: nombre,
+            email: usuarioGuardadoActual.email || "",
+            rol: ["alumno", "admin"].includes(rolGuardado) ? rolGuardado : "alumno",
+            fecha_registro: usuarioGuardadoActual.fecha_registro || "",
+            activo: usuarioGuardadoActual.activo === false ||
+                Number(usuarioGuardadoActual.activo) === 0
+                ? 0
+                : 1
+        };
+        sessionStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
+
+        if (usuarioActivo.activo === 0) {
+            sessionStorage.removeItem("usuarioActivo");
+            alert("Tu usuario está desactivado. Contacta con un administrador.");
+            window.location.href = "/inicio_sesion.html";
+            return;
+        }
     }
 
     // 2. SEGURIDAD: Protección de rutas
@@ -44,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return; 
     }
 
-    if (usuarioActivo && usuarioActivo.rol !== "administrador" && rutaActual.includes("/administracion.html")) {
+    if (usuarioActivo && usuarioActivo.rol !== "admin" && rutaActual.includes("/administracion.html")) {
         alert("Acceso denegado: No tienes permisos de administrador.");
         window.location.href = "/menu_inicio.html";
         return;
@@ -116,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ocultarElemento();
             }
             // Si es estudiante, ocultar el botón de administración
-            if (usuarioActivo.rol === "estudiante" && href.includes("/administracion.html")) {
+            if (usuarioActivo.rol === "alumno" && href.includes("/administracion.html")) {
                 ocultarElemento();
             }
 

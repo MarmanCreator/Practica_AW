@@ -3,7 +3,10 @@
 //Primero rescatamos el almacenamiento local para recuperar informacion de usuarios guardada anteriorment. 
 //Usamos JSON para parsear esta informacion, y en caso de que no haya, crear un array vacio. 
 const usuariosGuardados = localStorage.getItem("usuarios");
-const usuarios = usuariosGuardados ? JSON.parse(usuariosGuardados) : []; 
+const usuarios = usuariosGuardados
+    ? JSON.parse(usuariosGuardados).map(normalizarUsuario)
+    : [];
+localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
 //Seleccionamos el formulario sobre el que vamos a trabajar en este caso el de registro
 const formularioRegistro = document.getElementById("registro"); 
@@ -17,22 +20,24 @@ if(formularioRegistro){
         
         //Vamos leyendo los campos 
         //.trim() limpia la entrada de datos, elimina los espacios en blanco. 
-        const nombre = document.getElementById("nombre").value.trim();  
-        const apellido = document.getElementById("apellido").value.trim(); 
-        const email = document.getElementById("email").value.trim(); 
-        const telefono = document.getElementById("telefono").value.trim();
+        const nombre = document.getElementById("nombre").value.trim();
+        const email = document.getElementById("email").value.trim().toLowerCase();
         const password = document.getElementById("password").value; 
         const confirPassword = document.getElementById("confirm_password").value; 
         const rol = document.getElementById("rol").value; 
         
-        //Esta linea establece lo que se puede usar en los campos de nombre y apellido.
+        //El nombre solo admite letras y espacios.
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
 
-        if (!regexLetras.test(nombre) ||
-            (apellido !== "" && !regexLetras.test(apellido))) {
+        if (!regexLetras.test(nombre)) {
 
-            alert("Error: El nombre y los apellidos solo pueden contener letras y espacios.");
+            alert("Error: El nombre solo puede contener letras y espacios.");
             return; // Detenemos el envío del formulario inmediatamente
+        }
+
+        if (!["alumno", "admin"].includes(rol)) {
+            alert("Error: El rol seleccionado no es válido.");
+            return;
         }
 
         //Compribacion basica temporal de las contraseñas. Muestra pantallita de error. 
@@ -42,7 +47,7 @@ if(formularioRegistro){
         }
 
         //LLamamos a la funcion que añade al nnuevo usuario con los nuevos datos
-        const registroExitoso = AnyadirUsuario(nombre, apellido, email, telefono, password, rol); 
+        const registroExitoso = AnyadirUsuario(nombre, email, password, rol);
         
         if(registroExitoso){
 
@@ -56,38 +61,63 @@ if(formularioRegistro){
         // Redirigimos a la página unificada tras el registro exitoso
         window.location.href = "/inicio_sesion.html";
 
-        // //Reedirigimos en fncion del rol.
-        // if(rol == "estudiante"){
-        //     window.location.href = "/menu_inicio_alumno.html";
-        // }else if(rol === "administrador"){
-        //     window.location.href = "/menu_inicio_admin.html"; 
-        // }
          }
     }) 
 }
 
-function AnyadirUsuario(nombre, apellido, email, telefono, password, rol){
+function AnyadirUsuario(nombre, email, password, rol){
+    const usuarioExistente = usuarios.find(
+        usuario => usuario.email.toLowerCase() === email
+    );
+
+    if (usuarioExistente) {
+        alert("Email ya registrado en otro usuario");
+        return false;
+    }
+
     const nuevoUsuario = {
-            id: usuarios.length + 1, // ID simple autoincremental
-            nombre: nombre,
-            apellido: apellido,
-            email: email,
-            telefono: telefono,
-            password: password, 
-            rol: rol,
-            activo: true
-        };
+        id_usuario: usuarios.reduce(
+            (mayorId, usuario) => Math.max(mayorId, usuario.id_usuario),
+            0
+        ) + 1,
+        nombre: nombre,
+        email: email,
+        password: password,
+        rol: rol,
+        fecha_registro: fechaHoraActual(),
+        activo: 1
+    };
 
-        const usuarioExistente = usuarios.find(
-            usuario => usuario.email === email
-        )
+    usuarios.push(nuevoUsuario);
+    return true;
+}
 
-        if(usuarioExistente){
-            alert("Email ya registrado en otro usuario")
-            return false;  
-        }
-        usuarios.push(nuevoUsuario);  
-        return true; 
+function normalizarUsuario(usuario, indice) {
+    const rol = usuario.rol === "administrador"
+        ? "admin"
+        : usuario.rol === "estudiante"
+            ? "alumno"
+            : usuario.rol;
+    const nombre = [usuario.nombre, usuario.apellido]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+    return {
+        id_usuario: Number(usuario.id_usuario ?? usuario.id ?? indice + 1),
+        nombre: nombre,
+        email: usuario.email || "",
+        password: usuario.password || usuario.contraseña || "",
+        rol: ["alumno", "admin"].includes(rol) ? rol : "alumno",
+        fecha_registro: usuario.fecha_registro || fechaHoraActual(),
+        activo: usuario.activo === false || Number(usuario.activo) === 0 ? 0 : 1
+    };
+}
+
+function fechaHoraActual() {
+    const ahora = new Date();
+    const fechaLocal = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000);
+    return fechaLocal.toISOString().slice(0, 19).replace("T", " ");
 }
 
 
