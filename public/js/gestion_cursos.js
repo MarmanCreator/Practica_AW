@@ -144,7 +144,6 @@ if (formulario_anyadir_curso) {
         const hora_final = document.getElementById("hora_final").value;
         const fecha_inicio = document.getElementById("fecha_inicio").value;
         const fecha_fin = document.getElementById("fecha_fin").value;
-        const imagen = sanitizarEntrada(document.getElementById("imagen").value.trim());
 
         //Esta linea establece lo que se puede usar en los campos.
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
@@ -204,12 +203,12 @@ if (formulario_anyadir_curso) {
         }
 
         const horario = crearHorario(dias, hora_inicio, hora_final);
-        AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_inicio, fecha_fin, horario, imagen);
+        AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_inicio, fecha_fin, horario);
         localStorage.setItem("cursos", JSON.stringify(cursos));
         window.location.href = "/gestiones_administrador/gestion_cursos.html";
     });
 }
-function AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_inicio, fecha_fin, horario, imagen) {
+function AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_inicio, fecha_fin, horario) {
     const nuevoCurso = {
         id_curso: cursos.reduce((mayorId, curso) => Math.max(mayorId, curso.id_curso), -1) + 1,
         nombre: nombre,
@@ -220,7 +219,7 @@ function AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_in
         fecha_inicio: fecha_inicio,
         fecha_fin: fecha_fin,
         horario: horario,
-        imagen: imagen,
+        imagen: "",
         estado: "activo"
     };
     cursos.push(nuevoCurso);
