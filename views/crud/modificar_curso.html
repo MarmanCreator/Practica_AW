@@ -69,9 +69,6 @@
         <label for="nombre">Nombre del curso:</label>
         <input type="text" id="nombre" name="nombre" placeholder="Nombre del curso">
 
-        <label for="categoría">Categoría:</label>
-        <input type="text" id="categoría" name="categoría" placeholder="Categoría del curso">
-
         <label for="fecha_inicio"> Fecha de inicio:</label>
         <input type="date" id="fecha_inicio" name="fecha_inicio" placeholder="Fecha de inicio">
 
@@ -111,8 +108,9 @@
             <input type="time" id="hora_final" name="hora_final" placeholder="Hora del final de la clase">
         </label>
 
-        <label for="imagen">Imagen del curso:</label>
-        <input type="file" id="imagen" name="imagen" accept="image/*">
+        <label for="imagen">Ruta de la imagen:</label>
+        <input type="text" id="imagen" name="imagen" placeholder="img/cursos/curso01.png">
+        <label><input type="checkbox" id="limpiar_imagen" name="limpiar_imagen"> Dejar la imagen vacía</label>
 
         <button type="button" onclick="window.location.href = '/gestiones_administrador/gestion_cursos.html'">Cancelar</button>
         <button type="submit">Modificar curso</button> 

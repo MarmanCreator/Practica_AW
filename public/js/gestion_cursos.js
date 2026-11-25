@@ -3,56 +3,47 @@
 const cursosGuardados = localStorage.getItem("cursos");
 
 const cursos = cursosGuardados
-    ? JSON.parse(cursosGuardados)
+    ? JSON.parse(cursosGuardados).map(normalizarCurso)
     : [
 
     {
-        id: 0,
+        id_curso: 0,
         nombre: "Aplicaciones Web",
-        categoria: "Desarrollo web",
         descripcion: "Aprende a desarrollar aplicaciones web modernas utilizando HTML, CSS y JavaScript.",
         id_aula: 1,
         id_docente: 0,
         plazas: 20,
-        dias: ["miercoles", "jueves", "viernes"],
-        hora_inicio: "10:00",
-        hora_final: "12:00",
         fecha_inicio: "2026-09-01",
         fecha_fin: "2026-12-20",
+        horario: "Miércoles, jueves y viernes 10:00-12:00",
         imagen: "",
-        estado: true
+        estado: "activo"
     },
     {
-        id: 1,
+        id_curso: 1,
         nombre: "Gestion de proyectos software",
-        categoria: "Gestión de proyectos",
         descripcion: "Aprende a gestionar proyectos de desarrollo de software utilizando metodologías ágiles y herramientas de gestión.",
         id_aula: 3,
         id_docente: 1,
         plazas: 2,
-        dias: ["lunes", "martes"],
-        hora_inicio: "14:00",
-        hora_final: "16:00",
         fecha_inicio: "2026-10-01",
         fecha_fin: "2027-01-31",
+        horario: "Lunes y martes 14:00-16:00",
         imagen: "/images/recurso-imagenes/vehiculos/byd_seal1.png",
-        estado: true
+        estado: "activo"
     },
     {
-        id: 2,
+        id_curso: 2,
         nombre: "Fundamentos de algoritmia",
-        categoria: "Programación",
         descripcion: "Aprende los conceptos básicos de algoritmia y estructuras de datos para resolver problemas de programación.",
         id_aula: 1,
         id_docente: 2,
         plazas: 0,
-        dias: ["lunes", "martes"],
-        hora_inicio: "09:00",
-        hora_final: "11:00",
         fecha_inicio: "2026-11-03",
         fecha_fin: "2027-01-15",
+        horario: "Lunes y martes 09:00-11:00",
         imagen: "/images/recurso-imagenes/vehiculos/byd_seal1.png",
-        estado: true
+        estado: "activo"
     }
 ];
 localStorage.setItem("cursos", JSON.stringify(cursos));
@@ -128,43 +119,23 @@ if (selectCurso) {
     for (let i = 0; i < cursos.length; i++) {
         const curso = cursos[i];
 
-        if (curso.estado) {
+        if (esCursoActivo(curso)) {
             const opcion = document.createElement("option");
-            opcion.value = curso.id;
+            opcion.value = curso.id_curso;
             opcion.textContent = `${curso.nombre}`.trim();
             selectCurso.appendChild(opcion);
         }
     }
 }
 
-function leerImagenComoDataURL(archivo) {
-    // Si no se selecciona ninguna imagen, se guarda una cadena vacía.
-    if (!archivo) return Promise.resolve("");
-
-    return new Promise((resolve, reject) => {
-        const lector = new FileReader();
-        lector.onload = () => {
-            if (typeof lector.result === "string") {
-                // La imagen se convierte en texto para poder guardarla en localStorage.
-                resolve(lector.result);
-            } else {
-                reject(new Error("No se pudo leer la imagen."));
-            }
-        };
-        lector.onerror = () => reject(new Error("No se pudo leer la imagen."));
-        lector.readAsDataURL(archivo);
-    });
-}
-
-
 const formulario_anyadir_curso = document.getElementById("añadir_curso");
 if (formulario_anyadir_curso) {
-    formulario_anyadir_curso.addEventListener("submit", async function (event) { //el async es para poder usar await dentro
+    formulario_anyadir_curso.addEventListener("submit", function (event) {
         event.preventDefault();
         const nombre = sanitizarEntrada(document.getElementById("nombre").value);
-        const categoria = sanitizarEntrada(document.getElementById("categoría").value);
         const descripcion = sanitizarEntrada(document.getElementById("descripcion").value);
-        const plazas = document.getElementById("plazas").value;
+        const plazasIntroducidas = document.getElementById("plazas").value.trim();
+        const plazas = Number(plazasIntroducidas);
         const id_aula = document.getElementById("id_aula").value;
         const id_docente = document.getElementById("id_docente").value;
         const dias = [...document.querySelectorAll('input[name="dias"]:checked')]
@@ -173,23 +144,26 @@ if (formulario_anyadir_curso) {
         const hora_final = document.getElementById("hora_final").value;
         const fecha_inicio = document.getElementById("fecha_inicio").value;
         const fecha_fin = document.getElementById("fecha_fin").value;
+        const imagen = sanitizarEntrada(document.getElementById("imagen").value.trim());
 
         //Esta linea establece lo que se puede usar en los campos.
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-        //Aquí comprobamos que no hayn metido cosas raras.
-        if (!regexLetras.test(nombre) || !regexLetras.test(categoria)) {
-            alert("Error: En estos campos solo están permidtidos letras y espacios.");
-            return; // Detenemos el envío del formulario inmediatamente
-        }
 
         //Lo mismo para números.
         const regexNumeros = /^\d+$/;
-        if (!regexNumeros.test(plazas)) {
-            alert("Error: En estos campos solo están permitidos números enteros positivos.");
+        if (!regexLetras.test(nombre.trim())) {
+            alert("El nombre del curso solo puede contener letras y espacios.");
+            return;
+        }
+        if (!regexNumeros.test(plazasIntroducidas)) {
+            alert("Las plazas deben ser un número entero no negativo.");
             return;
         }
 
-
+        if (!Number.isInteger(plazas) || plazas < 0) {
+            alert("El número de plazas debe ser un número entero no negativo.");
+            return;
+        }
         if (dias.length === 0) {
             alert("Debes seleccionar al menos un día.");
             return;
@@ -202,50 +176,52 @@ if (formulario_anyadir_curso) {
             alert("La fecha de inicio debe ser anterior a la fecha de finalización.");
             return;
         }
-        if(!Number.isInteger(Number(plazas)) || Number(plazas) < 0) {
-            alert("El número de plazas debe ser un número entero no negativo.");
-            return;
-        }
-        if (cursos.some(curso => curso.nombre.toLowerCase() === nombre.toLowerCase() && curso.estado)) {
+        if (cursos.some(curso =>
+            curso.nombre.toLowerCase() === nombre.toLowerCase() && esCursoActivo(curso)
+        )) {
             alert("Ya existe un curso con ese nombre y no puede haber 2 cursos con el mismo nombre.");
             return;
         }
-        if(cursos.find(curso => curso.id_aula === Number(id_aula) && curso.estado && curso.id_docente === Number(id_docente))) {
+        if (cursos.some(curso =>
+            curso.id_aula === Number(id_aula) &&
+            esCursoActivo(curso) &&
+            curso.id_docente === Number(id_docente)
+        )) {
             alert("Ya existe un curso en esa aula con ese docente.");
             return;
         }
-        if(cursos.find(curso => curso.id_aula === Number(id_aula) && curso.estado && curso.dias.some(dia => dias.includes(dia)) && ((hora_inicio >= curso.hora_inicio && hora_inicio < curso.hora_final) || (hora_final > curso.hora_inicio && hora_final <= curso.hora_final)))) {
+        if (cursos.some(curso => {
+            const horarioExistente = analizarHorario(curso.horario);
+            return curso.id_aula === Number(id_aula) &&
+                esCursoActivo(curso) &&
+                horarioExistente &&
+                horarioExistente.dias.some(dia => dias.includes(dia)) &&
+                hora_inicio < horarioExistente.hora_final &&
+                hora_final > horarioExistente.hora_inicio;
+        })) {
             alert("Ya existe un curso en esa aula en ese horario.");
             return;
         }
-        let imagen = "";
-        try {
-            imagen = await leerImagenComoDataURL(document.getElementById("imagen").files[0]);
-        } catch (error) {
-            alert(error.message);
-            return;
-        }
-        AnyadirCurso(nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen);
+
+        const horario = crearHorario(dias, hora_inicio, hora_final);
+        AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_inicio, fecha_fin, horario, imagen);
         localStorage.setItem("cursos", JSON.stringify(cursos));
         window.location.href = "/gestiones_administrador/gestion_cursos.html";
     });
 }
-function AnyadirCurso(nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen) {
+function AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_inicio, fecha_fin, horario, imagen) {
     const nuevoCurso = {
-        id: cursos.reduce((mayorId, curso) => Math.max(mayorId, curso.id), -1) + 1,
+        id_curso: cursos.reduce((mayorId, curso) => Math.max(mayorId, curso.id_curso), -1) + 1,
         nombre: nombre,
-        categoria: categoria,
         descripcion: descripcion,
-        plazas: plazas,
+        plazas: Number(plazas),
         id_aula: Number(id_aula),
         id_docente: Number(id_docente),
-        dias: dias,
-        hora_inicio: hora_inicio,
-        hora_final: hora_final,
         fecha_inicio: fecha_inicio,
         fecha_fin: fecha_fin,
+        horario: horario,
         imagen: imagen,
-        estado: true
+        estado: "activo"
     };
     cursos.push(nuevoCurso);
 }
@@ -255,17 +231,19 @@ if (formulario_eliminar_curso) {
     formulario_eliminar_curso.addEventListener("submit", function (event) {
         event.preventDefault();
         const id = Number(document.getElementById("id_curso").value);
-        const cursoExiste = cursos.some(curso => curso.id === id && curso.estado);
+        const cursoExiste = cursos.some(curso => curso.id_curso === id && esCursoActivo(curso));
 
         if (!Number.isInteger(id) || !cursoExiste) {
             alert("No existe ningún curso con ese ID.");
             return;
         }
-        const curso = cursos.find(cursoActual => cursoActual.id === id && cursoActual.estado);
-        if (curso && curso.estado) {
-            curso.estado = false;
+        const curso = cursos.find(cursoActual =>
+            cursoActual.id_curso === id && esCursoActivo(cursoActual)
+        );
+        if (curso) {
+            curso.estado = "inactivo";
         }
-        else{
+        else {
             alert("No existe ningún curso con ese ID o ya está eliminado.");
             return;
         }
@@ -277,42 +255,42 @@ if (formulario_eliminar_curso) {
 
 const formulario_modificar_curso = document.getElementById("modificar_curso");
 if (formulario_modificar_curso) {
-    formulario_modificar_curso.addEventListener("submit", async function (event) {
+    formulario_modificar_curso.addEventListener("submit", function (event) {
         event.preventDefault();
 
         const id = Number(sanitizarEntrada(document.getElementById("id_curso").value));
-        const cursoExiste = cursos.some(curso => curso.id === id && curso.estado);
-        if (!Number.isInteger(id) || !cursoExiste) {
+        const curso = cursos.find(cursoActual =>
+            cursoActual.id_curso === id && esCursoActivo(cursoActual)
+        );
+        if (!Number.isInteger(id) || !curso) {
             alert("No existe ningún curso con ese ID.");
             return;
         }
 
-        const curso = cursos.find(cursoActual => cursoActual.id === id);
-    
-
         const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
-        //el .trim() es para eliminar los espacios en blanco al principio y al final del string
+        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (nombreIntroducido !== "" && !regexLetras.test(nombreIntroducido)) {
+            alert("El nombre del curso solo puede contener letras y espacios.");
+            return;
+        }
+
         let nombre = curso.nombre;
         if (nombreIntroducido !== "") {
             if (cursos.some(cursoActual =>
-                cursoActual.id !== id &&
+                cursoActual.id_curso !== id &&
                 cursoActual.nombre.toLowerCase() === nombreIntroducido.toLowerCase() &&
-                cursoActual.estado
+                esCursoActivo(cursoActual)
             )) {
                 alert("Ya existe un curso activo con ese nombre.");
                 return;
             }
             nombre = nombreIntroducido;
         }
-        let categoria = curso.categoria;
-        if (sanitizarEntrada(document.getElementById("categoría").value.trim()) !== "") { 
-            categoria = sanitizarEntrada(document.getElementById("categoría").value);
-        }
+
         let descripcion = curso.descripcion;
         if (sanitizarEntrada(document.getElementById("descripcion").value.trim()) !== "") {
             descripcion = sanitizarEntrada(document.getElementById("descripcion").value);
         }
-
 
         let plazas = curso.plazas;
         const plazasIntroducidas = document.getElementById("plazas").value.trim();
@@ -353,9 +331,10 @@ if (formulario_modificar_curso) {
             }
         }
 
-        let dias = curso.dias;
-        let hora_inicio = curso.hora_inicio;
-        let hora_final = curso.hora_final;
+        const horarioActual = analizarHorario(curso.horario);
+        let dias = horarioActual ? horarioActual.dias : [];
+        let hora_inicio = horarioActual ? horarioActual.hora_inicio : "";
+        let hora_final = horarioActual ? horarioActual.hora_final : "";
         const diasIntroducidos = [...document.querySelectorAll('input[name="dias"]:checked')]
             .map(dia => dia.value);
         const horaInicioIntroducida = document.getElementById("hora_inicio").value;
@@ -364,29 +343,32 @@ if (formulario_modificar_curso) {
             horaInicioIntroducida !== "" ||
             horaFinalIntroducida !== "";
         if (horarioIntroducido) {
-            if ((horaInicioIntroducida === "" && horaFinalIntroducida !== "") || (horaFinalIntroducida === "" && horaInicioIntroducida !== "")) {
+            if ((horaInicioIntroducida === "") !== (horaFinalIntroducida === "")) {
                 alert("Debes introducir la hora de inicio y la hora final.");
                 return;
             }
-            if (horaInicioIntroducida >= horaFinalIntroducida) {
+            if (diasIntroducidos.length > 0) dias = diasIntroducidos;
+            if (horaInicioIntroducida !== "") hora_inicio = horaInicioIntroducida;
+            if (horaFinalIntroducida !== "") hora_final = horaFinalIntroducida;
+            if (dias.length === 0 || !hora_inicio || !hora_final || hora_inicio >= hora_final) {
                 alert("La hora de inicio debe ser anterior a la hora final.");
                 return;
             }
-            if (diasIntroducidos.length > 0) {
-                dias = diasIntroducidos;
-            }
-            hora_inicio = horaInicioIntroducida;
-            hora_final = horaFinalIntroducida;
         }
 
-        if (horarioIntroducido && cursos.some(cursoActual =>
-            cursoActual.id !== id &&
-            cursoActual.estado &&
-            Array.isArray(cursoActual.dias) &&
-            cursoActual.dias.some(dia => dias.includes(dia)) &&
-            hora_inicio < cursoActual.hora_final &&
-            hora_final > cursoActual.hora_inicio
-        )) {
+        const horario = horarioIntroducido
+            ? crearHorario(dias, hora_inicio, hora_final)
+            : curso.horario;
+        if (horarioIntroducido && cursos.some(cursoActual => {
+            const horarioExistente = analizarHorario(cursoActual.horario);
+            return cursoActual.id_curso !== id &&
+                esCursoActivo(cursoActual) &&
+                Number(cursoActual.id_aula) === Number(id_aula) &&
+                horarioExistente &&
+                horarioExistente.dias.some(dia => dias.includes(dia)) &&
+                hora_inicio < horarioExistente.hora_final &&
+                hora_final > horarioExistente.hora_inicio;
+        })) {
             alert("Ya existe otro curso con un horario que se solapa en alguno de esos días.");
             return;
         }
@@ -410,31 +392,16 @@ if (formulario_modificar_curso) {
 
         if ((idAulaIntroducido !== "" || idDocenteIntroducido !== "") &&
             cursos.some(cursoActual =>
-            cursoActual.id !== id &&
-            cursoActual.estado &&
-            Number(cursoActual.id_aula) === Number(id_aula) &&
-            Number(cursoActual.id_docente) === Number(id_docente)
-        )) {
+                cursoActual.id_curso !== id &&
+                esCursoActivo(cursoActual) &&
+                Number(cursoActual.id_aula) === Number(id_aula) &&
+                Number(cursoActual.id_docente) === Number(id_docente)
+            )) {
             alert("Ya existe un curso en esa aula con ese docente.");
             return;
         }
 
-        let imagen = curso.imagen || "";
-        const archivoImagen = document.getElementById("imagen").files[0];
-        if (archivoImagen) {
-            try {
-                // Si se selecciona una imagen nueva, sustituye a la anterior.
-                imagen = await leerImagenComoDataURL(archivoImagen); // el await es necesario para que guarde la imagen una vez que ya se ha leido entrea
-            } catch (error) {
-                alert(error.message);
-                return;
-            }
-        }
-
-        //VALIDACION DE SEGURIDAD 
         const regexNumeros = /^\d+$/;
-        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-
         if ((idAulaIntroducido !== "" && !regexNumeros.test(idAulaIntroducido)) ||
             (plazasIntroducidas !== "" && !regexNumeros.test(plazasIntroducidas)) ||
             (idDocenteIntroducido !== "" && !regexNumeros.test(idDocenteIntroducido))) {
@@ -442,34 +409,41 @@ if (formulario_modificar_curso) {
             return;
         }
 
-        if (!regexLetras.test(nombre) || !regexLetras.test(categoria)) {
-            alert("Error: En estos campos solo están permitidos letras y espacios.");
-            return;
-        }
+        let imagen = curso.imagen || "";
+        const imagenIntroducida = sanitizarEntrada(document.getElementById("imagen").value.trim());
+        const limpiarImagen = document.getElementById("limpiar_imagen").checked;
+        if (imagenIntroducida !== "") imagen = imagenIntroducida;
+        else if (limpiarImagen) imagen = "";
 
-
-        modificarCurso(id, nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen);
+        modificarCurso(id, {
+            nombre,
+            descripcion,
+            plazas,
+            id_aula,
+            id_docente,
+            fecha_inicio,
+            fecha_fin,
+            horario,
+            imagen
+        });
         localStorage.setItem("cursos", JSON.stringify(cursos));
         window.location.href = "/gestiones_administrador/gestion_cursos.html";
 
     });
 }
-function modificarCurso(id, nombre, categoria, descripcion, plazas, id_aula, id_docente, dias, hora_inicio, hora_final, fecha_inicio, fecha_fin, imagen) {
-    const curso = cursos.find(curso => curso.id === id);
-    if (curso) {
-        curso.nombre = nombre;
-        curso.categoria = categoria;
-        curso.descripcion = descripcion;
-        curso.plazas = plazas;
-        curso.id_aula = Number(id_aula);
-        curso.id_docente = Number(id_docente);
-        curso.dias = dias;
-        curso.hora_inicio = hora_inicio;
-        curso.hora_final = hora_final;
-        curso.fecha_inicio = fecha_inicio;
-        curso.fecha_fin = fecha_fin;
-        curso.imagen = imagen;
-    }
+function modificarCurso(id, datos) {
+    const curso = cursos.find(cursoActual => cursoActual.id_curso === id);
+    if (!curso) return;
+
+    curso.nombre = datos.nombre;
+    curso.descripcion = datos.descripcion;
+    curso.plazas = Number(datos.plazas);
+    curso.id_aula = Number(datos.id_aula);
+    curso.id_docente = Number(datos.id_docente);
+    curso.fecha_inicio = datos.fecha_inicio;
+    curso.fecha_fin = datos.fecha_fin;
+    curso.horario = datos.horario;
+    curso.imagen = datos.imagen;
 }
     
 
@@ -486,22 +460,18 @@ if (contenedorTarjetas) {
 
     const totalCursos = document.createElement('p');
     totalCursos.className = 'total-cursos';
-    const cursosActivos = cursos.filter(curso => curso.estado);
+    const cursosActivos = cursos.filter(esCursoActivo);
     totalCursos.textContent = 'Cursos disponibles: ' + cursosActivos.length;
 
     for (let i = 0; i < cursosActivos.length; i++) {
         const cursoActual = cursosActivos[i];
         const card = document.createElement('article');
         card.className = 'tarjeta';
-        const dias = Array.isArray(cursoActual.dias) && cursoActual.dias.length > 0
-            ? cursoActual.dias.join(", ")
-            : "No especificados";
-        const horaInicio = cursoActual.hora_inicio || "No especificada";
-        const horaFinal = cursoActual.hora_final || "No especificada";
+        const horario = cursoActual.horario || "No especificado";
         const fechaInicio = cursoActual.fecha_inicio || "No especificada";
         const fechaFin = cursoActual.fecha_fin || "No especificada";
         const imagen = cursoActual.imagen
-            ? `<img src="${cursoActual.imagen}" alt="Imagen del curso ${cursoActual.nombre}">`
+            ? `<img src="${sanitizarEntrada(cursoActual.imagen)}" alt="Imagen del curso ${sanitizarEntrada(cursoActual.nombre)}">`
             : "";
         const aula = aulas.find(aulaActual => aulaActual.id_aula === Number(cursoActual.id_aula));
         const docente = docentes.find(docenteActual => docenteActual.id_docente === Number(cursoActual.id_docente));
@@ -510,16 +480,14 @@ if (contenedorTarjetas) {
 
         card.innerHTML = `
             ${imagen}
-            <h4>${cursoActual.nombre}</h4>
-            <p><strong>Id:</strong> ${cursoActual.id}</p>
-            <p><strong>Categoría:</strong> ${cursoActual.categoria}</p>
-            <p><strong>Días:</strong> ${dias}</p>
-            <p><strong>Horario:</strong> ${horaInicio} - ${horaFinal}</p>
-            <p><strong>Fechas:</strong> ${fechaInicio} - ${fechaFin}</p>
-            <p>${cursoActual.descripcion}</p>
-            <p><strong>Plazas disponibles:</strong> ${cursoActual.plazas}</p>
-            <p><strong>Aula:</strong> ${nombreAula}</p>
-            <p><strong>Docente:</strong> ${nombreDocente}</p>
+            <h4>${sanitizarEntrada(cursoActual.nombre)}</h4>
+            <p><strong>Id:</strong> ${sanitizarEntrada(cursoActual.id_curso)}</p>
+            <p><strong>Horario:</strong> ${sanitizarEntrada(horario)}</p>
+            <p><strong>Fechas:</strong> ${sanitizarEntrada(fechaInicio)} - ${sanitizarEntrada(fechaFin)}</p>
+            <p>${sanitizarEntrada(cursoActual.descripcion)}</p>
+            <p><strong>Plazas disponibles:</strong> ${sanitizarEntrada(cursoActual.plazas)}</p>
+            <p><strong>Aula:</strong> ${sanitizarEntrada(nombreAula)}</p>
+            <p><strong>Docente:</strong> ${sanitizarEntrada(nombreDocente)}</p>
         `;
 
         let button = null;
@@ -528,7 +496,7 @@ if (contenedorTarjetas) {
             button.textContent = "Matricularse";
             button.addEventListener("click", () => {
                 const idUsuarioActual = Number(usuarioActual.id_usuario !== undefined ? usuarioActual.id_usuario : usuarioActual.id);
-                const idCursoActual = Number(cursoActual.id_curso !== undefined ? cursoActual.id_curso : cursoActual.id);
+                const idCursoActual = cursoActual.id_curso;
                 if(matriculas.some(matricula =>
                     matricula.id_curso === idCursoActual &&
                     matricula.id_usuario === idUsuarioActual &&
@@ -575,10 +543,86 @@ function fechaHoraActual() {
 
 // Función para neutralizar etiquetas HTML y evitar inyecciones XSS
 function sanitizarEntrada(texto) {
-    return texto
-        .replace(/&/g, "&amp;")
+    return String(texto)
+        .replace(/&(?!(amp|lt|gt|quot|#039);)/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+function normalizarCurso(curso) {
+    const horarioAntiguo = Array.isArray(curso.dias)
+        ? crearHorario(curso.dias, curso.hora_inicio || "", curso.hora_final || "")
+        : "";
+    const estado = curso.estado === "activo" || curso.estado === "inactivo"
+        ? curso.estado
+        : curso.estado === false
+            ? "inactivo"
+            : "activo";
+
+    return {
+        id_curso: Number(curso.id_curso !== undefined ? curso.id_curso : curso.id),
+        id_docente: Number(curso.id_docente),
+        id_aula: Number(curso.id_aula),
+        nombre: curso.nombre,
+        descripcion: curso.descripcion || "",
+        fecha_inicio: curso.fecha_inicio,
+        fecha_fin: curso.fecha_fin,
+        horario: curso.horario || horarioAntiguo,
+        plazas: Number(curso.plazas),
+        imagen: curso.imagen || "",
+        estado
+    };
+}
+
+function esCursoActivo(curso) {
+    return curso.estado === "activo" || curso.estado === true;
+}
+
+function crearHorario(dias, horaInicio, horaFinal) {
+    const nombresDias = {
+        lunes: "lunes",
+        martes: "martes",
+        miercoles: "miércoles",
+        jueves: "jueves",
+        viernes: "viernes"
+    };
+    const ordenDias = ["lunes", "martes", "miercoles", "jueves", "viernes"];
+    const diasOrdenados = ordenDias
+        .filter(dia => dias.includes(dia))
+        .map(dia => nombresDias[dia]);
+    if (diasOrdenados.length === 0) return "";
+
+    diasOrdenados[0] = `${diasOrdenados[0][0].toUpperCase()}${diasOrdenados[0].slice(1)}`;
+    const diasTexto = diasOrdenados.length === 1
+        ? diasOrdenados[0]
+        : `${diasOrdenados.slice(0, -1).join(", ")} y ${diasOrdenados[diasOrdenados.length - 1]}`;
+    return `${diasTexto} ${horaInicio}-${horaFinal}`;
+}
+
+function analizarHorario(horario) {
+    if (typeof horario !== "string") return null;
+    const coincidencia = horario.trim().match(/^(.*?)\s+(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})$/);
+    if (!coincidencia) return null;
+
+    const valoresDias = {
+        lunes: "lunes",
+        martes: "martes",
+        miercoles: "miercoles",
+        jueves: "jueves",
+        viernes: "viernes"
+    };
+    const dias = coincidencia[1]
+        .split(/\s*,\s*|\s+y\s+/i)
+        .map(dia => dia.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
+        .map(dia => valoresDias[dia])
+        .filter(Boolean);
+    if (dias.length === 0) return null;
+
+    return {
+        dias,
+        hora_inicio: coincidencia[2],
+        hora_final: coincidencia[3]
+    };
 }
