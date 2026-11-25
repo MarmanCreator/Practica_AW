@@ -3,10 +3,7 @@
 //Primero rescatamos el almacenamiento local para recuperar informacion de usuarios guardada anteriorment. 
 //Usamos JSON para parsear esta informacion, y en caso de que no haya, crear un array vacio. 
 const usuariosGuardados = localStorage.getItem("usuarios");
-const usuarios = usuariosGuardados
-    ? JSON.parse(usuariosGuardados).map(normalizarUsuario)
-    : [];
-localStorage.setItem("usuarios", JSON.stringify(usuarios));
+const usuarios = usuariosGuardados ? JSON.parse(usuariosGuardados) : [];
 
 //Seleccionamos el formulario sobre el que vamos a trabajar en este caso el de registro
 const formularioRegistro = document.getElementById("registro"); 
@@ -90,28 +87,6 @@ function AnyadirUsuario(nombre, email, password, rol){
 
     usuarios.push(nuevoUsuario);
     return true;
-}
-
-function normalizarUsuario(usuario, indice) {
-    const rol = usuario.rol === "administrador"
-        ? "admin"
-        : usuario.rol === "estudiante"
-            ? "alumno"
-            : usuario.rol;
-    const nombre = [usuario.nombre, usuario.apellido]
-        .filter(Boolean)
-        .join(" ")
-        .trim();
-
-    return {
-        id_usuario: Number(usuario.id_usuario ?? usuario.id ?? indice + 1),
-        nombre: nombre,
-        email: usuario.email || "",
-        password: usuario.password || usuario.contraseña || "",
-        rol: ["alumno", "admin"].includes(rol) ? rol : "alumno",
-        fecha_registro: usuario.fecha_registro || fechaHoraActual(),
-        activo: usuario.activo === false || Number(usuario.activo) === 0 ? 0 : 1
-    };
 }
 
 function fechaHoraActual() {

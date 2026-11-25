@@ -1,7 +1,7 @@
 const docentesGuardados = localStorage.getItem("docentes");
 
 const docentes = docentesGuardados
-    ? JSON.parse(docentesGuardados).map(normalizarDocente)
+    ? JSON.parse(docentesGuardados)
     : [
         {
             id_docente: 0,
@@ -214,22 +214,6 @@ function sanitizarEntrada(texto) {
         .replace(/'/g, "&#039;");
 }
 
-function normalizarDocente(docente) {
-    const nombre = docente.apellido
-        ? `${docente.nombre} ${docente.apellido}`.trim()
-        : docente.nombre;
-
-    return {
-        id_docente: Number(docente.id_docente !== undefined ? docente.id_docente : docente.id),
-        nombre: nombre,
-        email: docente.email,
-        especialidad: docente.especialidad,
-        telefono: docente.telefono,
-        foto: docente.foto || "",
-        activo: Number(docente.activo) === 0 ? 0 : 1
-    };
-}
-
 function esActivo(docente) {
-    return Number(docente.activo) === 1;
+    return docente.activo === 1;
 }

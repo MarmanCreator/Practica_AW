@@ -1,6 +1,6 @@
 const usuariosGuardados = localStorage.getItem("usuarios");
 const usuarios = usuariosGuardados
-    ? JSON.parse(usuariosGuardados).map(normalizarUsuario)
+    ? JSON.parse(usuariosGuardados)
     : [
         {
             id_usuario: 1,
@@ -26,7 +26,7 @@ localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
 const usuarioSesionGuardado = sessionStorage.getItem("usuarioActivo");
 const usuarioSesionActual = usuarioSesionGuardado
-    ? normalizarUsuario(JSON.parse(usuarioSesionGuardado), 0)
+    ? JSON.parse(usuarioSesionGuardado)
     : null;
 
 const selectUsuarioEliminado = document.getElementById("id_usuario_eliminado");
@@ -185,28 +185,6 @@ if (contenedorTarjetas) {
 
     contenedorTarjetas.replaceChildren(fragmento);
     contenedorTarjetas.prepend(tituloUsuarios, totalUsuarios);
-}
-
-function normalizarUsuario(usuario, indice) {
-    const rol = usuario.rol === "administrador"
-        ? "admin"
-        : usuario.rol === "estudiante"
-            ? "alumno"
-            : usuario.rol;
-    const nombre = [usuario.nombre, usuario.apellido]
-        .filter(Boolean)
-        .join(" ")
-        .trim();
-
-    return {
-        id_usuario: Number(usuario.id_usuario ?? usuario.id ?? indice + 1),
-        nombre: nombre,
-        email: usuario.email || "",
-        password: usuario.password || usuario.contraseña || "",
-        rol: ["alumno", "admin"].includes(rol) ? rol : "alumno",
-        fecha_registro: usuario.fecha_registro || fechaHoraActual(),
-        activo: usuario.activo === false || Number(usuario.activo) === 0 ? 0 : 1
-    };
 }
 
 function guardarUsuarios() {

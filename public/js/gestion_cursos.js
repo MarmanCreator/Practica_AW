@@ -3,7 +3,7 @@
 const cursosGuardados = localStorage.getItem("cursos");
 
 const cursos = cursosGuardados
-    ? JSON.parse(cursosGuardados).map(normalizarCurso)
+    ? JSON.parse(cursosGuardados)
     : [
 
     {
@@ -50,40 +50,16 @@ localStorage.setItem("cursos", JSON.stringify(cursos));
 
 const aulasGuardadas = localStorage.getItem("aulas");
 
-const aulas = aulasGuardadas ? JSON.parse(aulasGuardadas).map(aula => ({
-    id_aula: Number(aula.id_aula !== undefined ? aula.id_aula : aula.id),
-    nombre: aula.nombre,
-    estado: aula.estado !== undefined
-        ? aula.estado
-        : aula.activo
-            ? "activa"
-            : "inactiva"
-})) : [ ];
+const aulas = aulasGuardadas ? JSON.parse(aulasGuardadas) : [];
 
 const docentesGuardados = localStorage.getItem("docentes");
 
-const docentes = docentesGuardados ? JSON.parse(docentesGuardados).map(docente => ({
-    id_docente: Number(docente.id_docente !== undefined ? docente.id_docente : docente.id),
-    nombre: docente.apellido
-        ? `${docente.nombre} ${docente.apellido}`.trim()
-        : docente.nombre,
-    activo: Number(docente.activo) === 0 ? 0 : 1
-})) : [ ];
+const docentes = docentesGuardados ? JSON.parse(docentesGuardados) : [];
 
 const matriculasGuardadas = localStorage.getItem("matriculas");
 
 const matriculas = matriculasGuardadas
-    ? JSON.parse(matriculasGuardadas).map(matricula => ({
-        id_matricula: Number(matricula.id_matricula !== undefined ? matricula.id_matricula : matricula.id),
-        id_usuario: Number(matricula.id_usuario !== undefined ? matricula.id_usuario : matricula.id_alumno),
-        id_curso: Number(matricula.id_curso),
-        fecha_matricula: matricula.fecha_matricula || "",
-        estado: matricula.estado === "activa" || matricula.estado === "cancelada"
-            ? matricula.estado
-            : matricula.activo === false
-                ? "cancelada"
-                : "activa"
-    }))
+    ? JSON.parse(matriculasGuardadas)
     : [];
 
 
@@ -105,7 +81,7 @@ if (selectDocente) {
     for (let i = 0; i < docentes.length; i++) {
         const doc = docentes[i];
 
-        if (Number(doc.activo) === 1) {
+        if (doc.activo === 1) {
             const opcion = document.createElement("option");
             opcion.value = doc.id_docente;
             opcion.textContent = `${doc.nombre}`.trim();
@@ -324,7 +300,7 @@ if (formulario_modificar_curso) {
                 alert("El ID del docente debe ser un número entero.");
                 return;
             }
-            if (!docentes.some(docente => docente.id_docente === id_docente && Number(docente.activo) === 1)) {
+            if (!docentes.some(docente => docente.id_docente === id_docente && docente.activo === 1)) {
                 alert("No existe ningún docente con ese ID.");
                 return;
             }
@@ -362,7 +338,7 @@ if (formulario_modificar_curso) {
             const horarioExistente = analizarHorario(cursoActual.horario);
             return cursoActual.id_curso !== id &&
                 esCursoActivo(cursoActual) &&
-                Number(cursoActual.id_aula) === Number(id_aula) &&
+                cursoActual.id_aula === id_aula &&
                 horarioExistente &&
                 horarioExistente.dias.some(dia => dias.includes(dia)) &&
                 hora_inicio < horarioExistente.hora_final &&
@@ -393,8 +369,8 @@ if (formulario_modificar_curso) {
             cursos.some(cursoActual =>
                 cursoActual.id_curso !== id &&
                 esCursoActivo(cursoActual) &&
-                Number(cursoActual.id_aula) === Number(id_aula) &&
-                Number(cursoActual.id_docente) === Number(id_docente)
+                cursoActual.id_aula === id_aula &&
+                cursoActual.id_docente === id_docente
             )) {
             alert("Ya existe un curso en esa aula con ese docente.");
             return;
@@ -449,7 +425,7 @@ function modificarCurso(id, datos) {
 const contenedorTarjetas = document.querySelector('.tarjetas');
 const usuarioGuardado = sessionStorage.getItem("usuarioActivo");
 const usuarioActual = usuarioGuardado
-    ? normalizarUsuarioSesion(JSON.parse(usuarioGuardado))
+    ? JSON.parse(usuarioGuardado)
     : null;
 if (contenedorTarjetas) {
     const fragmento = document.createDocumentFragment();
@@ -472,8 +448,8 @@ if (contenedorTarjetas) {
         const imagen = cursoActual.imagen
             ? `<img src="${sanitizarEntrada(cursoActual.imagen)}" alt="Imagen del curso ${sanitizarEntrada(cursoActual.nombre)}">`
             : "";
-        const aula = aulas.find(aulaActual => aulaActual.id_aula === Number(cursoActual.id_aula));
-        const docente = docentes.find(docenteActual => docenteActual.id_docente === Number(cursoActual.id_docente));
+        const aula = aulas.find(aulaActual => aulaActual.id_aula === cursoActual.id_aula);
+        const docente = docentes.find(docenteActual => docenteActual.id_docente === cursoActual.id_docente);
         const nombreAula = aula ? aula.nombre : "No especificada";
         const nombreDocente = docente ? docente.nombre : "No especificado";
 
@@ -550,52 +526,8 @@ function sanitizarEntrada(texto) {
         .replace(/'/g, "&#039;");
 }
 
-function normalizarUsuarioSesion(usuario) {
-    const rol = usuario.rol === "administrador"
-        ? "admin"
-        : usuario.rol === "estudiante"
-            ? "alumno"
-            : usuario.rol;
-    const nombre = [usuario.nombre, usuario.apellido]
-        .filter(Boolean)
-        .join(" ")
-        .trim();
-
-    return {
-        id_usuario: Number(usuario.id_usuario ?? usuario.id),
-        nombre: nombre,
-        rol: ["alumno", "admin"].includes(rol) ? rol : "alumno",
-        activo: usuario.activo === false || Number(usuario.activo) === 0 ? 0 : 1
-    };
-}
-
-function normalizarCurso(curso) {
-    const horarioAntiguo = Array.isArray(curso.dias)
-        ? crearHorario(curso.dias, curso.hora_inicio || "", curso.hora_final || "")
-        : "";
-    const estado = curso.estado === "activo" || curso.estado === "inactivo"
-        ? curso.estado
-        : curso.estado === false
-            ? "inactivo"
-            : "activo";
-
-    return {
-        id_curso: Number(curso.id_curso !== undefined ? curso.id_curso : curso.id),
-        id_docente: Number(curso.id_docente),
-        id_aula: Number(curso.id_aula),
-        nombre: curso.nombre,
-        descripcion: curso.descripcion || "",
-        fecha_inicio: curso.fecha_inicio,
-        fecha_fin: curso.fecha_fin,
-        horario: curso.horario || horarioAntiguo,
-        plazas: Number(curso.plazas),
-        imagen: curso.imagen || "",
-        estado
-    };
-}
-
 function esCursoActivo(curso) {
-    return curso.estado === "activo" || curso.estado === true;
+    return curso.estado === "activo";
 }
 
 function crearHorario(dias, horaInicio, horaFinal) {

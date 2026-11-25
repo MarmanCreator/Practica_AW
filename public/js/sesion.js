@@ -24,29 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     */
 
     if (usuarioGuardado) {
-        const usuarioGuardadoActual = JSON.parse(usuarioGuardado);
-        const rolGuardado = usuarioGuardadoActual.rol === "administrador"
-            ? "admin"
-            : usuarioGuardadoActual.rol === "estudiante"
-                ? "alumno"
-                : usuarioGuardadoActual.rol;
-        const nombre = [usuarioGuardadoActual.nombre, usuarioGuardadoActual.apellido]
-            .filter(Boolean)
-            .join(" ")
-            .trim();
-
-        usuarioActivo = {
-            id_usuario: Number(usuarioGuardadoActual.id_usuario ?? usuarioGuardadoActual.id),
-            nombre: nombre,
-            email: usuarioGuardadoActual.email || "",
-            rol: ["alumno", "admin"].includes(rolGuardado) ? rolGuardado : "alumno",
-            fecha_registro: usuarioGuardadoActual.fecha_registro || "",
-            activo: usuarioGuardadoActual.activo === false ||
-                Number(usuarioGuardadoActual.activo) === 0
-                ? 0
-                : 1
-        };
-        sessionStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
+        usuarioActivo = JSON.parse(usuarioGuardado);
 
         if (usuarioActivo.activo === 0) {
             sessionStorage.removeItem("usuarioActivo");

@@ -1,15 +1,13 @@
 const matriculasGuardadas = localStorage.getItem("matriculas");
 
 const matriculas = matriculasGuardadas
-    ? JSON.parse(matriculasGuardadas).map(normalizarMatricula)
+    ? JSON.parse(matriculasGuardadas)
     : [];
 localStorage.setItem("matriculas", JSON.stringify(matriculas));
 
 const usuariosGuardados = localStorage.getItem("usuarios");
 
-const usuarios = usuariosGuardados
-    ? JSON.parse(usuariosGuardados).map(normalizarUsuario)
-    : [];
+const usuarios = usuariosGuardados ? JSON.parse(usuariosGuardados) : [];
 
 const cursosGuardados = localStorage.getItem("cursos");
 
@@ -52,9 +50,9 @@ if (selectCurso) {
     for (let i = 0; i < cursos.length; i++) {
         const curso = cursos[i];
 
-        if (curso.estado === true || curso.estado === "activo") {
+        if (curso.estado === "activo") {
             const opcion = document.createElement("option");
-            opcion.value = obtenerIdCurso(curso);
+            opcion.value = curso.id_curso;
             opcion.textContent = `${curso.nombre}`.trim();
             selectCurso.appendChild(opcion);
         }
@@ -71,11 +69,11 @@ if (formularioAnyadirMatricula &&
         const id_usuario = Number(document.getElementById("id_usuario").value);
         const id_curso = Number(document.getElementById("id_curso").value);
         const usuario = usuarios.find(usuarioActual =>
-            obtenerIdUsuario(usuarioActual) === id_usuario && usuarioActual.activo
+            usuarioActual.id_usuario === id_usuario && usuarioActual.activo === 1
         );
         const curso = cursos.find(cursoActual =>
-            obtenerIdCurso(cursoActual) === id_curso &&
-            (cursoActual.estado === true || cursoActual.estado === "activo")
+            cursoActual.id_curso === id_curso &&
+            cursoActual.estado === "activo"
         );
 
         if (!Number.isInteger(id_usuario) || !usuario) {
@@ -154,11 +152,11 @@ if (formularioModificarMatricula) {
             ? matricula.id_curso
             : Number(idCursoIntroducido);
         const usuario = usuarios.find(usuarioActual =>
-            obtenerIdUsuario(usuarioActual) === id_usuario && usuarioActual.activo
+            usuarioActual.id_usuario === id_usuario && usuarioActual.activo === 1
         );
         const curso = cursos.find(cursoActual =>
-            obtenerIdCurso(cursoActual) === id_curso &&
-            (cursoActual.estado === true || cursoActual.estado === "activo")
+            cursoActual.id_curso === id_curso &&
+            cursoActual.estado === "activo"
         );
 
         if (idUsuarioIntroducido !== "" && (!Number.isInteger(id_usuario) || !usuario)) {
@@ -190,7 +188,7 @@ const contenedorTarjetas = document.querySelector(".tarjetas");
 const es_mis_matriculas = document.getElementById("tarjetas-mis-matriculas");
 const usuarioGuardado = sessionStorage.getItem("usuarioActivo");
 const usuarioActual = usuarioGuardado
-    ? normalizarUsuario(JSON.parse(usuarioGuardado), 0)
+    ? JSON.parse(usuarioGuardado)
     : null;
 
 if(es_mis_matriculas){
@@ -213,10 +211,10 @@ if(es_mis_matriculas){
         const matriculaActual = matriculasMias[i];
         const usuarioId = matriculaActual.id_usuario;
         const usuario = usuarios.find(usuarioActual =>
-            obtenerIdUsuario(usuarioActual) === Number(usuarioId)
+            usuarioActual.id_usuario === usuarioId
         );
         const curso = cursos.find(cursoActual =>
-            obtenerIdCurso(cursoActual) === Number(matriculaActual.id_curso)
+            cursoActual.id_curso === matriculaActual.id_curso
         );
         const nombreUsuario = usuario ? usuario.nombre : "Usuario no encontrado";
         const nombreCurso = curso ? curso.nombre : "Curso no encontrado";
@@ -254,10 +252,10 @@ else if (contenedorTarjetas) {
         const matriculaActual = matriculasActivas[i];
         const usuarioId = matriculaActual.id_usuario;
         const usuario = usuarios.find(usuarioActual =>
-            obtenerIdUsuario(usuarioActual) === Number(usuarioId)
+            usuarioActual.id_usuario === usuarioId
         );
         const curso = cursos.find(cursoActual =>
-            obtenerIdCurso(cursoActual) === Number(matriculaActual.id_curso)
+            cursoActual.id_curso === matriculaActual.id_curso
         );
         const nombreUsuario = usuario ? usuario.nombre : "Usuario no encontrado";
         const nombreCurso = curso ? curso.nombre : "Curso no encontrado";
@@ -289,68 +287,11 @@ else if (contenedorTarjetas) {
     contenedorTarjetas.prepend(titulo, total);
 }
 
-function normalizarMatricula(matricula) {
-    const estado = matricula.estado === "activa" || matricula.estado === "cancelada"
-        ? matricula.estado
-        : matricula.activo === false
-            ? "cancelada"
-            : "activa";
-
-    return {
-        id_matricula: Number(matricula.id_matricula ?? matricula.id),
-        id_usuario: Number(matricula.id_usuario ?? matricula.id_alumno),
-        id_curso: Number(matricula.id_curso),
-        fecha_matricula: normalizarFechaHora(matricula.fecha_matricula),
-        estado
-    };
-}
-
-function normalizarFechaHora(fecha) {
-    if (!fecha) return "";
-    if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}/.test(fecha)) {
-        return fecha.replace("T", " ").slice(0, 19);
-    }
-
-    const partes = fecha.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (partes) {
-        return `${partes[3]}-${partes[2].padStart(2, "0")}-${partes[1].padStart(2, "0")} 00:00:00`;
-    }
-
-    return fecha;
-}
-
 function fechaHoraActual() {
     const ahora = new Date();
     const formato = numero => String(numero).padStart(2, "0");
     return `${ahora.getFullYear()}-${formato(ahora.getMonth() + 1)}-${formato(ahora.getDate())} ` +
         `${formato(ahora.getHours())}:${formato(ahora.getMinutes())}:${formato(ahora.getSeconds())}`;
-}
-
-function obtenerIdUsuario(usuario) {
-    return Number(usuario.id_usuario);
-}
-
-function normalizarUsuario(usuario, indice) {
-    const rol = usuario.rol === "administrador"
-        ? "admin"
-        : usuario.rol === "estudiante"
-            ? "alumno"
-            : usuario.rol;
-    const nombre = [usuario.nombre, usuario.apellido]
-        .filter(Boolean)
-        .join(" ")
-        .trim();
-
-    return {
-        id_usuario: Number(usuario.id_usuario ?? usuario.id ?? indice + 1),
-        nombre: nombre,
-        rol: ["alumno", "admin"].includes(rol) ? rol : "alumno",
-        activo: usuario.activo === false || Number(usuario.activo) === 0 ? 0 : 1
-    };
-}
-
-function obtenerIdCurso(curso) {
-    return Number(curso.id_curso ?? curso.id);
 }
 
 function sanitizarEntrada(texto) {

@@ -1,19 +1,7 @@
 const aulasGuardadas = localStorage.getItem("aulas");
 
 const aulas = aulasGuardadas
-    ? JSON.parse(aulasGuardadas).map(aula => ({
-        id_aula: Number(aula.id_aula !== undefined ? aula.id_aula : aula.id),
-        nombre: aula.nombre,
-        edificio: aula.edificio,
-        planta: String(aula.planta),
-        capacidad: Number(aula.capacidad),
-        equipamiento: aula.equipamiento || "",
-        estado: aula.estado !== undefined
-            ? aula.estado
-            : aula.activo
-                ? "activa"
-                : "inactiva"
-    }))
+    ? JSON.parse(aulasGuardadas)
     : [
         {
             id_aula: 1,

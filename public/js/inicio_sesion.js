@@ -19,7 +19,7 @@ if (formularioLogin) {
         const usuarioValido = usuarios.find(
             usuario => usuario.email === emailInput &&
                 usuario.password === passwordInput &&
-                Number(usuario.activo) === 1
+                usuario.activo === 1
         );
 
         //Condicional para procesar el resultado de la búsqueda
