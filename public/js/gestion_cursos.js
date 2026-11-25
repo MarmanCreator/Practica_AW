@@ -71,7 +71,13 @@ const aulas = aulasGuardadas ? JSON.parse(aulasGuardadas).map(aula => ({
 
 const docentesGuardados = localStorage.getItem("docentes");
 
-const docentes = docentesGuardados ? JSON.parse(docentesGuardados): [ ];
+const docentes = docentesGuardados ? JSON.parse(docentesGuardados).map(docente => ({
+    id_docente: Number(docente.id_docente !== undefined ? docente.id_docente : docente.id),
+    nombre: docente.apellido
+        ? `${docente.nombre} ${docente.apellido}`.trim()
+        : docente.nombre,
+    activo: Number(docente.activo) === 0 ? 0 : 1
+})) : [ ];
 
 const matriculasGuardadas = localStorage.getItem("matriculas");
 
@@ -108,10 +114,10 @@ if (selectDocente) {
     for (let i = 0; i < docentes.length; i++) {
         const doc = docentes[i];
 
-        if (doc.activo) {
+        if (Number(doc.activo) === 1) {
             const opcion = document.createElement("option");
-            opcion.value = doc.id;
-            opcion.textContent = `${doc.nombre} ${doc.apellido || ""}`.trim();
+            opcion.value = doc.id_docente;
+            opcion.textContent = `${doc.nombre}`.trim();
             selectDocente.appendChild(opcion);
         }
     }
@@ -341,7 +347,7 @@ if (formulario_modificar_curso) {
                 alert("El ID del docente debe ser un número entero.");
                 return;
             }
-            if (!docentes.some(docente => docente.id === id_docente && docente.activo)) {
+            if (!docentes.some(docente => docente.id_docente === id_docente && Number(docente.activo) === 1)) {
                 alert("No existe ningún docente con ese ID.");
                 return;
             }
@@ -498,11 +504,9 @@ if (contenedorTarjetas) {
             ? `<img src="${cursoActual.imagen}" alt="Imagen del curso ${cursoActual.nombre}">`
             : "";
         const aula = aulas.find(aulaActual => aulaActual.id_aula === Number(cursoActual.id_aula));
-        const docente = docentes.find(docenteActual => docenteActual.id === Number(cursoActual.id_docente));
+        const docente = docentes.find(docenteActual => docenteActual.id_docente === Number(cursoActual.id_docente));
         const nombreAula = aula ? aula.nombre : "No especificada";
-        const nombreDocente = docente
-            ? `${docente.nombre} ${docente.apellido || ""}`.trim()
-            : "No especificado";
+        const nombreDocente = docente ? docente.nombre : "No especificado";
 
         card.innerHTML = `
             ${imagen}

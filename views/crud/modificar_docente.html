@@ -70,9 +70,6 @@
         <label for="nombre">Nombre del docente:</label>
         <input type="text" id="nombre" name="nombre" placeholder="Nombre del docente">
 
-        <label for="apellido">Apellido del docente:</label>
-        <input type="text" id="apellido" name="apellido" placeholder="Apellido del docente">
-
         <label for="especialidad">Especialidad:</label>
         <input type="text" id="especialidad" name="especialidad" placeholder="Especialidad del docente">
 
@@ -81,6 +78,10 @@
 
         <label for="telefono">Teléfono:</label>
         <input type="tel" id="telefono" name="telefono" placeholder="Teléfono del docente">
+
+        <label for="foto">Foto (ruta o URL):</label>
+        <input type="text" id="foto" name="foto" placeholder="images/docentes/docente01.png">
+        <label><input type="checkbox" id="limpiar_foto" name="limpiar_foto"> Dejar la foto vacía</label>
 
         <button type="button" onclick="window.location.href = '/gestiones_administrador/gestion_docentes.html'">Cancelar</button>
         <button type="submit">Modificar docente</button> 

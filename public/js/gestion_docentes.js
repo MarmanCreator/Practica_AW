@@ -1,34 +1,34 @@
 const docentesGuardados = localStorage.getItem("docentes");
 
 const docentes = docentesGuardados
-    ? JSON.parse(docentesGuardados)
+    ? JSON.parse(docentesGuardados).map(normalizarDocente)
     : [
         {
-            id: 0,
-            nombre: "Marcos",
-            apellido: "García",
+            id_docente: 0,
+            nombre: "Marcos García",
             especialidad: "Matemáticas",
             email: "garcia@example.com",
             telefono: "123456789",
-            activo: true
+            foto: "",
+            activo: 1
         },
         {
-            id: 1,
-            nombre: "Pepe",
-            apellido: "López",
+            id_docente: 1,
+            nombre: "Pepe López",
             especialidad: "Física",
             email: "lopez@example.com",
             telefono: "987654321",
-            activo: true
+            foto: "",
+            activo: 1
         },
         {
-            id: 2,
-            nombre: "Antonio",
-            apellido: "Martínez",
+            id_docente: 2,
+            nombre: "Antonio Martínez",
             especialidad: "Química",
             email: "martinez@example.com",
             telefono: "555555555",
-            activo: true
+            foto: "",
+            activo: 1
         }
     ];
 
@@ -40,10 +40,10 @@ if (selectDocente) {
     for (let i = 0; i < docentes.length; i++) {
         const doc = docentes[i];
 
-        if (doc.activo) {
+        if (esActivo(doc)) {
             const opcion = document.createElement("option");
-            opcion.value = doc.id;
-            opcion.textContent = `${doc.nombre} ${doc.apellido || ""}`.trim();
+            opcion.value = doc.id_docente;
+            opcion.textContent = `${doc.nombre}`.trim();
             selectDocente.appendChild(opcion);
         }
     }
@@ -56,7 +56,6 @@ if (formularioAnyadirDocente) {
         
        // 1. LECTURA Y SANITIZACIÓN
         const nombre = sanitizarEntrada(document.getElementById("nombre").value.trim());
-        const apellido = sanitizarEntrada(document.getElementById("apellido").value.trim());
         const especialidad = sanitizarEntrada(document.getElementById("especialidad").value.trim()); 
         const email = sanitizarEntrada(document.getElementById("email").value.trim());
         const telefono = document.getElementById("telefono").value.trim();
@@ -67,8 +66,8 @@ if (formularioAnyadirDocente) {
         const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
 
         // Agrupamos la validación de todos los campos de texto
-        if (!regexLetras.test(nombre) || !regexLetras.test(apellido) || !regexLetras.test(especialidad)) {
-            alert("Error: En los campos de nombre, apellido y especialidad solo están permitidos letras y espacios.");
+        if (!regexLetras.test(nombre) || !regexLetras.test(especialidad)) {
+            alert("Error: En los campos de nombre y especialidad solo están permitidos letras y espacios.");
             return;
         }
 
@@ -80,13 +79,13 @@ if (formularioAnyadirDocente) {
 
         // 3. EJECUCIÓN (Solo si ha superado todos los return anteriores)
         docentes.push({
-            id: docentes.reduce((mayorId, docente) => Math.max(mayorId, docente.id), -1) + 1,
+            id_docente: docentes.reduce((mayorId, docente) => Math.max(mayorId, docente.id_docente), -1) + 1,
             nombre: nombre,
-            apellido: apellido,
             especialidad: especialidad, 
             email: email,
             telefono: telefono,
-            activo: true
+            foto: "",
+            activo: 1
         });
 
         localStorage.setItem("docentes", JSON.stringify(docentes));
@@ -99,14 +98,14 @@ if (formularioEliminarDocente) {
     formularioEliminarDocente.addEventListener("submit", event => {
         event.preventDefault();
         const id = Number(document.getElementById("id_docente").value);
-        const docente = docentes.find(docenteActual => docenteActual.id === id);
+        const docente = docentes.find(docenteActual => docenteActual.id_docente === id);
 
-        if (!Number.isInteger(id) || !docente || !docente.activo) {
+        if (!Number.isInteger(id) || !docente || !esActivo(docente)) {
             alert("No existe ningún docente con ese ID.");
             return;
         }
 
-        docente.activo = false;
+        docente.activo = 0;
         localStorage.setItem("docentes", JSON.stringify(docentes));
         window.location.href = "/gestiones_administrador/gestion_docentes.html";
     });
@@ -117,31 +116,29 @@ if (formularioModificarDocente) {
     formularioModificarDocente.addEventListener("submit", event => {
         event.preventDefault();
         const id = Number(document.getElementById("id_docente").value);
-        const docente = docentes.find(docenteActual => docenteActual.id === id && docenteActual.activo);
+        const docente = docentes.find(docenteActual => docenteActual.id_docente === id && esActivo(docenteActual));
 
         if (!Number.isInteger(id) || !docente) {
             alert("No existe ningún docente con ese ID.");
             return;
         }
         // 1. LECTURA Y SANITIZACIÓN
-        const idIntroducido = document.getElementById("id_docente").value.trim();
         const nombreIntroducido = sanitizarEntrada(document.getElementById("nombre").value.trim());
-        const apellidoIntroducido = sanitizarEntrada(document.getElementById("apellido").value.trim());
         const especialidadIntroducida = sanitizarEntrada(document.getElementById("especialidad").value.trim());
         const emailIntroducido = sanitizarEntrada(document.getElementById("email").value.trim());
         const telefonoIntroducido = document.getElementById("telefono").value.trim();
+        const fotoIntroducida = sanitizarEntrada(document.getElementById("foto").value.trim());
+        const limpiarFoto = document.getElementById("limpiar_foto").checked;
 
         // 2. VALIDACIONES DE SEGURIDAD (REGEX)
-        const regexNumeros = /^\d+$/;
         const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         const regexTelefono = /^[\d\s]+$/;
         const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         // Comprobación de campos de texto agrupados (Solo si han escrito algo nuevo)
-        if ((nombreIntroducido !== "" && !regexLetras.test(nombreIntroducido)) || 
-            (apellidoIntroducido !== "" && !regexLetras.test(apellidoIntroducido)) || 
+        if ((nombreIntroducido !== "" && !regexLetras.test(nombreIntroducido)) ||
             (especialidadIntroducida !== "" && !regexLetras.test(especialidadIntroducida))) {
-            alert("Error: En los campos de nombre, apellido y especialidad solo están permitidos letras y espacios.");
+            alert("Error: En los campos de nombre y especialidad solo están permitidos letras y espacios.");
             return;
         }
 
@@ -158,10 +155,11 @@ if (formularioModificarDocente) {
 
         
         if (nombreIntroducido !== "") docente.nombre = nombreIntroducido;
-        if (apellidoIntroducido !== "") docente.apellido = apellidoIntroducido;
         if (especialidadIntroducida !== "") docente.especialidad = especialidadIntroducida;
         if (emailIntroducido !== "") docente.email = emailIntroducido;
         if (telefonoIntroducido !== "") docente.telefono = telefonoIntroducido;
+        if (fotoIntroducida !== "") docente.foto = fotoIntroducida;
+        else if (limpiarFoto) docente.foto = "";
 
         localStorage.setItem("docentes", JSON.stringify(docentes));
         window.location.href = "/gestiones_administrador/gestion_docentes.html";
@@ -179,20 +177,24 @@ if (contenedorTarjetas) {
     const total = document.createElement("p");
     total.className = "total-cursos";
     total.id = "total-docentes";
-    const docentesActivos = docentes.filter(docente => docente.activo);
+    const docentesActivos = docentes.filter(esActivo);
     total.textContent = "Docentes disponibles: " + docentesActivos.length;
 
     for (let i = 0; i < docentesActivos.length; i++) {
         const docenteActual = docentesActivos[i];
         const card = document.createElement('article');
         card.className = 'tarjeta';
+        const foto = docenteActual.foto
+            ? `<img src="${sanitizarEntrada(docenteActual.foto)}" alt="Foto de ${sanitizarEntrada(docenteActual.nombre)}">`
+            : "";
 
         card.innerHTML = `
-            <h4>${docenteActual.nombre} ${docenteActual.apellido}</h4>
-            <p><strong>Id:</strong> ${docenteActual.id}</p>
-            <p><strong>Especialidad:</strong> ${docenteActual.especialidad}</p>
-            <p><strong>Email:</strong> ${docenteActual.email}</p>
-            <p><strong>Teléfono:</strong> ${docenteActual.telefono}</p>
+            ${foto}
+            <h4>${sanitizarEntrada(docenteActual.nombre)}</h4>
+            <p><strong>Id:</strong> ${sanitizarEntrada(docenteActual.id_docente)}</p>
+            <p><strong>Especialidad:</strong> ${sanitizarEntrada(docenteActual.especialidad)}</p>
+            <p><strong>Email:</strong> ${sanitizarEntrada(docenteActual.email)}</p>
+            <p><strong>Teléfono:</strong> ${sanitizarEntrada(docenteActual.telefono)}</p>
         `;
 
         fragmento.appendChild(card);
@@ -204,10 +206,30 @@ if (contenedorTarjetas) {
 
 // Función para neutralizar etiquetas HTML y evitar inyecciones XSS
 function sanitizarEntrada(texto) {
-    return texto
-        .replace(/&/g, "&amp;")
+    return String(texto)
+        .replace(/&(?!(amp|lt|gt|quot|#039);)/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+function normalizarDocente(docente) {
+    const nombre = docente.apellido
+        ? `${docente.nombre} ${docente.apellido}`.trim()
+        : docente.nombre;
+
+    return {
+        id_docente: Number(docente.id_docente !== undefined ? docente.id_docente : docente.id),
+        nombre: nombre,
+        email: docente.email,
+        especialidad: docente.especialidad,
+        telefono: docente.telefono,
+        foto: docente.foto || "",
+        activo: Number(docente.activo) === 0 ? 0 : 1
+    };
+}
+
+function esActivo(docente) {
+    return Number(docente.activo) === 1;
 }
