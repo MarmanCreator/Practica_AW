@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import publicasRouter from './routes/publicas.routes.js';
 import crudRouter from './routes/crud.routes.js';
 import adminRouter from './routes/admin.routes.js';
+import cursosApiRouter from './routes/cursos.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,7 @@ app.use('/public', express.static(PUBLIC));
 // ---------- Routers ----------
 app.use('/crud', crudRouter);                           // /crud/anyadir_curso
 app.use('/gestiones_administrador', adminRouter);       // /gestiones_administrador/gestion_cursos
+app.use('/api/cursos', cursosApiRouter);
 app.use('/', publicasRouter);                           // /  y  /aulas, /catalogo_cursos...
 
 // ---------- 404 y errores (siempre al final) ----------

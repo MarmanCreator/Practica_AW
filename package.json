@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "dev": "node --watch app.js"
+    "start": "node --env-file=.env app.js",
+    "dev": "node --env-file=.env --watch app.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/MarmanCreator/Practica_AW#readme",
   "dependencies": {
-    "express": "^5.3.0"
+    "express": "^5.3.0",
+    "mariadb": "^3.5.5"
   }
 }

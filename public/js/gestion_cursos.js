@@ -420,59 +420,117 @@ function modificarCurso(id, datos) {
     curso.horario = datos.horario;
     curso.imagen = datos.imagen;
 }
-    
 
+////////////////////////////AVANCE PARA CONECTAR CON LA BD///////////////////////////////////////////////
+    
+// 1. REFERENCIAS INICIALES Y SESIÓN
+// Buscamos la sección del HTML (<section class="tarjetas">) donde pintaremos los cursos.
+// Si estamos en otra página (como añadir curso), esto valdrá null y no se ejecutará la carga del catálogo.
 const contenedorTarjetas = document.querySelector('.tarjetas');
+
+// Recuperamos al usuario que inició sesión en esta pestaña (si lo hay) para saber si debemos mostrar el botón "Matricularse".
 const usuarioGuardado = sessionStorage.getItem("usuarioActivo");
 const usuarioActual = usuarioGuardado
     ? JSON.parse(usuarioGuardado)
     : null;
-if (contenedorTarjetas) {
+
+
+// 2. FUNCIONES AUXILIARES DE FORMATO Y DOM SEGURO
+
+// MariaDB devuelve las fechas en formato ISO completo (ej: "2027-01-10T23:00:00.000Z").
+// Con .slice(0, 10) nos quedamos solo con los primeros 10 caracteres ("2027-01-10").
+function formatearFecha(fecha) {
+    if (!fecha) return "No especificada";
+    return String(fecha).slice(0, 10);
+}
+
+// Crea un párrafo del tipo <p><strong>Etiqueta: </strong>Valor</p> usando el DOM puro.
+// Al usar textContent y createTextNode en lugar de innerHTML, evitamos cualquier ataque XSS
+// porque el navegador trata todo como texto plano y nunca ejecuta etiquetas HTML ni scripts.
+function crearParrafoDato(etiqueta, valor) {
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = etiqueta + ": ";
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(String(valor)));
+    return p;
+}
+
+// Si la petición fetch falla (por ejemplo, si MariaDB está apagada o hay un error 500),
+// limpiamos el contenedor y mostramos un mensaje amigable sin revelar detalles técnicos.
+function mostrarErrorCatalogo(mensaje) {
+    const p = document.createElement('p');
+    p.className = 'error-catalogo';
+    p.textContent = mensaje;
+    contenedorTarjetas.replaceChildren(p);
+}
+
+
+// 3. RENDERIZADO DE LAS TARJETAS DE CURSOS
+function mostrarCursos(listaCursos) {
+    // DocumentFragment es un contenedor temporal en memoria.
+    // Metemos todas las tarjetas aquí y al final lo insertamos todo de golpe en el HTML (mejor rendimiento).
     const fragmento = document.createDocumentFragment();
 
+    // Cabecera de la sección con el número total de cursos recibidos desde la BD
     const tituloCursos = document.createElement('h3');
     tituloCursos.textContent = 'Cursos disponibles';
 
     const totalCursos = document.createElement('p');
     totalCursos.className = 'total-cursos';
-    const cursosActivos = cursos.filter(esCursoActivo);
-    totalCursos.textContent = 'Cursos disponibles: ' + cursosActivos.length;
+    totalCursos.textContent = 'Cursos disponibles: ' + listaCursos.length;
 
-    for (let i = 0; i < cursosActivos.length; i++) {
-        const cursoActual = cursosActivos[i];
+    // Recorremos cada curso del array JSON que nos ha devuelto Express
+    for (let i = 0; i < listaCursos.length; i++) {
+        const cursoActual = listaCursos[i];
         const card = document.createElement('article');
         card.className = 'tarjeta';
+
+        // Si el curso tiene ruta de imagen en la BD, creamos la etiqueta <img>
+        if (cursoActual.imagen) {
+            const img = document.createElement('img');
+            // Nos aseguramos de que la ruta empiece por "/" para que Express la busque desde la carpeta public/
+            img.src = cursoActual.imagen.startsWith('/') ? cursoActual.imagen : '/' + cursoActual.imagen;
+            img.alt = 'Imagen del curso ' + cursoActual.nombre;
+            card.appendChild(img);
+        }
+
+        // Título del curso
+        const titulo = document.createElement('h4');
+        titulo.textContent = cursoActual.nombre;
+        card.appendChild(titulo);
+
+        // Preparamos los textos con valores por defecto por si algún campo viene vacío (NULL en la BD).
+        // aula_nombre y docente_nombre vienen directamente del JOIN que hicimos en cursos.service.js.
         const horario = cursoActual.horario || "No especificado";
-        const fechaInicio = cursoActual.fecha_inicio || "No especificada";
-        const fechaFin = cursoActual.fecha_fin || "No especificada";
-        const imagen = cursoActual.imagen
-            ? `<img src="${sanitizarEntrada(cursoActual.imagen)}" alt="Imagen del curso ${sanitizarEntrada(cursoActual.nombre)}">`
-            : "";
-        const aula = aulas.find(aulaActual => aulaActual.id_aula === cursoActual.id_aula);
-        const docente = docentes.find(docenteActual => docenteActual.id_docente === cursoActual.id_docente);
-        const nombreAula = aula ? aula.nombre : "No especificada";
-        const nombreDocente = docente ? docente.nombre : "No especificado";
+        const fechas = `${formatearFecha(cursoActual.fecha_inicio)} - ${formatearFecha(cursoActual.fecha_fin)}`;
+        const nombreAula = cursoActual.aula_nombre || "No especificada";
+        const nombreDocente = cursoActual.docente_nombre || "No especificado";
 
-        card.innerHTML = `
-            ${imagen}
-            <h4>${sanitizarEntrada(cursoActual.nombre)}</h4>
-            <p><strong>Id:</strong> ${sanitizarEntrada(cursoActual.id_curso)}</p>
-            <p><strong>Horario:</strong> ${sanitizarEntrada(horario)}</p>
-            <p><strong>Fechas:</strong> ${sanitizarEntrada(fechaInicio)} - ${sanitizarEntrada(fechaFin)}</p>
-            <p>${sanitizarEntrada(cursoActual.descripcion)}</p>
-            <p><strong>Plazas disponibles:</strong> ${sanitizarEntrada(cursoActual.plazas)}</p>
-            <p><strong>Aula:</strong> ${sanitizarEntrada(nombreAula)}</p>
-            <p><strong>Docente:</strong> ${sanitizarEntrada(nombreDocente)}</p>
-        `;
+        // Añadimos los datos a la tarjeta de forma segura
+        card.appendChild(crearParrafoDato("Id", cursoActual.id_curso));
+        card.appendChild(crearParrafoDato("Horario", horario));
+        card.appendChild(crearParrafoDato("Fechas", fechas));
 
-        let button = null;
+        const desc = document.createElement('p');
+        desc.textContent = cursoActual.descripcion || "";
+        card.appendChild(desc);
+
+        card.appendChild(crearParrafoDato("Plazas disponibles", cursoActual.plazas));
+        card.appendChild(crearParrafoDato("Aula", nombreAula));
+        card.appendChild(crearParrafoDato("Docente", nombreDocente));
+
+        // Si hay un alumno activo logueado, le añadimos el botón de matricularse
+        // (las matrículas siguen usando localStorage de forma provisional hasta la entrega final)
         if (usuarioActual && usuarioActual.activo === 1 && usuarioActual.rol === "alumno") {
-            button = document.createElement("button");
+            const button = document.createElement("button");
             button.textContent = "Matricularse";
             button.addEventListener("click", () => {
                 const idUsuarioActual = usuarioActual.id_usuario;
                 const idCursoActual = cursoActual.id_curso;
-                if(matriculas.some(matricula =>
+
+                // Comprobamos que no esté ya matriculado en este mismo curso
+                if (matriculas.some(matricula =>
                     matricula.id_curso === idCursoActual &&
                     matricula.id_usuario === idUsuarioActual &&
                     matricula.estado === "activa"
@@ -480,10 +538,14 @@ if (contenedorTarjetas) {
                     alert("No te puedes matricular en un curso en el que ya estás matriculado.");
                     return;
                 }
-                if(cursoActual.plazas <= 0) {
+
+                // Comprobamos que queden plazas
+                if (cursoActual.plazas <= 0) {
                     alert("No hay plazas disponibles en este curso.");
                     return;
                 }
+
+                // Creamos y guardamos la matrícula en localStorage
                 const nuevaMatricula = {
                     id_matricula: matriculas.reduce((mayorId, matricula) => Math.max(mayorId, matricula.id_matricula), 0) + 1,
                     id_curso: idCursoActual,
@@ -495,25 +557,51 @@ if (contenedorTarjetas) {
                 localStorage.setItem("matriculas", JSON.stringify(matriculas));
                 alert("Te has matriculado en el curso " + cursoActual.nombre + ".");
             });
-        }
-
-        if (button) {
             card.appendChild(button);
         }
 
+        // Añadimos la tarjeta terminada al fragmento en memoria
         fragmento.appendChild(card);
     }
 
+    // Reemplazamos el contenido de <section class="tarjetas"> con todas las tarjetas nuevas
     contenedorTarjetas.replaceChildren(fragmento);
+    // Colocamos el título y el contador justo encima de las tarjetas
     contenedorTarjetas.prepend(tituloCursos, totalCursos);
 }
 
+
+// 4. PETICIÓN A LA API REST (CONEXIÓN CON EXPRESS Y MARIADB)
+// Solo hacemos la petición si estamos en una página que tiene el contenedor de tarjetas.
+if (contenedorTarjetas) {
+    // Enviamos una petición HTTP GET asíncrona a nuestro endpoint de Express
+    fetch('/api/cursos')
+        .then(r => {
+            // fetch() no lanza error automáticamente ante códigos 404 o 500;
+            // por eso comprobamos r.ok (true si el estado es 200-299). Si falla, saltamos al .catch().
+            if (!r.ok) throw new Error('Error HTTP ' + r.status);
+            // Convertimos el cuerpo de la respuesta (texto JSON) en un array de objetos JavaScript
+            return r.json();
+        })
+        // Cuando tenemos el array real de MariaDB, llamamos a la función que pinta las tarjetas
+        .then(cursosBD => mostrarCursos(cursosBD))
+        // Si se cae el servidor, no hay red o MariaDB devuelve un 500, mostramos el error controlado
+        .catch(() => mostrarErrorCatalogo('No se pudo cargar el catálogo de cursos.'));
+}
 function fechaHoraActual() {
     const ahora = new Date();
     const formato = numero => String(numero).padStart(2, "0");
     return `${ahora.getFullYear()}-${formato(ahora.getMonth() + 1)}-${formato(ahora.getDate())} ` +
         `${formato(ahora.getHours())}:${formato(ahora.getMinutes())}:${formato(ahora.getSeconds())}`;
 }
+
+
+/*Si en la defensa te preguntan por el recorrido completo de los datos, puedes resumirlo en una frase:
+ gestion_cursos.js lanza fetch('/api/cursos') → app.js lo redirige a routes/cursos.routes.js → llama a services/cursos.service.js → 
+ ejecuta el SELECT con JOIN en db/mariadb.js → vuelve como JSON con código 200 y mostrarCursos() lo pinta con textConten
+*/
+
+////////////////////////////AVANCE PARA CONECTAR CON LA BD///////////////////////////////////////////////
 
 
 // Función para neutralizar etiquetas HTML y evitar inyecciones XSS
