@@ -121,6 +121,15 @@ export async function crearCurso(curso) {
     return { id_curso: Number(resultado.insertId) };
 }
 
+export async function desactivarCurso(idCurso) {
+    const resultado = await query(
+        "UPDATE cursos SET estado = 'inactivo' WHERE id_curso = ? AND estado = 'activo'",
+        [idCurso]
+    );
+
+    return resultado.affectedRows > 0;
+}
+
 function analizarHorario(horario) {
     const coincidencia = horario.match(/^(.+)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/);
     if (!coincidencia) return null;

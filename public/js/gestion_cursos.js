@@ -195,29 +195,68 @@ async function cargarReferenciasCurso() {
 
 const formulario_eliminar_curso = document.getElementById("eliminar_curso");
 if (formulario_eliminar_curso) {
-    formulario_eliminar_curso.addEventListener("submit", function (event) {
+    const cargaCursosEliminar = cargarCursosParaEliminar();
+
+    formulario_eliminar_curso.addEventListener("submit", async function (event) {
         event.preventDefault();
-        const id = Number(document.getElementById("id_curso").value);
-        const cursoExiste = cursos.some(curso => curso.id_curso === id && esCursoActivo(curso));
-
-        if (!Number.isInteger(id) || !cursoExiste) {
-            alert("No existe ningún curso con ese ID.");
+        if (!await cargaCursosEliminar) {
             return;
         }
-        const curso = cursos.find(cursoActual =>
-            cursoActual.id_curso === id && esCursoActivo(cursoActual)
-        );
-        if (curso) {
-            curso.estado = "inactivo";
-        }
-        else {
-            alert("No existe ningún curso con ese ID o ya está eliminado.");
+
+        const idCursoIntroducido = document.getElementById("id_curso").value;
+        const id = Number(idCursoIntroducido);
+        if (!Number.isInteger(id) || id <= 0) {
+            alert("Selecciona un curso válido.");
             return;
         }
-        localStorage.setItem("cursos", JSON.stringify(cursos));
-        window.location.href = "/gestiones_administrador/gestion_cursos.html";
 
+        try {
+            const respuesta = await fetch(`/api/cursos/${id}`, { method: "DELETE" });
+            const resultado = await respuesta.json().catch(() => ({}));
+
+            if (!respuesta.ok) {
+                throw new Error(resultado.error || "No se pudo eliminar el curso.");
+            }
+
+            alert("Curso eliminado correctamente.");
+            window.location.href = "/gestiones_administrador/gestion_cursos.html";
+        } catch (error) {
+            console.error("Error al eliminar el curso:", error);
+            alert(error.message || "No se pudo conectar con el servidor.");
+        }
     });
+}
+
+// esta funcion carga los cursos que se muestran en el select del formulario de eliminar curso, mostrando solo los cursos activos.
+async function cargarCursosParaEliminar() {
+    try {
+        const respuesta = await fetch("/api/cursos");
+        if (!respuesta.ok) {
+            throw new Error(`Error HTTP ${respuesta.status}`);
+        }
+
+        const cursosActivos = await respuesta.json();
+        if (!Array.isArray(cursosActivos)) {
+            throw new Error("La respuesta de cursos no tiene el formato esperado.");
+        }
+
+        const select = document.getElementById("id_curso");
+        const opcionInicial = select.options[0];
+        select.replaceChildren(opcionInicial);
+
+        for (const curso of cursosActivos) {
+            const opcion = document.createElement("option");
+            opcion.value = curso.id_curso;
+            opcion.textContent = `${curso.nombre} (${curso.id_curso})`;
+            select.appendChild(opcion);
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error al cargar cursos para eliminar:", error);
+        alert("No se pudieron cargar los cursos desde la base de datos.");
+        return false;
+    }
 }
 
 // MODIFICAR CURSO

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
     crearCurso,
+    desactivarCurso,
     listarCursos,
     listarReferenciasCurso
 } from '../services/cursos.service.js';
@@ -40,6 +41,25 @@ router.post('/', async (req, res) => {
         res.status(statusCode).json({
             error: statusCode >= 500 ? 'Error interno al crear el curso' : err.message
         });
+    }
+});
+
+router.delete('/:id', async (req, res) => {
+    const idCurso = Number(req.params.id);
+    if (!Number.isInteger(idCurso) || idCurso <= 0) {
+        return res.status(400).json({ error: 'El ID del curso no es válido.' });
+    }
+
+    try {
+        const desactivado = await desactivarCurso(idCurso);
+        if (!desactivado) {
+            return res.status(404).json({ error: 'No existe un curso activo con ese ID.' });
+        }
+
+        return res.status(204).end();
+    } catch (err) {
+        console.error('Error al desactivar curso:', err);
+        return res.status(500).json({ error: 'Error interno al eliminar el curso' });
     }
 });
 
