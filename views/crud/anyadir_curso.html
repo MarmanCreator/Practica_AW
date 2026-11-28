@@ -61,7 +61,7 @@
         <form class="formulario_base" id="añadir_curso" action="#" method="post">
         <!-- Aqui importante añadir el atributo id ="nombre" para que el input pille la etiqueta. -->
         <label for="nombre">Nombre del curso:*</label>
-        <input type="text" id="nombre" name="nombre" placeholder="Nombre del curso" required>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre del curso" maxlength="100" required>
 
         <label for="descripcion">Descripción:</label>
         <textarea id="descripcion" name="descripcion" placeholder="Descripción del curso"></textarea>
@@ -73,7 +73,7 @@
         <input type="date" id="fecha_fin" name="fecha_fin" placeholder="Fecha de fin" required>
 
         <label for="plazas">Plazas:*</label>
-        <input type="number" id="plazas" name="plazas" placeholder="Número de plazas" required>
+        <input type="number" id="plazas" name="plazas" placeholder="Número de plazas" min="1" required>
 
         <label for="id_aula">Id del aula asignada:*</label>
         <select id="id_aula" name="id_aula" required>

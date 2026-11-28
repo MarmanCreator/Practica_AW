@@ -94,13 +94,13 @@ if (formulario_anyadir_curso) {
             alert("El nombre del curso solo puede contener letras y espacios.");
             return;
         }
-        if (!regexNumeros.test(plazasIntroducidas)) {
-            alert("Las plazas deben ser un número entero no negativo.");
+        if (!regexNumeros.test(plazasIntroducidas) || Number(plazasIntroducidas) <= 0) {
+            alert("Las plazas deben ser un número entero mayor que cero.");
             return;
         }
 
-        if (!Number.isInteger(plazas) || plazas < 0) {
-            alert("El número de plazas debe ser un número entero no negativo.");
+        if (!Number.isInteger(plazas) || plazas <= 0) {
+            alert("El número de plazas debe ser un número entero mayor que cero.");
             return;
         }
         if (dias.length === 0) {

@@ -74,16 +74,20 @@ export async function crearCurso(curso) {
         `SELECT id_curso
         FROM cursos
         WHERE id_aula = ? AND id_docente = ? AND estado = 'activo'
+            AND fecha_inicio <= ? AND fecha_fin >= ?
         LIMIT 1`,
-        [curso.id_aula, curso.id_docente]
+        [curso.id_aula, curso.id_docente, curso.fecha_fin, curso.fecha_inicio]
     );
     if (mismoDocenteEnAula.length > 0) {
         throw crearError("Ya existe un curso activo en esa aula con ese docente.", 409);
     }
 
     const cursosEnAula = await query(
-        "SELECT horario FROM cursos WHERE id_aula = ? AND estado = 'activo'",
-        [curso.id_aula]
+        `SELECT horario
+        FROM cursos
+        WHERE id_aula = ? AND estado = 'activo'
+            AND fecha_inicio <= ? AND fecha_fin >= ?`,
+        [curso.id_aula, curso.fecha_fin, curso.fecha_inicio]
     );
     const horarioNuevo = analizarHorario(curso.horario);
     const horarioSolapado = cursosEnAula.some(cursoExistente => {

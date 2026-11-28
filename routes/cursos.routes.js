@@ -60,8 +60,11 @@ function validarCurso(datos) {
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
         throw crearErrorValidacion('El nombre del curso solo puede contener letras y espacios.');
     }
-    if (!Number.isInteger(plazas) || plazas < 0) {
-        throw crearErrorValidacion('Las plazas deben ser un número entero no negativo.');
+    if (nombre.length > 100) {
+        throw crearErrorValidacion('El nombre del curso no puede superar los 100 caracteres.');
+    }
+    if (!Number.isInteger(plazas) || plazas <= 0) {
+        throw crearErrorValidacion('Las plazas deben ser un número entero mayor que cero.');
     }
     if (!Number.isInteger(id_aula) || id_aula <= 0 ||
         !Number.isInteger(id_docente) || id_docente <= 0) {
