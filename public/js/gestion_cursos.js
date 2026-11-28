@@ -2,50 +2,8 @@
 
 const cursosGuardados = localStorage.getItem("cursos");
 
-const cursos = cursosGuardados
-    ? JSON.parse(cursosGuardados)
-    : [
+const cursos = cursosGuardados ? JSON.parse(cursosGuardados) : [];
 
-    {
-        id_curso: 0,
-        nombre: "Aplicaciones Web",
-        descripcion: "Aprende a desarrollar aplicaciones web modernas utilizando HTML, CSS y JavaScript.",
-        id_aula: 1,
-        id_docente: 0,
-        plazas: 20,
-        fecha_inicio: "2026-09-01",
-        fecha_fin: "2026-12-20",
-        horario: "Miércoles, jueves y viernes 10:00-12:00",
-        imagen: "",
-        estado: "activo"
-    },
-    {
-        id_curso: 1,
-        nombre: "Gestion de proyectos software",
-        descripcion: "Aprende a gestionar proyectos de desarrollo de software utilizando metodologías ágiles y herramientas de gestión.",
-        id_aula: 3,
-        id_docente: 1,
-        plazas: 2,
-        fecha_inicio: "2026-10-01",
-        fecha_fin: "2027-01-31",
-        horario: "Lunes y martes 14:00-16:00",
-        imagen: "/images/recurso-imagenes/vehiculos/byd_seal1.png",
-        estado: "activo"
-    },
-    {
-        id_curso: 2,
-        nombre: "Fundamentos de algoritmia",
-        descripcion: "Aprende los conceptos básicos de algoritmia y estructuras de datos para resolver problemas de programación.",
-        id_aula: 1,
-        id_docente: 2,
-        plazas: 0,
-        fecha_inicio: "2026-11-03",
-        fecha_fin: "2027-01-15",
-        horario: "Lunes y martes 09:00-11:00",
-        imagen: "/images/recurso-imagenes/vehiculos/byd_seal1.png",
-        estado: "activo"
-    }
-];
 localStorage.setItem("cursos", JSON.stringify(cursos));
 
 const aulasGuardadas = localStorage.getItem("aulas");
@@ -104,16 +62,22 @@ if (selectCurso) {
     }
 }
 
+// AÑADIR CURSO
+
 const formulario_anyadir_curso = document.getElementById("añadir_curso");
+const cargaReferenciasCurso = formulario_anyadir_curso
+    ? cargarReferenciasCurso()
+    : Promise.resolve(true);
+
 if (formulario_anyadir_curso) {
-    formulario_anyadir_curso.addEventListener("submit", function (event) {
+    formulario_anyadir_curso.addEventListener("submit", async function (event) {
         event.preventDefault();
-        const nombre = sanitizarEntrada(document.getElementById("nombre").value);
-        const descripcion = sanitizarEntrada(document.getElementById("descripcion").value);
+        const nombre = sanitizarEntrada(document.getElementById("nombre").value.trim());
+        const descripcion = sanitizarEntrada(document.getElementById("descripcion").value.trim());
         const plazasIntroducidas = document.getElementById("plazas").value.trim();
         const plazas = Number(plazasIntroducidas);
-        const id_aula = document.getElementById("id_aula").value;
-        const id_docente = document.getElementById("id_docente").value;
+        const id_aula = Number(document.getElementById("id_aula").value);
+        const id_docente = Number(document.getElementById("id_docente").value);
         const dias = [...document.querySelectorAll('input[name="dias"]:checked')]
             .map(dia => dia.value); // los 3 puntos son para que se convierta en un array y luego se mapea para obtener los valores de los días seleccionados
         const hora_inicio = document.getElementById("hora_inicio").value;
@@ -151,55 +115,83 @@ if (formulario_anyadir_curso) {
             alert("La fecha de inicio debe ser anterior a la fecha de finalización.");
             return;
         }
-        if (cursos.some(curso =>
-            curso.nombre.toLowerCase() === nombre.toLowerCase() && esCursoActivo(curso)
-        )) {
-            alert("Ya existe un curso con ese nombre y no puede haber 2 cursos con el mismo nombre.");
-            return;
-        }
-        if (cursos.some(curso =>
-            curso.id_aula === Number(id_aula) &&
-            esCursoActivo(curso) &&
-            curso.id_docente === Number(id_docente)
-        )) {
-            alert("Ya existe un curso en esa aula con ese docente.");
-            return;
-        }
-        if (cursos.some(curso => {
-            const horarioExistente = analizarHorario(curso.horario);
-            return curso.id_aula === Number(id_aula) &&
-                esCursoActivo(curso) &&
-                horarioExistente &&
-                horarioExistente.dias.some(dia => dias.includes(dia)) &&
-                hora_inicio < horarioExistente.hora_final &&
-                hora_final > horarioExistente.hora_inicio;
-        })) {
-            alert("Ya existe un curso en esa aula en ese horario.");
+
+        if (!await cargaReferenciasCurso) {
             return;
         }
 
         const horario = crearHorario(dias, hora_inicio, hora_final);
-        AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_inicio, fecha_fin, horario);
-        localStorage.setItem("cursos", JSON.stringify(cursos));
-        window.location.href = "/gestiones_administrador/gestion_cursos.html";
+        try {
+            const respuesta = await fetch("/api/cursos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    nombre,
+                    descripcion,
+                    fecha_inicio,
+                    fecha_fin,
+                    horario,
+                    plazas,
+                    id_aula,
+                    id_docente
+                })
+            });
+            const resultado = await respuesta.json().catch(() => ({}));
+
+            if (!respuesta.ok) {
+                throw new Error(resultado.error || "No se pudo añadir el curso.");
+            }
+
+            alert("Curso añadido correctamente.");
+            window.location.href = "/gestiones_administrador/gestion_cursos.html";
+        } catch (error) {
+            console.error("Error al añadir el curso:", error);
+            alert(error.message || "No se pudo conectar con el servidor.");
+        }
     });
 }
-function AnyadirCurso(nombre, descripcion, plazas, id_aula, id_docente, fecha_inicio, fecha_fin, horario) {
-    const nuevoCurso = {
-        id_curso: cursos.reduce((mayorId, curso) => Math.max(mayorId, curso.id_curso), -1) + 1,
-        nombre: nombre,
-        descripcion: descripcion,
-        plazas: Number(plazas),
-        id_aula: Number(id_aula),
-        id_docente: Number(id_docente),
-        fecha_inicio: fecha_inicio,
-        fecha_fin: fecha_fin,
-        horario: horario,
-        imagen: "",
-        estado: "activo"
-    };
-    cursos.push(nuevoCurso);
+
+async function cargarReferenciasCurso() {
+    try {
+        const respuesta = await fetch("/api/cursos/referencias");
+        if (!respuesta.ok) {
+            throw new Error(`Error HTTP ${respuesta.status}`);
+        }
+
+        const referencias = await respuesta.json();
+        if (!Array.isArray(referencias.aulas) || !Array.isArray(referencias.docentes)) {
+            throw new Error("La respuesta de aulas y docentes no tiene el formato esperado.");
+        }
+
+        const selectAulaCurso = document.getElementById("id_aula");
+        const selectDocenteCurso = document.getElementById("id_docente");
+        const opcionInicialAula = selectAulaCurso.options[0];
+        const opcionInicialDocente = selectDocenteCurso.options[0];
+        selectAulaCurso.replaceChildren(opcionInicialAula);
+        selectDocenteCurso.replaceChildren(opcionInicialDocente);
+
+        for (const aula of referencias.aulas) {
+            const opcion = document.createElement("option");
+            opcion.value = aula.id_aula;
+            opcion.textContent = aula.nombre;
+            selectAulaCurso.appendChild(opcion);
+        }
+        for (const docente of referencias.docentes) {
+            const opcion = document.createElement("option");
+            opcion.value = docente.id_docente;
+            opcion.textContent = docente.nombre;
+            selectDocenteCurso.appendChild(opcion);
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error al cargar aulas y docentes:", error);
+        alert("No se pudieron cargar las aulas y los docentes desde la base de datos.");
+        return false;
+    }
 }
+
+// ELIMINAR CURSO
 
 const formulario_eliminar_curso = document.getElementById("eliminar_curso");
 if (formulario_eliminar_curso) {
@@ -227,6 +219,8 @@ if (formulario_eliminar_curso) {
 
     });
 }
+
+// MODIFICAR CURSO
 
 const formulario_modificar_curso = document.getElementById("modificar_curso");
 if (formulario_modificar_curso) {
