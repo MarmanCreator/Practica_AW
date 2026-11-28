@@ -1,52 +1,14 @@
 
-
+// esto que queda de localStorage es provisional solo para el boton de matricularse
+// cuando ya este hecho todo el tema de las matriculas con la BBDD ya no hara falta
 const cursosGuardados = localStorage.getItem("cursos");
 
 const cursos = cursosGuardados ? JSON.parse(cursosGuardados) : [];
 
-localStorage.setItem("cursos", JSON.stringify(cursos));
-
-const aulasGuardadas = localStorage.getItem("aulas");
-
-const aulas = aulasGuardadas ? JSON.parse(aulasGuardadas) : [];
-
-const docentesGuardados = localStorage.getItem("docentes");
-
-const docentes = docentesGuardados ? JSON.parse(docentesGuardados) : [];
-
 const matriculasGuardadas = localStorage.getItem("matriculas");
 
-const matriculas = matriculasGuardadas
-    ? JSON.parse(matriculasGuardadas)
-    : [];
+const matriculas = matriculasGuardadas ? JSON.parse(matriculasGuardadas) : [];
 
-
-
-const selectAula = document.getElementById("id_aula");
-
-if (selectAula) {
-    for (let i = 0; i < aulas.length; i++) {
-        const aula = aulas[i];
-        if (aula.estado !== "activa") continue;
-        const opcion = document.createElement("option");
-        opcion.value = aula.id_aula;
-        opcion.textContent = `${aula.nombre}`.trim();
-        selectAula.appendChild(opcion);
-    }
-}
-const selectDocente = document.getElementById("id_docente");
-if (selectDocente) {
-    for (let i = 0; i < docentes.length; i++) {
-        const doc = docentes[i];
-
-        if (doc.activo === 1) {
-            const opcion = document.createElement("option");
-            opcion.value = doc.id_docente;
-            opcion.textContent = `${doc.nombre}`.trim();
-            selectDocente.appendChild(opcion);
-        }
-    }
-}
 //y esto para rellenar el select de cursos en el formulario de añadir matrícula, mostrando solo los cursos activos.
 const selectCurso = document.getElementById("id_curso");
 if (selectCurso) {
