@@ -262,14 +262,19 @@ async function cargarCursosParaEliminar() {
 // MODIFICAR CURSO
 
 const formulario_modificar_curso = document.getElementById("modificar_curso");
+let cursosParaModificar = [];
+
 if (formulario_modificar_curso) {
-    formulario_modificar_curso.addEventListener("submit", function (event) {
+    const cargaCursosModificar = cargarCursosParaModificar();
+    const cargaReferenciasModificar = cargarReferenciasCurso();
+
+    formulario_modificar_curso.addEventListener("submit", async function (event) {
         event.preventDefault();
 
+        if (!await cargaCursosModificar || !await cargaReferenciasModificar) return;
+
         const id = Number(sanitizarEntrada(document.getElementById("id_curso").value));
-        const curso = cursos.find(cursoActual =>
-            cursoActual.id_curso === id && esCursoActivo(cursoActual)
-        );
+        const curso = cursosParaModificar.find(cursoActual => cursoActual.id_curso === id);
         if (!Number.isInteger(id) || !curso) {
             alert("No existe ningún curso con ese ID.");
             return;
@@ -281,31 +286,22 @@ if (formulario_modificar_curso) {
             alert("El nombre del curso solo puede contener letras y espacios.");
             return;
         }
-
-        let nombre = curso.nombre;
-        if (nombreIntroducido !== "") {
-            if (cursos.some(cursoActual =>
-                cursoActual.id_curso !== id &&
-                cursoActual.nombre.toLowerCase() === nombreIntroducido.toLowerCase() &&
-                esCursoActivo(cursoActual)
-            )) {
-                alert("Ya existe un curso activo con ese nombre.");
-                return;
-            }
-            nombre = nombreIntroducido;
+        if (nombreIntroducido.length > 100) {
+            alert("El nombre del curso no puede superar los 100 caracteres.");
+            return;
         }
 
-        let descripcion = curso.descripcion;
-        if (sanitizarEntrada(document.getElementById("descripcion").value.trim()) !== "") {
-            descripcion = sanitizarEntrada(document.getElementById("descripcion").value);
-        }
+        const nombre = nombreIntroducido || curso.nombre;
+
+        const descripcionIntroducida = sanitizarEntrada(document.getElementById("descripcion").value.trim());
+        const descripcion = descripcionIntroducida || curso.descripcion || "";
 
         let plazas = curso.plazas;
         const plazasIntroducidas = document.getElementById("plazas").value.trim();
         if (plazasIntroducidas !== "") {
             plazas = Number(plazasIntroducidas);
-            if (!Number.isInteger(plazas) || plazas < 0) {
-                alert("El número de plazas debe ser un número entero no negativo.");
+            if (!Number.isInteger(plazas) || plazas <= 0) {
+                alert("El número de plazas debe ser un número entero mayor que cero.");
                 return;
             }
         }
@@ -314,12 +310,8 @@ if (formulario_modificar_curso) {
         const idAulaIntroducido = document.getElementById("id_aula").value.trim();
         if (idAulaIntroducido !== "") {
             id_aula = Number(idAulaIntroducido);
-            if (!Number.isInteger(id_aula)) {
+            if (!Number.isInteger(id_aula) || id_aula <= 0) {
                 alert("El ID del aula debe ser un número entero.");
-                return;
-            }
-            if (!aulas.some(aula => aula.id_aula === id_aula && aula.estado === "activa")) {
-                alert("No existe ningún aula con ese ID.");
                 return;
             }
         }
@@ -329,12 +321,8 @@ if (formulario_modificar_curso) {
 
         if (idDocenteIntroducido !== "") {
             id_docente = Number(idDocenteIntroducido);
-            if (!Number.isInteger(id_docente)) {
+            if (!Number.isInteger(id_docente) || id_docente <= 0) {
                 alert("El ID del docente debe ser un número entero.");
-                return;
-            }
-            if (!docentes.some(docente => docente.id_docente === id_docente && docente.activo === 1)) {
-                alert("No existe ningún docente con ese ID.");
                 return;
             }
         }
@@ -367,22 +355,9 @@ if (formulario_modificar_curso) {
         const horario = horarioIntroducido
             ? crearHorario(dias, hora_inicio, hora_final)
             : curso.horario;
-        if (horarioIntroducido && cursos.some(cursoActual => {
-            const horarioExistente = analizarHorario(cursoActual.horario);
-            return cursoActual.id_curso !== id &&
-                esCursoActivo(cursoActual) &&
-                cursoActual.id_aula === id_aula &&
-                horarioExistente &&
-                horarioExistente.dias.some(dia => dias.includes(dia)) &&
-                hora_inicio < horarioExistente.hora_final &&
-                hora_final > horarioExistente.hora_inicio;
-        })) {
-            alert("Ya existe otro curso con un horario que se solapa en alguno de esos días.");
-            return;
-        }
 
-        let fecha_inicio = curso.fecha_inicio;
-        let fecha_fin = curso.fecha_fin;
+        let fecha_inicio = String(curso.fecha_inicio).slice(0, 10);
+        let fecha_fin = String(curso.fecha_fin).slice(0, 10);
         const fechaInicioIntroducida = document.getElementById("fecha_inicio").value;
         const fechaFinIntroducida = document.getElementById("fecha_fin").value;
         if (fechaInicioIntroducida !== "" || fechaFinIntroducida !== "") {
@@ -396,17 +371,6 @@ if (formulario_modificar_curso) {
             }
             fecha_inicio = fechaInicioIntroducida;
             fecha_fin = fechaFinIntroducida;
-        }
-
-        if ((idAulaIntroducido !== "" || idDocenteIntroducido !== "") &&
-            cursos.some(cursoActual =>
-                cursoActual.id_curso !== id &&
-                esCursoActivo(cursoActual) &&
-                cursoActual.id_aula === id_aula &&
-                cursoActual.id_docente === id_docente
-            )) {
-            alert("Ya existe un curso en esa aula con ese docente.");
-            return;
         }
 
         const regexNumeros = /^\d+$/;
@@ -423,35 +387,66 @@ if (formulario_modificar_curso) {
         if (imagenIntroducida !== "") imagen = imagenIntroducida;
         else if (limpiarImagen) imagen = "";
 
-        modificarCurso(id, {
-            nombre,
-            descripcion,
-            plazas,
-            id_aula,
-            id_docente,
-            fecha_inicio,
-            fecha_fin,
-            horario,
-            imagen
-        });
-        localStorage.setItem("cursos", JSON.stringify(cursos));
-        window.location.href = "/gestiones_administrador/gestion_cursos.html";
+        try {
+            const respuesta = await fetch(`/api/cursos/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    nombre,
+                    descripcion,
+                    fecha_inicio,
+                    fecha_fin,
+                    horario,
+                    plazas,
+                    id_aula,
+                    id_docente,
+                    imagen
+                })
+            });
+            const resultado = await respuesta.json().catch(() => ({}));
 
+            if (!respuesta.ok) {
+                throw new Error(resultado.error || "No se pudo modificar el curso.");
+            }
+
+            alert("Curso modificado correctamente.");
+            window.location.href = "/gestiones_administrador/gestion_cursos.html";
+        } catch (error) {
+            console.error("Error al modificar el curso:", error);
+            alert(error.message || "No se pudo conectar con el servidor.");
+        }
     });
 }
-function modificarCurso(id, datos) {
-    const curso = cursos.find(cursoActual => cursoActual.id_curso === id);
-    if (!curso) return;
 
-    curso.nombre = datos.nombre;
-    curso.descripcion = datos.descripcion;
-    curso.plazas = Number(datos.plazas);
-    curso.id_aula = Number(datos.id_aula);
-    curso.id_docente = Number(datos.id_docente);
-    curso.fecha_inicio = datos.fecha_inicio;
-    curso.fecha_fin = datos.fecha_fin;
-    curso.horario = datos.horario;
-    curso.imagen = datos.imagen;
+async function cargarCursosParaModificar() {
+    try {
+        const respuesta = await fetch("/api/cursos");
+        if (!respuesta.ok) {
+            throw new Error(`Error HTTP ${respuesta.status}`);
+        }
+
+        cursosParaModificar = await respuesta.json();
+        if (!Array.isArray(cursosParaModificar)) {
+            throw new Error("La respuesta de cursos no tiene el formato esperado.");
+        }
+
+        const select = document.getElementById("id_curso");
+        const opcionInicial = select.options[0];
+        select.replaceChildren(opcionInicial);
+
+        for (const curso of cursosParaModificar) {
+            const opcion = document.createElement("option");
+            opcion.value = curso.id_curso;
+            opcion.textContent = `${curso.nombre} (${curso.id_curso})`;
+            select.appendChild(opcion);
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error al cargar cursos para modificar:", error);
+        alert("No se pudieron cargar los cursos desde la base de datos.");
+        return false;
+    }
 }
 
 ////////////////////////////AVANCE PARA CONECTAR CON LA BD///////////////////////////////////////////////

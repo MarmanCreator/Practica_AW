@@ -3,7 +3,8 @@ import {
     crearCurso,
     desactivarCurso,
     listarCursos,
-    listarReferenciasCurso
+    listarReferenciasCurso,
+    modificarCurso
 } from '../services/cursos.service.js';
 
 const router = Router();
@@ -44,6 +45,31 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.put('/:id', async (req, res) => {
+    const idCurso = Number(req.params.id);
+    if (!Number.isInteger(idCurso) || idCurso <= 0) {
+        return res.status(400).json({ error: 'El ID del curso no es válido.' });
+    }
+
+    try {
+        const curso = validarCurso(req.body);
+        const modificado = await modificarCurso(idCurso, curso);
+        if (!modificado) {
+            return res.status(404).json({ error: 'No existe un curso activo con ese ID.' });
+        }
+
+        return res.status(200).json({ id_curso: idCurso });
+    } catch (err) {
+        const statusCode = err.statusCode || 500;
+        if (statusCode >= 500) {
+            console.error('Error al modificar curso:', err);
+        }
+        return res.status(statusCode).json({
+            error: statusCode >= 500 ? 'Error interno al modificar el curso' : err.message
+        });
+    }
+});
+
 router.delete('/:id', async (req, res) => {
     const idCurso = Number(req.params.id);
     if (!Number.isInteger(idCurso) || idCurso <= 0) {
@@ -70,6 +96,11 @@ function validarCurso(datos) {
 
     const nombre = typeof datos.nombre === 'string' ? datos.nombre.trim() : '';
     const descripcion = typeof datos.descripcion === 'string' ? datos.descripcion.trim() : '';
+    const imagen = datos.imagen === undefined
+        ? ''
+        : typeof datos.imagen === 'string'
+            ? datos.imagen.trim()
+            : null;
     const fecha_inicio = datos.fecha_inicio;
     const fecha_fin = datos.fecha_fin;
     const horario = typeof datos.horario === 'string' ? datos.horario.trim() : '';
@@ -82,6 +113,9 @@ function validarCurso(datos) {
     }
     if (nombre.length > 100) {
         throw crearErrorValidacion('El nombre del curso no puede superar los 100 caracteres.');
+    }
+    if (imagen === null || imagen.length > 255) {
+        throw crearErrorValidacion('La ruta de la imagen no puede superar los 255 caracteres.');
     }
     if (!Number.isInteger(plazas) || plazas <= 0) {
         throw crearErrorValidacion('Las plazas deben ser un número entero mayor que cero.');
@@ -103,6 +137,7 @@ function validarCurso(datos) {
         fecha_fin,
         horario,
         plazas,
+        imagen,
         id_aula,
         id_docente,
         hora_inicio: horarioValidado.hora_inicio,

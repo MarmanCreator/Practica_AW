@@ -121,6 +121,95 @@ export async function crearCurso(curso) {
     return { id_curso: Number(resultado.insertId) };
 }
 
+export async function modificarCurso(idCurso, curso) {
+    const cursosEncontrados = await query(
+        "SELECT id_curso, id_docente, id_aula FROM cursos WHERE id_curso = ? AND estado = 'activo' LIMIT 1",
+        [idCurso]
+    );
+    if (cursosEncontrados.length === 0) return false;
+
+    const cursoActual = cursosEncontrados[0];
+    if (curso.id_aula !== cursoActual.id_aula) {
+        const aula = await query(
+            "SELECT id_aula FROM aulas WHERE id_aula = ? AND estado = 'activa' LIMIT 1",
+            [curso.id_aula]
+        );
+        if (aula.length === 0) {
+            throw crearError("El aula seleccionada no existe o está inactiva.", 400);
+        }
+    }
+
+    if (curso.id_docente !== cursoActual.id_docente) {
+        const docente = await query(
+            "SELECT id_docente FROM docentes WHERE id_docente = ? AND activo = 1 LIMIT 1",
+            [curso.id_docente]
+        );
+        if (docente.length === 0) {
+            throw crearError("El docente seleccionado no existe o está inactivo.", 400);
+        }
+    }
+
+    const cursoConNombre = await query(
+        "SELECT id_curso FROM cursos WHERE LOWER(nombre) = LOWER(?) AND estado = 'activo' AND id_curso <> ? LIMIT 1",
+        [curso.nombre, idCurso]
+    );
+    if (cursoConNombre.length > 0) {
+        throw crearError("Ya existe otro curso activo con ese nombre.", 409);
+    }
+
+    const mismoDocenteEnAula = await query(
+        `SELECT id_curso
+        FROM cursos
+        WHERE id_aula = ? AND id_docente = ? AND estado = 'activo'
+            AND id_curso <> ? AND fecha_inicio <= ? AND fecha_fin >= ?
+        LIMIT 1`,
+        [curso.id_aula, curso.id_docente, idCurso, curso.fecha_fin, curso.fecha_inicio]
+    );
+    if (mismoDocenteEnAula.length > 0) {
+        throw crearError("Ya existe un curso activo en esa aula con ese docente.", 409);
+    }
+
+    const cursosEnAula = await query(
+        `SELECT horario
+        FROM cursos
+        WHERE id_aula = ? AND estado = 'activo' AND id_curso <> ?
+            AND fecha_inicio <= ? AND fecha_fin >= ?`,
+        [curso.id_aula, idCurso, curso.fecha_fin, curso.fecha_inicio]
+    );
+    const horarioNuevo = analizarHorario(curso.horario);
+    const horarioSolapado = cursosEnAula.some(cursoExistente => {
+        const horarioExistente = analizarHorario(cursoExistente.horario);
+        return horarioExistente &&
+            horarioExistente.dias.some(dia => horarioNuevo.dias.includes(dia)) &&
+            curso.hora_inicio < horarioExistente.hora_final &&
+            curso.hora_final > horarioExistente.hora_inicio;
+    });
+    if (horarioSolapado) {
+        throw crearError("Ya existe otro curso en esa aula con un horario que se solapa.", 409);
+    }
+
+    await query(
+        `UPDATE cursos
+        SET nombre = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?,
+            horario = ?, plazas = ?, imagen = ?, id_docente = ?, id_aula = ?
+        WHERE id_curso = ? AND estado = 'activo'`,
+        [
+            curso.nombre,
+            curso.descripcion,
+            curso.fecha_inicio,
+            curso.fecha_fin,
+            curso.horario,
+            curso.plazas,
+            curso.imagen,
+            curso.id_docente,
+            curso.id_aula,
+            idCurso
+        ]
+    );
+
+    return true;
+}
+
 export async function desactivarCurso(idCurso) {
     const resultado = await query(
         "UPDATE cursos SET estado = 'inactivo' WHERE id_curso = ? AND estado = 'activo'",
